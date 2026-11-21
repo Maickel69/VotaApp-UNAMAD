@@ -10,6 +10,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import androidx.core.content.ContextCompat
 import kotlin.math.min
 
 /**
@@ -35,18 +36,18 @@ class DonutChartView @JvmOverloads constructor(
 
     private val bgTrackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        color = Color.parseColor("#E2E8F0")
+        color = ContextCompat.getColor(context, R.color.border_light)
     }
 
     private val centerNumPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        color = Color.parseColor("#0F172A")
+        color = ContextCompat.getColor(context, R.color.text_primary)
     }
 
     private val centerLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
-        color = Color.parseColor("#64748B")
+        color = ContextCompat.getColor(context, R.color.text_muted)
     }
 
     private val legendDotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -54,7 +55,7 @@ class DonutChartView @JvmOverloads constructor(
     }
 
     private val legendTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#334155")
+        color = ContextCompat.getColor(context, R.color.text_secondary)
     }
 
     private val arcRect = RectF()

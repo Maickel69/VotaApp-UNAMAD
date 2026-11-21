@@ -1,12 +1,14 @@
 <resources>
-    <!-- Mantiene coherencia visual de alto contraste en dispositivos con modo oscuro -->
-    <style name="Base.Theme.ProyectoFinal" parent="Theme.Material3.Light.NoActionBar">
+    <!-- Tema Oscuro Profesional UNAMAD -->
+    <style name="Base.Theme.ProyectoFinal" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryContainer">@color/primary_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="colorSecondaryContainer">@color/primary_soft</item>
-        <item name="colorOnSecondaryContainer">@color/primary</item>
+        <item name="colorOnSecondaryContainer">@color/text_primary</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
         <item name="android:windowBackground">@color/background_light</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>

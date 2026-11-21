@@ -28,24 +28,50 @@
             android:gravity="center_horizontal"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:paddingTop="24dp"
+            android:paddingTop="22dp"
             android:paddingBottom="48dp">
 
-            <!-- Badge Institucional -->
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Fila Superior: Badge Institucional y Botón de Tema -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="UNAMAD · INGENIERÍA DE SISTEMAS"
-                android:textSize="10.5sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08"
-                android:textColor="#E2E8F0"
-                android:background="@drawable/bg_pill_translucent"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_marginBottom="14dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UNAMAD · INGENIERÍA DE SISTEMAS"
+                    android:textSize="10.5sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:textColor="#E2E8F0"
+                    android:background="@drawable/bg_pill_translucent"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/btnTemaLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Modo Claro"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_pill_translucent"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp" />
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="72dp"
@@ -159,7 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Bienvenido de nuevo"
-                        android:textSize="18sp"
+                        android:textSize="19sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary" />
 
@@ -171,47 +197,7 @@
                         android:textSize="12.5sp"
                         android:textColor="@color/text_secondary"
                         android:layout_marginTop="2dp"
-                        android:layout_marginBottom="16dp" />
-
-                    <!-- Selector Iniciar Sesión / Crear Cuenta -->
-                    <RadioGroup
-                        android:id="@+id/rgAuthModo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="@drawable/bg_filter_container"
-                        android:padding="4dp"
-                        android:layout_marginBottom="16dp">
-
-                        <RadioButton
-                            android:id="@+id/rbModoLogin"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:minHeight="44dp"
-                            android:layout_weight="1"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:text="Iniciar Sesión"
-                            android:checked="true"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/filter_chip_text"
-                            android:background="@drawable/bg_filter_chip" />
-
-                        <RadioButton
-                            android:id="@+id/rbModoRegistro"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:minHeight="44dp"
-                            android:layout_weight="1"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:text="Crear Cuenta"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/filter_chip_text"
-                            android:background="@drawable/bg_filter_chip" />
-                    </RadioGroup>
+                        android:layout_marginBottom="18dp" />
 
                     <!-- Campos de Registro (Nombre y Código Universitario) -->
                     <LinearLayout
@@ -307,7 +293,7 @@
                         app:boxCornerRadiusTopEnd="12dp"
                         app:boxCornerRadiusBottomStart="12dp"
                         app:boxCornerRadiusBottomEnd="12dp"
-                        android:layout_marginBottom="4dp">
+                        android:layout_marginBottom="6dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAuthPassword"
@@ -318,18 +304,43 @@
                             android:textColor="@color/text_primary" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Enlace ¿Olvidaste tu contraseña? -->
-                    <TextView
-                        android:id="@+id/tvForgotPassword"
-                        android:layout_width="wrap_content"
+                    <!-- Fila de enlaces: Crear cuenta (izquierda) y ¿Olvidaste tu contraseña? (derecha) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="¿Olvidaste tu contraseña?"
-                        android:textSize="12.5sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/accent"
-                        android:paddingTop="6dp"
-                        android:paddingBottom="10dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp">
+
+                        <TextView
+                            android:id="@+id/tvToggleAuthModo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Crear cuenta"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/accent"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:paddingEnd="12dp" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tvForgotPassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="¿Olvidaste tu contraseña?"
+                            android:textSize="12.5sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/accent"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:paddingStart="12dp" />
+                    </LinearLayout>
 
                     <ProgressBar
                         android:id="@+id/pbAuth"

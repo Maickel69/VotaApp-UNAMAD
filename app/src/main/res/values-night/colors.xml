@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta Principal Institucional UNAMAD (Modo Oscuro Profesional) -->
+    <color name="primary">#3B82F6</color>          <!-- Azul Brillante Legible sobre Oscuro -->
+    <color name="primary_dark">#070D1F</color>     <!-- Azul Noche Profundo -->
+    <color name="header_end">#132554</color>       <!-- Fin de gradiente de cabecera nocturna -->
+    <color name="primary_light">#1E3A8A</color>    <!-- Contenedor Azul Oscuro -->
+    <color name="primary_soft">#172554</color>     <!-- Píldoras y fondos suaves en oscuro -->
+    <color name="accent">#3B82F6</color>           <!-- Azul Eléctrico de Acción -->
+
+    <!-- Colores de Estado y Acción (Alto Contraste sobre Fondos Oscuros) -->
+    <color name="success">#34D399</color>          <!-- Esmeralda Brillante -->
+    <color name="success_light">#064E3B</color>    <!-- Fondo Badge Activa Oscuro -->
+    <color name="danger">#F87171</color>           <!-- Coral / Rojo Brillante -->
+    <color name="danger_light">#450A0A</color>     <!-- Fondo Badge Cerrada Oscuro -->
+    <color name="danger_border">#7F1D1D</color>    <!-- Borde Rojo en Modo Oscuro -->
+    <color name="warning">#FBBF24</color>          <!-- Oro / Ámbar Ganador -->
+    <color name="warning_light">#2E1C05</color>    <!-- Fondo Ganador Oscuro -->
+    <color name="warning_border">#B45309</color>   <!-- Borde Ámbar Oscuro -->
+    <color name="info">#38BDF8</color>             <!-- Celeste Brillante -->
+    <color name="info_light">#0C4A6E</color>       <!-- Fondo Badge Categoría Oscuro -->
+
+    <!-- Colores Neutros y Superficies Nocturnas -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="background_light">#0B1120</color> <!-- Fondo Obsidian Midnight -->
+    <color name="card_background">#131C31</color>  <!-- Superficie Elevada de Tarjetas -->
+    <color name="border_light">#1E293B</color>     <!-- Borde Slate Oscuro -->
+    <color name="border_input">#334155</color>     <!-- Borde de Inputs en Oscuro -->
+    <color name="text_primary">#F8FAFC</color>     <!-- Texto Principal Blanco Nítido -->
+    <color name="text_secondary">#CBD5E1</color>   <!-- Texto Secundario Gris Claro -->
+    <color name="text_muted">#94A3B8</color>       <!-- Texto Pistas / Metadatos -->
+</resources>

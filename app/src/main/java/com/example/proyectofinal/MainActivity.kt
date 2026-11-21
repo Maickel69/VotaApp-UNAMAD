@@ -166,6 +166,8 @@ class MainActivity : AppCompatActivity() {
             val etNombre = EditText(this).apply {
                 hint = "Nombre completo"
                 setText(perfil?.nombre?.ifBlank { FirebaseRepository.currentDisplayName() } ?: FirebaseRepository.currentDisplayName())
+                setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
                 setBackgroundResource(R.drawable.bg_input)
                 setPadding((12 * d).toInt(), (10 * d).toInt(), (12 * d).toInt(), (10 * d).toInt())
             }
@@ -174,6 +176,8 @@ class MainActivity : AppCompatActivity() {
             val etCodigo = EditText(this).apply {
                 hint = "Código universitario (ej. 202201045)"
                 setText(perfil?.codigoUniversitario ?: "")
+                setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
                 setBackgroundResource(R.drawable.bg_input)
                 setPadding((12 * d).toInt(), (10 * d).toInt(), (12 * d).toInt(), (10 * d).toInt())
                 layoutParams = LinearLayout.LayoutParams(
@@ -182,6 +186,21 @@ class MainActivity : AppCompatActivity() {
                 ).apply { topMargin = (10 * d).toInt() }
             }
             contenedor.addView(etCodigo)
+
+            val switchTema = com.google.android.material.materialswitch.MaterialSwitch(this).apply {
+                text = "Modo Oscuro"
+                textSize = 14f
+                setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+                isChecked = esModoOscuroActivo()
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = (14 * d).toInt() }
+                setOnCheckedChangeListener { _, _ ->
+                    alternarModoOscuro()
+                }
+            }
+            contenedor.addView(switchTema)
 
             AlertDialog.Builder(this)
                 .setTitle("Mi Cuenta UNAMAD")

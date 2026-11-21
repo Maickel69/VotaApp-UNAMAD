@@ -20,18 +20,16 @@ import com.google.firebase.auth.auth
 
 /**
  * ============================================================================
- * PANTALLA DE ACCESO: LoginActivity (Firebase Authentication)
+ * PANTALLA DE ACCESO: LoginActivity (Firebase Authentication + Modo Oscuro)
  * ============================================================================
  */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var btnTemaLogin: TextView
     private lateinit var tvBienvenidaLogin: TextView
     private lateinit var tvSubtituloLogin: TextView
-    private lateinit var rgAuthModo: RadioGroup
-    private lateinit var rbModoLogin: RadioButton
-    private lateinit var rbModoRegistro: RadioButton
     private lateinit var llCamposRegistro: LinearLayout
     private lateinit var tilAuthNombre: TextInputLayout
     private lateinit var tilAuthEmail: TextInputLayout
@@ -40,10 +38,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var etAuthCodigo: EditText
     private lateinit var etAuthEmail: EditText
     private lateinit var etAuthPassword: EditText
+    private lateinit var tvToggleAuthModo: TextView
     private lateinit var tvForgotPassword: TextView
     private lateinit var pbAuth: ProgressBar
     private lateinit var btnAuthAccion: Button
     private lateinit var btnGoogleSignIn: Button
+
+    private var modoRegistro: Boolean = false
 
     private val googleSignInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -83,15 +84,20 @@ class LoginActivity : AppCompatActivity() {
         }
 
         vincularVistas()
+        modoRegistro = savedInstanceState?.getBoolean(KEY_MODO_REGISTRO, false) ?: false
+        aplicarEstadoModo()
         configurarEventos()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_MODO_REGISTRO, modoRegistro)
+    }
+
     private fun vincularVistas() {
+        btnTemaLogin = findViewById(R.id.btnTemaLogin)
         tvBienvenidaLogin = findViewById(R.id.tvBienvenidaLogin)
         tvSubtituloLogin = findViewById(R.id.tvSubtituloLogin)
-        rgAuthModo = findViewById(R.id.rgAuthModo)
-        rbModoLogin = findViewById(R.id.rbModoLogin)
-        rbModoRegistro = findViewById(R.id.rbModoRegistro)
         llCamposRegistro = findViewById(R.id.llCamposRegistro)
         tilAuthNombre = findViewById(R.id.tilAuthNombre)
         tilAuthEmail = findViewById(R.id.tilAuthEmail)
@@ -100,34 +106,45 @@ class LoginActivity : AppCompatActivity() {
         etAuthCodigo = findViewById(R.id.etAuthCodigo)
         etAuthEmail = findViewById(R.id.etAuthEmail)
         etAuthPassword = findViewById(R.id.etAuthPassword)
+        tvToggleAuthModo = findViewById(R.id.tvToggleAuthModo)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
         pbAuth = findViewById(R.id.pbAuth)
         btnAuthAccion = findViewById(R.id.btnAuthAccion)
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
+
+        btnTemaLogin.text = if (esModoOscuroActivo()) "Modo Claro" else "Modo Oscuro"
+    }
+
+    private fun aplicarEstadoModo() {
+        llCamposRegistro.visibility = if (modoRegistro) View.VISIBLE else View.GONE
+        btnAuthAccion.text = if (modoRegistro) "Crear Cuenta Institucional" else "Iniciar Sesión"
+        tvToggleAuthModo.text = if (modoRegistro) "Ya tengo cuenta" else "Crear cuenta"
+        tvBienvenidaLogin.text = if (modoRegistro) "Crear cuenta nueva" else "Bienvenido de nuevo"
+        tvSubtituloLogin.text = if (modoRegistro) {
+            "Completa tus datos para participar en encuestas y votaciones."
+        } else {
+            "Ingresa con tu cuenta para participar o gestionar encuestas."
+        }
+        tilAuthNombre.error = null
+        tilAuthEmail.error = null
+        tilAuthPassword.error = null
     }
 
     private fun configurarEventos() {
-        rgAuthModo.setOnCheckedChangeListener { _, checkedId ->
-            val esRegistro = checkedId == R.id.rbModoRegistro
-            llCamposRegistro.visibility = if (esRegistro) View.VISIBLE else View.GONE
-            tvForgotPassword.visibility = if (esRegistro) View.GONE else View.VISIBLE
-            btnAuthAccion.text = if (esRegistro) "Crear Cuenta Institucional" else "Iniciar Sesión"
-            tvBienvenidaLogin.text = if (esRegistro) "Registro de participante" else "Bienvenido de nuevo"
-            tvSubtituloLogin.text = if (esRegistro) {
-                "Completa tus datos para participar en encuestas y votaciones."
-            } else {
-                "Ingresa con tu cuenta para participar o gestionar encuestas."
-            }
-            tilAuthNombre.error = null
-            tilAuthEmail.error = null
-            tilAuthPassword.error = null
+        btnTemaLogin.setOnClickListener {
+            alternarModoOscuro()
+        }
+
+        tvToggleAuthModo.setOnClickListener {
+            modoRegistro = !modoRegistro
+            aplicarEstadoModo()
         }
 
         btnAuthAccion.setOnClickListener {
             tilAuthNombre.error = null
             tilAuthEmail.error = null
             tilAuthPassword.error = null
-            if (rbModoRegistro.isChecked) {
+            if (modoRegistro) {
                 registrarConCorreo()
             } else {
                 iniciarSesionConCorreo()
@@ -298,5 +315,9 @@ class LoginActivity : AppCompatActivity() {
     private fun irAMain() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    companion object {
+        private const val KEY_MODO_REGISTRO = "key_modo_registro"
     }
 }

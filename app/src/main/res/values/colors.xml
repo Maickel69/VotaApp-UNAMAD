@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Paleta Principal Institucional UNAMAD -->
+    <!-- Paleta Principal Institucional UNAMAD (Modo Claro) -->
     <color name="primary">#1E3A8A</color>          <!-- Azul Académico Profundo -->
     <color name="primary_dark">#0F2460</color>     <!-- Azul Marino Oscuro -->
+    <color name="header_end">#1E3A8A</color>       <!-- Fin de gradiente de cabecera -->
     <color name="primary_light">#DBEAFE</color>    <!-- Azul Claro Suave -->
     <color name="primary_soft">#EFF6FF</color>     <!-- Azul Muy Suave para Fondos -->
     <color name="accent">#2563EB</color>           <!-- Azul Vibrante de Acción -->
 
-    <!-- Colores de Estado y Acción (WCAG AA >= 4.5:1 sobre fondos claros) -->
+    <!-- Colores de Estado y Acción -->
     <color name="success">#047857</color>          <!-- Verde Esmeralda / Activa -->
     <color name="success_light">#ECFDF5</color>    <!-- Verde Claro para Badges -->
     <color name="danger">#B91C1C</color>           <!-- Rojo Peligro / Cerrada / Eliminar -->
@@ -22,11 +23,11 @@
     <!-- Colores Neutros y Superficies -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="background_light">#F1F5F9</color> <!-- Fondo Slate Suave -->
-    <color name="card_background">#FFFFFF</color>  <!-- Fondo Blanco Puro de Tarjetas -->
+    <color name="background_light">#F1F5F9</color> <!-- Fondo General -->
+    <color name="card_background">#FFFFFF</color>  <!-- Fondo de Tarjetas -->
     <color name="border_light">#E2E8F0</color>     <!-- Borde Sutil -->
     <color name="border_input">#CBD5E1</color>     <!-- Borde de Inputs -->
     <color name="text_primary">#0F172A</color>     <!-- Texto Principal -->
     <color name="text_secondary">#475569</color>   <!-- Texto Secundario -->
-    <color name="text_muted">#64748B</color>       <!-- Texto Pistas / Metadatos (AA) -->
+    <color name="text_muted">#64748B</color>       <!-- Texto Pistas / Metadatos -->
 </resources>
