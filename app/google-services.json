@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "366573920480",
+    "project_id": "votaapp-unamad-2026",
+    "storage_bucket": "votaapp-unamad-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:366573920480:android:c0dc82e9b694eca9cef085",
+        "android_client_info": {
+          "package_name": "com.example.proyectofinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "366573920480-dndmpoql6st1s5216vttbcglv51jcm0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.proyectofinal",
+            "certificate_hash": "0953540205a7c55d19d19302180ad0907aa3ebbd"
+          }
+        },
+        {
+          "client_id": "366573920480-7bmu3fgu2boojfqn7tdf98h7lku373sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpsnJrZCUVteP1OrOP2Ryk4Q7ZfVTlkwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "366573920480-7bmu3fgu2boojfqn7tdf98h7lku373sc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

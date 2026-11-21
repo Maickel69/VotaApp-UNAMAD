@@ -9,22 +9,11 @@ import com.google.android.material.materialswitch.MaterialSwitch
 
 /**
  * ============================================================================
- * PANTALLA 2: CrearEncuestaActivity (Crear y Editar Encuestas - CRUD Encuestas)
+ * PANTALLA 2: CrearEncuestaActivity (Crear y Editar Encuestas en Firestore)
  * ============================================================================
- * Proyecto: Sistema de Encuestas y Votaciones UNAMAD - EPISI
- * 
- * Funcionalidades:
- *  1. Permite registrar una nueva encuesta con título, descripción, categoría y estado.
- *  2. Permite editar una encuesta existente si recibe el ID por Intent.
- *  3. Valida campos obligatorios con retroalimentación clara para el usuario.
- *  4. Da la opción de guardar y volver o guardar y pasar a gestionar preguntas.
  */
 class CrearEncuestaActivity : AppCompatActivity() {
 
-    // 1. Instancia del gestor de base de datos
-    private lateinit var dbHelper: DatabaseHelper
-
-    // 2. Elementos visuales del layout
     private lateinit var tvTituloPantalla: TextView
     private lateinit var etTituloEncuesta: EditText
     private lateinit var etDescripcionEncuesta: EditText
@@ -38,8 +27,7 @@ class CrearEncuestaActivity : AppCompatActivity() {
     private lateinit var btnGuardarYVolver: Button
     private lateinit var btnCancelar: Button
 
-    // 3. Variable para identificar si estamos creando (-1) o editando (> 0)
-    private var idEncuestaEdicion: Long = -1L
+    private var idEncuestaEdicion: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,19 +36,13 @@ class CrearEncuestaActivity : AppCompatActivity() {
 
         configurarEdgeToEdgeConHeader(findViewById(R.id.scrollCrearEncuesta), findViewById(R.id.topBar))
 
-        // Inicializar helper de base de datos
-        dbHelper = DatabaseHelper(this)
-
-        // Vincular componentes XML
         vincularVistas()
 
-        // Verificar si se recibió un ID para edición
-        idEncuestaEdicion = intent.getLongExtra(MainActivity.EXTRA_ID_ENCUESTA, -1L)
-        if (idEncuestaEdicion > 0L) {
-            cargarDatosParaEdicion()
+        idEncuestaEdicion = intent.getStringExtra(MainActivity.EXTRA_ID_ENCUESTA)
+        if (!idEncuestaEdicion.isNullOrBlank()) {
+            cargarDatosParaEdicion(idEncuestaEdicion!!)
         }
 
-        // Configurar acciones de los botones
         configurarEventos()
     }
 
@@ -79,32 +61,30 @@ class CrearEncuestaActivity : AppCompatActivity() {
         btnCancelar = findViewById(R.id.btnCancelar)
     }
 
-    /**
-     * Carga la información de la encuesta en los campos cuando se está en modo edición
-     */
-    private fun cargarDatosParaEdicion() {
+    private fun cargarDatosParaEdicion(idEncuesta: String) {
         tvTituloPantalla.text = "Modificar Encuesta"
-        val encuesta = dbHelper.obtenerEncuestaPorId(idEncuestaEdicion)
-
-        if (encuesta != null) {
-            etTituloEncuesta.setText(encuesta.titulo)
-            etDescripcionEncuesta.setText(encuesta.descripcion)
-            swActiva.isChecked = encuesta.activa
-
-            when (encuesta.categoria) {
-                "Satisfacción" -> rbCatSatisfaccion.isChecked = true
-                "Votación", "Votación Estudiantil" -> rbCatVotacion.isChecked = true
-                "General" -> rbCatGeneral.isChecked = true
-                else -> rbCatAcademica.isChecked = true
+        FirebaseRepository.obtenerEncuestaPorId(idEncuesta) { encuesta ->
+            if (isFinishing || isDestroyed) return@obtenerEncuestaPorId
+            if (encuesta != null) {
+                etTituloEncuesta.setText(encuesta.titulo)
+                etDescripcionEncuesta.setText(encuesta.descripcion)
+                swActiva.isChecked = encuesta.activa
+                when (encuesta.categoria) {
+                    "Satisfacción" -> rbCatSatisfaccion.isChecked = true
+                    "Votación", "Votación Estudiantil" -> rbCatVotacion.isChecked = true
+                    "General" -> rbCatGeneral.isChecked = true
+                    else -> rbCatAcademica.isChecked = true
+                }
+            } else {
+                Toast.makeText(this, "No se encontró la encuesta.", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }
 
     private fun configurarEventos() {
-        // Opción 1: Guardar e ir a gestionar preguntas de inmediato
         btnGuardarYPreguntas.setOnClickListener {
-            val idGuardado = guardarEncuesta()
-            if (idGuardado > 0L) {
+            guardarEncuesta { idGuardado ->
                 val intent = Intent(this, GestionarPreguntasActivity::class.java).apply {
                     putExtra(MainActivity.EXTRA_ID_ENCUESTA, idGuardado)
                 }
@@ -113,54 +93,42 @@ class CrearEncuestaActivity : AppCompatActivity() {
             }
         }
 
-        // Opción 2: Guardar y volver a la pantalla principal
         btnGuardarYVolver.setOnClickListener {
-            val idGuardado = guardarEncuesta()
-            if (idGuardado > 0L) {
-                Toast.makeText(this, "Encuesta guardada con éxito.", Toast.LENGTH_SHORT).show()
+            guardarEncuesta {
+                Toast.makeText(this, "Encuesta guardada en la nube con éxito.", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
 
-        // Opción 3: Cancelar
-        btnCancelar.setOnClickListener {
-            finish()
-        }
+        btnCancelar.setOnClickListener { finish() }
     }
 
-    /**
-     * Valida los datos del formulario y realiza la inserción o actualización en SQLite
-     * @return ID de la encuesta si fue exitoso, -1L si falló la validación
-     */
-    private fun guardarEncuesta(): Long {
+    private fun guardarEncuesta(onExito: (String) -> Unit) {
         val titulo = etTituloEncuesta.text.toString().trim()
         val descripcion = etDescripcionEncuesta.text.toString().trim()
         val activa = swActiva.isChecked
 
-        // Validación 1: Título no vacío y con longitud mínima
         if (titulo.isEmpty()) {
             etTituloEncuesta.error = "El título es obligatorio"
             etTituloEncuesta.requestFocus()
             Toast.makeText(this, "Por favor ingrese el título de la encuesta.", Toast.LENGTH_SHORT).show()
-            return -1L
+            return
         }
 
         if (titulo.length < 5) {
             etTituloEncuesta.error = "El título debe contener al menos 5 caracteres"
             etTituloEncuesta.requestFocus()
             Toast.makeText(this, "El título es demasiado corto (mínimo 5 caracteres).", Toast.LENGTH_SHORT).show()
-            return -1L
+            return
         }
 
-        // Validación 2: Descripción no vacía
         if (descripcion.isEmpty()) {
             etDescripcionEncuesta.error = "La descripción u objetivo es obligatorio"
             etDescripcionEncuesta.requestFocus()
             Toast.makeText(this, "Por favor ingrese una breve descripción u objetivo.", Toast.LENGTH_SHORT).show()
-            return -1L
+            return
         }
 
-        // Obtener categoría seleccionada
         val categoria = when (rgCategoria.checkedRadioButtonId) {
             R.id.rbCatSatisfaccion -> "Satisfacción"
             R.id.rbCatVotacion -> "Votación"
@@ -168,16 +136,30 @@ class CrearEncuestaActivity : AppCompatActivity() {
             else -> "Académica"
         }
 
-        // Guardar o Actualizar en la base de datos
-        val resultado = if (idEncuestaEdicion > 0L) {
-            val actualizado = dbHelper.actualizarEncuesta(idEncuestaEdicion, titulo, descripcion, categoria, activa)
-            if (actualizado) idEncuestaEdicion else -1L
+        btnGuardarYPreguntas.isEnabled = false
+        btnGuardarYVolver.isEnabled = false
+
+        val idEdit = idEncuestaEdicion
+        if (!idEdit.isNullOrBlank()) {
+            FirebaseRepository.actualizarEncuesta(idEdit, titulo, descripcion, categoria, activa) { ok, err ->
+                btnGuardarYPreguntas.isEnabled = true
+                btnGuardarYVolver.isEnabled = true
+                if (ok) {
+                    onExito(idEdit)
+                } else {
+                    Toast.makeText(this, "Error al actualizar: $err", Toast.LENGTH_SHORT).show()
+                }
+            }
         } else {
-            dbHelper.crearEncuesta(titulo, descripcion, categoria, activa)
+            FirebaseRepository.crearEncuesta(titulo, descripcion, categoria, activa) { nuevoId, err ->
+                btnGuardarYPreguntas.isEnabled = true
+                btnGuardarYVolver.isEnabled = true
+                if (nuevoId != null) {
+                    onExito(nuevoId)
+                } else {
+                    Toast.makeText(this, "Error al guardar: $err", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-        if (resultado <= 0L) {
-            Toast.makeText(this, "No se pudo guardar la encuesta. Inténtelo nuevamente.", Toast.LENGTH_SHORT).show()
-        }
-        return resultado
     }
 }

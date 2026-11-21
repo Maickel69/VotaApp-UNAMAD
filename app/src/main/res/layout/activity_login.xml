@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollLogin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:background="@color/background_light"
+    tools:context=".LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingBottom="28dp">
+
+        <!-- HERO HEADER -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_header_gradient"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="44dp">
+
+            <FrameLayout
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:background="@drawable/bg_logo_circle"
+                android:padding="12dp"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/encuesta"
+                    android:contentDescription="Logo VotaApp UNAMAD" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VotaApp UNAMAD"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plataforma en la Nube • Firebase"
+                android:textSize="13sp"
+                android:textColor="#CBD5E1"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- TARJETA DE ACCESO -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-24dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Selector Iniciar Sesión / Registrarse -->
+                    <RadioGroup
+                        android:id="@+id/rgAuthModo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_filter_container"
+                        android:padding="4dp"
+                        android:layout_marginBottom="18dp">
+
+                        <RadioButton
+                            android:id="@+id/rbModoLogin"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="44dp"
+                            android:layout_weight="1"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="Iniciar Sesión"
+                            android:checked="true"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/filter_chip_text"
+                            android:background="@drawable/bg_filter_chip" />
+
+                        <RadioButton
+                            android:id="@+id/rbModoRegistro"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="44dp"
+                            android:layout_weight="1"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="Crear Cuenta"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/filter_chip_text"
+                            android:background="@drawable/bg_filter_chip" />
+                    </RadioGroup>
+
+                    <!-- Campos de Registro (Nombre y Código) -->
+                    <LinearLayout
+                        android:id="@+id/llCamposRegistro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre Completo (*)"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginBottom="6dp" />
+
+                        <EditText
+                            android:id="@+id/etAuthNombre"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:hint="Ej. Maicol Amezquita Camargo"
+                            android:inputType="textPersonName|textCapWords"
+                            android:padding="13dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_muted"
+                            android:layout_marginBottom="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Código Universitario (opcional)"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginBottom="6dp" />
+
+                        <EditText
+                            android:id="@+id/etAuthCodigo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:hint="Ej. 202201045"
+                            android:inputType="text"
+                            android:padding="13dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_muted"
+                            android:layout_marginBottom="12dp" />
+                    </LinearLayout>
+
+                    <!-- Correo -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Correo Electrónico (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etAuthEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="usuario@unamad.edu.pe"
+                        android:inputType="textEmailAddress"
+                        android:padding="13dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Contraseña -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contraseña (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etAuthPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Mínimo 6 caracteres"
+                        android:inputType="textPassword"
+                        android:padding="13dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="18dp" />
+
+                    <ProgressBar
+                        android:id="@+id/pbAuth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
+
+                    <!-- Botón Principal -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAuthAccion"
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
+                        android:text="Iniciar Sesión"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp"
+                        android:backgroundTint="@color/accent"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Separador -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="14dp">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="@color/border_light" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="o continúa con"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_muted"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="@color/border_light" />
+                    </LinearLayout>
+
+                    <!-- Botón Google Sign-In -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGoogleSignIn"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Continuar con Google"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        app:strokeColor="@color/border_input"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

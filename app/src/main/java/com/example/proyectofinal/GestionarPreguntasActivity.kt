@@ -8,26 +8,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import java.util.UUID
 
 /**
  * ============================================================================
- * PANTALLA 3: GestionarPreguntasActivity (Gestión de Preguntas y Alternativas)
+ * PANTALLA 3: GestionarPreguntasActivity (CRUD Preguntas en Firestore)
  * ============================================================================
- * Proyecto: Sistema de Encuestas y Votaciones UNAMAD - EPISI
- * 
- * Funcionalidades:
- *  1. Permite agregar preguntas de Selección Única o de Opción Múltiple.
- *  2. Permite definir de 2 a 4 alternativas de respuesta por pregunta.
- *  3. Lista todas las preguntas actuales de la encuesta en tiempo real.
- *  4. Permite editar y eliminar preguntas con sus alternativas en cascada.
- *  5. Valida que la encuesta tenga al menos una pregunta antes de finalizar.
  */
 class GestionarPreguntasActivity : AppCompatActivity() {
 
-    // 1. Gestor de base de datos
-    private lateinit var dbHelper: DatabaseHelper
-
-    // 2. Elementos visuales del layout
     private lateinit var tvEncuestaTitulo: TextView
     private lateinit var tvTituloFormPregunta: TextView
     private lateinit var etTextoPregunta: EditText
@@ -44,11 +33,11 @@ class GestionarPreguntasActivity : AppCompatActivity() {
     private lateinit var tvSinPreguntas: TextView
     private lateinit var llListaPreguntas: LinearLayout
     private lateinit var btnFinalizar: Button
-
-    // 3. Variables de control
-    private var idEncuesta: Long = -1L
-    private var idPreguntaEnEdicion: Long = -1L // -1 = Creando nueva pregunta; >0 = Editando
     private lateinit var scrollView: ScrollView
+
+    private var idEncuesta: String = ""
+    private var idPreguntaEnEdicion: String? = null
+    private val preguntasActuales = ArrayList<Pregunta>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,33 +47,31 @@ class GestionarPreguntasActivity : AppCompatActivity() {
         scrollView = findViewById(R.id.scrollGestionarPreguntas)
         configurarEdgeToEdgeConHeader(scrollView, findViewById(R.id.topBar))
 
-        // Obtener ID de la encuesta recibido por Intent
-        idEncuesta = intent.getLongExtra(MainActivity.EXTRA_ID_ENCUESTA, -1L)
-        if (idEncuesta == -1L) {
+        idEncuesta = intent.getStringExtra(MainActivity.EXTRA_ID_ENCUESTA) ?: ""
+        if (idEncuesta.isBlank()) {
             Toast.makeText(this, "Error: No se recibió una encuesta válida.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        dbHelper = DatabaseHelper(this)
-
         vincularVistas()
-        cargarDatosEncuesta()
-        cargarListaPreguntas()
         configurarEventos()
 
-        // Restaurar modo edición tras rotación de pantalla
-        idPreguntaEnEdicion = savedInstanceState?.getLong(KEY_ID_PREGUNTA_EDICION, -1L) ?: -1L
-        if (idPreguntaEnEdicion > 0L) {
+        idPreguntaEnEdicion = savedInstanceState?.getString(KEY_ID_PREGUNTA_EDICION)
+        if (!idPreguntaEnEdicion.isNullOrBlank()) {
             tvTituloFormPregunta.text = "Modificar Pregunta"
             btnGuardarPregunta.text = "Actualizar Pregunta"
             btnCancelarEdicion.visibility = View.VISIBLE
         }
+
+        cargarEncuestaYPreguntas()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putLong(KEY_ID_PREGUNTA_EDICION, idPreguntaEnEdicion)
+        if (idPreguntaEnEdicion != null) {
+            outState.putString(KEY_ID_PREGUNTA_EDICION, idPreguntaEnEdicion)
+        }
     }
 
     private fun vincularVistas() {
@@ -106,33 +93,26 @@ class GestionarPreguntasActivity : AppCompatActivity() {
         btnFinalizar = findViewById(R.id.btnFinalizar)
     }
 
-    /**
-     * Muestra el título de la encuesta en la cabecera
-     */
-    private fun cargarDatosEncuesta() {
-        val encuesta = dbHelper.obtenerEncuestaPorId(idEncuesta)
-        if (encuesta != null) {
+    private fun cargarEncuestaYPreguntas() {
+        FirebaseRepository.obtenerEncuestaPorId(idEncuesta) { encuesta ->
+            if (isFinishing || isDestroyed) return@obtenerEncuestaPorId
+            if (encuesta == null) {
+                Toast.makeText(this, "No se encontró la encuesta.", Toast.LENGTH_SHORT).show()
+                finish()
+                return@obtenerEncuestaPorId
+            }
             tvEncuestaTitulo.text = "Encuesta: ${encuesta.titulo}"
+            preguntasActuales.clear()
+            preguntasActuales.addAll(encuesta.preguntas)
+            renderizarListaPreguntas()
         }
     }
 
     private fun configurarEventos() {
-        // Botón Guardar / Actualizar Pregunta
-        btnGuardarPregunta.setOnClickListener {
-            guardarPregunta()
-        }
+        btnGuardarPregunta.setOnClickListener { guardarPregunta() }
+        btnCancelarEdicion.setOnClickListener { limpiarFormulario() }
+        btnFinalizar.setOnClickListener { intentarSalir() }
 
-        // Botón Cancelar modo edición
-        btnCancelarEdicion.setOnClickListener {
-            limpiarFormulario()
-        }
-
-        // Botón Finalizar y Volver
-        btnFinalizar.setOnClickListener {
-            intentarSalir()
-        }
-
-        // Interceptar botón/gesto Atrás del sistema para validar mínimo 1 pregunta
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 intentarSalir()
@@ -141,8 +121,7 @@ class GestionarPreguntasActivity : AppCompatActivity() {
     }
 
     private fun intentarSalir() {
-        val total = dbHelper.contarPreguntasDeEncuesta(idEncuesta)
-        if (total == 0) {
+        if (preguntasActuales.isEmpty()) {
             AlertDialog.Builder(this)
                 .setTitle("Atención")
                 .setMessage("Debe registrar al menos 1 pregunta en esta encuesta antes de finalizar.")
@@ -154,13 +133,8 @@ class GestionarPreguntasActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Valida el formulario de la pregunta e inserta o actualiza en SQLite
-     */
     private fun guardarPregunta() {
         val textoPregunta = etTextoPregunta.text.toString().trim()
-
-        // Validación 1: Enunciado de la pregunta
         if (textoPregunta.isEmpty()) {
             etTextoPregunta.error = "El enunciado de la pregunta es obligatorio"
             etTextoPregunta.requestFocus()
@@ -168,54 +142,64 @@ class GestionarPreguntasActivity : AppCompatActivity() {
             return
         }
 
-        // Validación 2: Tipo de pregunta
         val tipo = if (rbTipoMultiple.isChecked) "MULTIPLE" else "UNICA"
 
-        // Validación 3: Al menos 2 alternativas obligatorias
-        val alt1 = etAlternativa1.text.toString().trim()
-        val alt2 = etAlternativa2.text.toString().trim()
-        val alt3 = etAlternativa3.text.toString().trim()
-        val alt4 = etAlternativa4.text.toString().trim()
+        val textosAlt = listOf(
+            etAlternativa1.text.toString().trim(),
+            etAlternativa2.text.toString().trim(),
+            etAlternativa3.text.toString().trim(),
+            etAlternativa4.text.toString().trim()
+        ).filter { it.isNotEmpty() }
 
-        val alternativas = mutableListOf<String>()
-        if (alt1.isNotEmpty()) alternativas.add(alt1)
-        if (alt2.isNotEmpty()) alternativas.add(alt2)
-        if (alt3.isNotEmpty()) alternativas.add(alt3)
-        if (alt4.isNotEmpty()) alternativas.add(alt4)
-
-        if (alternativas.size < 2) {
+        if (textosAlt.size < 2) {
             Toast.makeText(this, "Debe ingresar al menos 2 alternativas de respuesta.", Toast.LENGTH_LONG).show()
             etAlternativa1.requestFocus()
             return
         }
 
-        // Inserción o Actualización
-        if (idPreguntaEnEdicion > 0L) {
-            val exito = dbHelper.actualizarPreguntaConAlternativas(idPreguntaEnEdicion, textoPregunta, tipo, alternativas)
-            if (exito) {
-                Toast.makeText(this, "Pregunta actualizada con éxito.", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Error al actualizar la pregunta.", Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            val idInsertado = dbHelper.insertarPreguntaConAlternativas(idEncuesta, textoPregunta, tipo, alternativas)
-            if (idInsertado > 0L) {
-                Toast.makeText(this, "Pregunta guardada con éxito.", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Error al guardar la pregunta.", Toast.LENGTH_SHORT).show()
-            }
+        val nuevasAlternativas = textosAlt.map { texto ->
+            Alternativa(id = UUID.randomUUID().toString(), texto = texto)
         }
 
-        // Limpiar formulario y refrescar listado
-        limpiarFormulario()
-        cargarListaPreguntas()
+        val nuevaLista = ArrayList(preguntasActuales)
+        val editId = idPreguntaEnEdicion
+        if (!editId.isNullOrBlank()) {
+            val idx = nuevaLista.indexOfFirst { it.id == editId }
+            if (idx >= 0) {
+                nuevaLista[idx] = Pregunta(id = editId, texto = textoPregunta, tipo = tipo, alternativas = nuevasAlternativas)
+            }
+        } else {
+            nuevaLista.add(
+                Pregunta(
+                    id = UUID.randomUUID().toString(),
+                    texto = textoPregunta,
+                    tipo = tipo,
+                    alternativas = nuevasAlternativas
+                )
+            )
+        }
+
+        btnGuardarPregunta.isEnabled = false
+        FirebaseRepository.guardarPreguntasEncuesta(idEncuesta, nuevaLista) { ok, err ->
+            btnGuardarPregunta.isEnabled = true
+            if (ok) {
+                preguntasActuales.clear()
+                preguntasActuales.addAll(nuevaLista)
+                Toast.makeText(
+                    this,
+                    if (!editId.isNullOrBlank()) "Pregunta actualizada con éxito." else "Pregunta guardada con éxito.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                limpiarFormulario()
+                renderizarListaPreguntas()
+            } else {
+                Toast.makeText(this, "Error al guardar: $err", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    /**
-     * Restaura el formulario a su estado original de "Nueva Pregunta"
-     */
     private fun limpiarFormulario() {
-        idPreguntaEnEdicion = -1L
+        idPreguntaEnEdicion = null
         tvTituloFormPregunta.text = "Agregar Nueva Pregunta"
         btnGuardarPregunta.text = "Guardar Pregunta"
         btnCancelarEdicion.visibility = View.GONE
@@ -230,24 +214,18 @@ class GestionarPreguntasActivity : AppCompatActivity() {
         etAlternativa4.setText("")
     }
 
-    /**
-     * Carga y dibuja las preguntas registradas de la encuesta
-     */
-    private fun cargarListaPreguntas() {
+    private fun renderizarListaPreguntas() {
         llListaPreguntas.removeAllViews()
-        val listaPreguntas = dbHelper.listarPreguntasDeEncuesta(idEncuesta)
+        tvTituloListaPreguntas.text = "Preguntas Registradas (${preguntasActuales.size})"
 
-        tvTituloListaPreguntas.text = "Preguntas Registradas (${listaPreguntas.size})"
-
-        if (listaPreguntas.isEmpty()) {
+        if (preguntasActuales.isEmpty()) {
             tvSinPreguntas.visibility = View.VISIBLE
             return
         }
         tvSinPreguntas.visibility = View.GONE
 
         val inflater = LayoutInflater.from(this)
-
-        for ((index, pregunta) in listaPreguntas.withIndex()) {
+        for ((index, pregunta) in preguntasActuales.withIndex()) {
             val itemVista = inflater.inflate(R.layout.item_pregunta_gestion, llListaPreguntas, false)
 
             val tvTexto = itemVista.findViewById<TextView>(R.id.tvItemPreguntaTexto)
@@ -258,81 +236,58 @@ class GestionarPreguntasActivity : AppCompatActivity() {
 
             tvTexto.text = "${index + 1}. ${pregunta.texto}"
             tvTipo.text = if (pregunta.tipo == "MULTIPLE") "Opción Múltiple" else "Selección Única"
+            tvAlternativas.text = pregunta.alternativas.joinToString("\n") { "• ${it.texto}" }
 
-            // Obtener alternativas
-            val listaAlt = dbHelper.listarAlternativasDePregunta(pregunta.id)
-            val altsTexto = StringBuilder()
-            for (alt in listaAlt) {
-                altsTexto.append("• ${alt.texto}\n")
-            }
-            tvAlternativas.text = altsTexto.toString().trimEnd()
-
-            // Acción: Editar pregunta
-            btnEditar.setOnClickListener {
-                cargarPreguntaParaEditar(pregunta, listaAlt)
-            }
-
-            // Acción: Eliminar pregunta
-            btnEliminar.setOnClickListener {
-                mostrarDialogoEliminarPregunta(pregunta)
-            }
+            btnEditar.setOnClickListener { cargarPreguntaParaEditar(pregunta) }
+            btnEliminar.setOnClickListener { mostrarDialogoEliminarPregunta(pregunta) }
 
             llListaPreguntas.addView(itemVista)
         }
     }
 
-    /**
-     * Carga los datos de una pregunta existente en el formulario para modificarla
-     */
-    private fun cargarPreguntaParaEditar(pregunta: Pregunta, alternativas: List<Alternativa>) {
+    private fun cargarPreguntaParaEditar(pregunta: Pregunta) {
         idPreguntaEnEdicion = pregunta.id
         tvTituloFormPregunta.text = "Modificar Pregunta"
         btnGuardarPregunta.text = "Actualizar Pregunta"
         btnCancelarEdicion.visibility = View.VISIBLE
 
         etTextoPregunta.setText(pregunta.texto)
-        if (pregunta.tipo == "MULTIPLE") {
-            rbTipoMultiple.isChecked = true
-        } else {
-            rbTipoUnica.isChecked = true
-        }
+        if (pregunta.tipo == "MULTIPLE") rbTipoMultiple.isChecked = true else rbTipoUnica.isChecked = true
 
-        etAlternativa1.setText(alternativas.getOrNull(0)?.texto ?: "")
-        etAlternativa2.setText(alternativas.getOrNull(1)?.texto ?: "")
-        etAlternativa3.setText(alternativas.getOrNull(2)?.texto ?: "")
-        etAlternativa4.setText(alternativas.getOrNull(3)?.texto ?: "")
+        etAlternativa1.setText(pregunta.alternativas.getOrNull(0)?.texto ?: "")
+        etAlternativa2.setText(pregunta.alternativas.getOrNull(1)?.texto ?: "")
+        etAlternativa3.setText(pregunta.alternativas.getOrNull(2)?.texto ?: "")
+        etAlternativa4.setText(pregunta.alternativas.getOrNull(3)?.texto ?: "")
 
-        // Desplazar arriba y enfocar el campo para facilidad del usuario
         scrollView.smoothScrollTo(0, 0)
         etTextoPregunta.requestFocus()
         Toast.makeText(this, "Datos cargados en el formulario superior.", Toast.LENGTH_SHORT).show()
     }
 
-    companion object {
-        private const val KEY_ID_PREGUNTA_EDICION = "key_id_pregunta_edicion"
-    }
-
-    /**
-     * Diálogo de confirmación para eliminar una pregunta
-     */
     private fun mostrarDialogoEliminarPregunta(pregunta: Pregunta) {
         AlertDialog.Builder(this)
             .setTitle("Confirmar Eliminación")
-            .setMessage("¿Desea eliminar la pregunta:\n\"${pregunta.texto}\"?\nSe eliminarán sus alternativas y votos asociados.")
+            .setMessage("¿Desea eliminar la pregunta:\n\"${pregunta.texto}\"?")
             .setPositiveButton("Eliminar") { dialog, _ ->
-                val exito = dbHelper.eliminarPregunta(pregunta.id)
-                if (exito) {
-                    Toast.makeText(this, "Pregunta eliminada.", Toast.LENGTH_SHORT).show()
-                    if (idPreguntaEnEdicion == pregunta.id) {
-                        limpiarFormulario()
+                val nuevaLista = preguntasActuales.filter { it.id != pregunta.id }
+                FirebaseRepository.guardarPreguntasEncuesta(idEncuesta, nuevaLista) { ok, err ->
+                    if (ok) {
+                        preguntasActuales.clear()
+                        preguntasActuales.addAll(nuevaLista)
+                        Toast.makeText(this, "Pregunta eliminada.", Toast.LENGTH_SHORT).show()
+                        if (idPreguntaEnEdicion == pregunta.id) limpiarFormulario()
+                        renderizarListaPreguntas()
+                    } else {
+                        Toast.makeText(this, "Error al eliminar: $err", Toast.LENGTH_SHORT).show()
                     }
-                    cargarListaPreguntas()
-                } else {
-                    Toast.makeText(this, "Error al eliminar la pregunta.", Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    companion object {
+        private const val KEY_ID_PREGUNTA_EDICION = "key_id_pregunta_edicion"
     }
 }

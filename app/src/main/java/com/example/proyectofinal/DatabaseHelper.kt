@@ -365,7 +365,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             val activa = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ENCUESTA_ACTIVA)) == 1
             val fecha = cursor.getString(cursor.getColumnIndexOrThrow(COL_ENCUESTA_FECHA))
 
-            encuesta = Encuesta(id, titulo, descripcion, categoria, activa, fecha)
+            encuesta = Encuesta(id = id.toString(), titulo = titulo, descripcion = descripcion, categoria = categoria, activa = activa, fechaCreacion = fecha)
             encuesta.totalPreguntas = contarPreguntasDeEncuesta(id)
             encuesta.totalVotos = contarParticipantesUnicos(id)
         }
@@ -404,7 +404,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val activa = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ENCUESTA_ACTIVA)) == 1
                 val fecha = cursor.getString(cursor.getColumnIndexOrThrow(COL_ENCUESTA_FECHA))
 
-                val enc = Encuesta(id, titulo, descripcion, categoria, activa, fecha)
+                val enc = Encuesta(id = id.toString(), titulo = titulo, descripcion = descripcion, categoria = categoria, activa = activa, fechaCreacion = fecha)
                 enc.totalPreguntas = contarPreguntasDeEncuesta(id)
                 enc.totalVotos = contarParticipantesUnicos(id)
                 lista.add(enc)
@@ -558,7 +558,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow(COL_PREGUNTA_ID))
                 val texto = cursor.getString(cursor.getColumnIndexOrThrow(COL_PREGUNTA_TEXTO))
                 val tipo = cursor.getString(cursor.getColumnIndexOrThrow(COL_PREGUNTA_TIPO))
-                lista.add(Pregunta(id, idEncuesta, texto, tipo))
+                lista.add(Pregunta(id = id.toString(), texto = texto, tipo = tipo))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -584,7 +584,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val id = cursor.getLong(cursor.getColumnIndexOrThrow(COL_ALTERNATIVA_ID))
                 val texto = cursor.getString(cursor.getColumnIndexOrThrow(COL_ALTERNATIVA_TEXTO))
                 val votos = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ALTERNATIVA_VOTOS))
-                lista.add(Alternativa(id, idPregunta, texto, votos))
+                lista.add(Alternativa(id = id.toString(), texto = texto, votos = votos))
             } while (cursor.moveToNext())
         }
         cursor.close()
@@ -762,7 +762,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val preguntas = listarPreguntasDeEncuesta(idEncuesta)
 
         for (pregunta in preguntas) {
-            val alternativas = listarAlternativasDePregunta(pregunta.id)
+            val alternativas = listarAlternativasDePregunta(pregunta.id.toLongOrNull() ?: 0L)
             val totalVotosPregunta = alternativas.sumOf { it.votos }
 
             // Encontrar el voto máximo para determinar la(s) ganadora(s)

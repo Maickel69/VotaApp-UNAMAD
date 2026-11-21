@@ -1,0 +1,179 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid} (Firebase Auth UID)
+    // Fields:
+    //   - uid: string (required, immutable, must equal {uid} and request.auth.uid)
+    //   - nombre: string (required, 2..120 chars)
+    //   - codigoUniversitario: string (required, 0..30 chars)
+    //   - email: string (required, valid email format, <= 254 chars)
+    //   - fechaRegistro: number (required, immutable, >= 0)
+    //
+    // Collection: encuestas
+    // Document ID: {encuestaId}
+    // Fields:
+    //   - titulo: string (required, 5..160 chars)
+    //   - descripcion: string (required, 1..1000 chars)
+    //   - categoria: string (required, enum: 'Académica', 'Satisfacción', 'Votación', 'Votación Estudiantil', 'General')
+    //   - activa: bool (required)
+    //   - fechaCreacion: string (required, immutable, 1..40 chars)
+    //   - creadorUid: string (required, immutable, must equal request.auth.uid on create)
+    //   - creadorNombre: string (required, 1..120 chars)
+    //   - preguntas: list (required, 0..50 items)
+    //
+    // Subcollection: encuestas/{encuestaId}/votos
+    // Document ID: {voterUid} (must equal voter's Firebase Auth UID to enforce 1 vote per user)
+    // Fields:
+    //   - uid: string (required, must equal {voterUid} and request.auth.uid)
+    //   - participante: string (required, 2..120 chars)
+    //   - fechaVoto: string (required, 1..40 chars)
+    //   - respuestas: map or list (required, <= 50 entries/items)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if authenticated user owns the document by path ID
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Validate required fields exist
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // Validate that the document contains only allowed fields
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Validate that immutable fields have not changed on update
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // Validate string length bounds
+    function validStringLength(value, minLen, maxLen) {
+      return value is string && value.size() >= minLen && value.size() <= maxLen;
+    }
+
+    // Validate email format and length
+    function isValidEmail(email) {
+      return email is string &&
+             email.size() >= 5 &&
+             email.size() <= 254 &&
+             email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // Check if parent encuesta exists and is active
+    function isEncuestaActiva(encuestaId) {
+      let encuestaPath = /databases/$(database)/documents/encuestas/$(encuestaId);
+      return exists(encuestaPath) && get(encuestaPath).data.activa == true;
+    }
+
+    // Check if authenticated user is the creator of the parent encuesta
+    function isEncuestaCreator(encuestaId) {
+      let encuestaPath = /databases/$(database)/documents/encuestas/$(encuestaId);
+      return exists(encuestaPath) && get(encuestaPath).data.creadorUid == request.auth.uid;
+    }
+
+    // ===============================================================
+    // Domain Validators (Called in both create and update)
+    // ===============================================================
+
+    function isValidUser(data, uid) {
+      return hasOnlyAllowedFields(['uid', 'nombre', 'codigoUniversitario', 'email', 'fechaRegistro']) &&
+             hasRequiredFields(['uid', 'nombre', 'codigoUniversitario', 'email', 'fechaRegistro']) &&
+             data.uid is string && data.uid == uid && data.uid == request.auth.uid &&
+             validStringLength(data.nombre, 2, 120) &&
+             validStringLength(data.codigoUniversitario, 0, 30) &&
+             isValidEmail(data.email) &&
+             data.fechaRegistro is number && data.fechaRegistro >= 0;
+    }
+
+    function isValidEncuesta(data) {
+      let validCategorias = ['Académica', 'Satisfacción', 'Votación', 'Votación Estudiantil', 'General'];
+      return hasOnlyAllowedFields(['titulo', 'descripcion', 'categoria', 'activa', 'fechaCreacion', 'creadorUid', 'creadorNombre', 'preguntas']) &&
+             hasRequiredFields(['titulo', 'descripcion', 'categoria', 'activa', 'fechaCreacion', 'creadorUid', 'creadorNombre', 'preguntas']) &&
+             validStringLength(data.titulo, 5, 160) &&
+             validStringLength(data.descripcion, 1, 1000) &&
+             data.categoria is string && data.categoria in validCategorias &&
+             data.activa is bool &&
+             validStringLength(data.fechaCreacion, 1, 40) &&
+             validStringLength(data.creadorUid, 1, 128) &&
+             validStringLength(data.creadorNombre, 1, 120) &&
+             data.preguntas is list && data.preguntas.size() >= 0 && data.preguntas.size() <= 50;
+    }
+
+    function isValidVoto(data, voterUid) {
+      return hasOnlyAllowedFields(['uid', 'participante', 'fechaVoto', 'respuestas']) &&
+             hasRequiredFields(['uid', 'participante', 'fechaVoto', 'respuestas']) &&
+             data.uid is string && data.uid == voterUid && data.uid == request.auth.uid &&
+             validStringLength(data.participante, 2, 120) &&
+             validStringLength(data.fechaVoto, 1, 40) &&
+             (
+               (data.respuestas is map && data.respuestas.size() <= 50) ||
+               (data.respuestas is list && data.respuestas.size() <= 50)
+             );
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Users collection: contains PII (email, codigoUniversitario), so read is restricted to owner
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && isValidUser(request.resource.data, uid);
+      allow update: if isOwner(uid) &&
+                       isValidUser(request.resource.data, uid) &&
+                       areImmutableFieldsUnchanged(['uid', 'fechaRegistro']);
+      allow delete: if false;
+    }
+
+    // Encuestas collection
+    match /encuestas/{encuestaId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+                       isValidEncuesta(request.resource.data) &&
+                       request.resource.data.creadorUid == request.auth.uid;
+      allow update: if isAuthenticated() &&
+                       resource.data.creadorUid == request.auth.uid &&
+                       isValidEncuesta(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['creadorUid', 'fechaCreacion']);
+      allow delete: if isAuthenticated() &&
+                       resource.data.creadorUid == request.auth.uid;
+
+      // Votos subcollection: document ID equals voter's UID to guarantee one vote per user
+      match /votos/{voterUid} {
+        allow read: if isAuthenticated();
+        allow create: if isOwner(voterUid) &&
+                         isValidVoto(request.resource.data, voterUid) &&
+                         isEncuestaActiva(encuestaId);
+        allow update: if false;
+        allow delete: if isAuthenticated() &&
+                         isEncuestaCreator(encuestaId);
+      }
+    }
+
+    // Default deny for any unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
