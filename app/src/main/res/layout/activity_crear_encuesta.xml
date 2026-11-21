@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla para Crear y Editar Encuestas (CRUD Encuestas) -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollCrearEncuesta"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:background="@color/background_light"
+    tools:context=".CrearEncuestaActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!-- 1. CABECERA SUPERIOR -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_topbar"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="22dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvTituloPantalla"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nueva Encuesta"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Complete los campos requeridos para configurar la consulta."
+                android:textSize="13sp"
+                android:textColor="#CBD5E1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- 2. TARJETA DEL FORMULARIO -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <!-- Campo 1: Título de la Encuesta -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Título de la Encuesta (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etTituloEncuesta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Ej. Evaluación de Calidad Académica 2026"
+                        android:padding="13dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:inputType="textCapSentences"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Campo 2: Descripción -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Descripción u Objetivo (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etDescripcionEncuesta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Detalle brevemente el objetivo y alcance de esta encuesta..."
+                        android:padding="13dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:minLines="3"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Campo 3: Categoría -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categoría (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <RadioGroup
+                        android:id="@+id/rgCategoria"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp">
+
+                        <RadioButton
+                            android:id="@+id/rbCatAcademica"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Académica"
+                            android:checked="true"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/rbCatSatisfaccion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Satisfacción"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/rbCatVotacion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Votación Estudiantil"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/rbCatGeneral"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="General"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+                    </RadioGroup>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/border_light"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Campo 4: Estado Activa / Cerrada -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado de la Encuesta"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="4dp" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swActiva"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:text="Habilitada para recibir votos"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:checked="true"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. BOTONES DE ACCIÓN -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarYPreguntas"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Guardar y Gestionar Preguntas"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/primary"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarYVolver"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Guardar y Volver al Inicio"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelar"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="Cancelar"
+                android:textSize="14sp"
+                app:icon="@drawable/ic_back"
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconTint="@color/primary"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

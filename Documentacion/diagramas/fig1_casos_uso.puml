@@ -1,0 +1,63 @@
+@startuml fig1_casos_uso
+left to right direction
+skinparam dpi 300
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+skinparam ArrowColor #1B4F72
+skinparam ArrowThickness 1.2
+
+skinparam actor {
+    BackgroundColor #D4E6F1
+    BorderColor #1A5276
+    FontSize 11
+}
+
+skinparam usecase {
+    BackgroundColor #EBF5FB
+    BorderColor #2980B9
+    FontSize 11
+}
+
+actor "Administrador / Creador\n(Docente / Directivo)" as Admin
+actor "Participante / Votante\n(Estudiante / Miembro)" as Votante
+
+rectangle "Sistema Móvil de Encuestas y Votaciones (VotaApp UNAMAD)" {
+    usecase "RF01: Crear Encuesta" as UC1
+    usecase "RF02: Consultar y Filtrar Encuestas" as UC2
+    usecase "RF03: Editar Encuesta y Estado" as UC3
+    usecase "RF04: Eliminar Encuesta" as UC4
+    usecase "RF05: Configurar Preguntas" as UC5
+    usecase "RF06: Configurar Alternativas" as UC6
+    usecase "RF07: Registrar Voto / Respuestas" as UC7
+    usecase "RF08: Visualizar Conteo y Resultados" as UC8
+
+    usecase "Validar Campos Obligatorios" as UC_Val
+    usecase "Verificar Voto Único" as UC_Unico
+    usecase "Calcular Métricas y Ganador" as UC_Metricas
+    usecase "Eliminación en Cascada (SQLite)" as UC_Cascada
+
+    UC1 ..> UC_Val : <<include>>
+    UC3 ..> UC_Val : <<include>>
+    UC4 ..> UC_Cascada : <<include>>
+    UC5 ..> UC6 : <<include>>
+    UC7 ..> UC_Val : <<include>>
+    UC7 ..> UC_Unico : <<include>>
+    UC8 ..> UC_Metricas : <<include>>
+}
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+Admin --> UC8
+
+UC2 <-- Votante
+UC7 <-- Votante
+UC8 <-- Votante
+
+@enduml

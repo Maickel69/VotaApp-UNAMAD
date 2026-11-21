@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tarjeta individual para mostrar una pregunta en GestionarPreguntasActivity -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="1dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/border_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Fila 1: Número, Enunciado y Tipo de Pregunta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvItemPreguntaTexto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="1. ¿Cómo califica la atención recibida?"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/tvItemPreguntaTipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selección Única"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/bg_badge_type"
+                android:textColor="@color/primary"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Fila 2: Texto con las alternativas registradas -->
+        <TextView
+            android:id="@+id/tvItemPreguntaAlternativas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Opción 1\n• Opción 2\n• Opción 3"
+            android:textSize="13.5sp"
+            android:textColor="@color/text_secondary"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="12dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/border_light"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Fila 3: Acciones (Editar / Eliminar Pregunta) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnItemPreguntaEditar"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="Editar"
+                android:textSize="12sp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_edit"
+                app:iconSize="15dp"
+                app:iconPadding="6dp"
+                app:iconTint="@color/primary"
+                app:cornerRadius="10dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnItemPreguntaEliminar"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="44dp"
+                android:text="Eliminar"
+                android:textSize="12sp"
+                android:textColor="@color/danger"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_delete"
+                app:iconSize="15dp"
+                app:iconPadding="6dp"
+                app:iconTint="@color/danger"
+                app:strokeColor="@color/danger_border"
+                app:cornerRadius="10dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

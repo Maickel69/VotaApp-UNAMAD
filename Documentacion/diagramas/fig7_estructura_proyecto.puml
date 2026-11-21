@@ -1,0 +1,80 @@
+@startuml fig7_estructura_proyecto
+skinparam dpi 300
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10.5
+skinparam shadowing false
+skinparam roundCorner 8
+
+skinparam package {
+    BackgroundColor #F8F9F9
+    BorderColor #1A5276
+    BorderThickness 1.2
+}
+
+skinparam file {
+    BackgroundColor #FFFFFF
+    BorderColor #2980B9
+    FontSize 10
+}
+
+package "ProyectoFinal (Estructura en Android Studio)" {
+
+    package "app / src / main" #EBF5FB {
+        package "manifests" #FFFFFF {
+            file "AndroidManifest.xml\n(Declaración de 5 Activities y Permisos)" as ManifestFile
+        }
+
+        package "java / com.example.proyectofinal" #E8F8F5 {
+            file "Models.kt (Encuesta, Pregunta, Alternativa, Respuesta)" as ModelsFile
+            file "DatabaseHelper.kt (SQLiteOpenHelper, DDL, CRUD, Cascadas)" as DbFile
+            file "MainActivity.kt (Panel Principal, Filtros y Estadísticas)" as MainFile
+            file "CrearEncuestaActivity.kt (Formulario Alta/Edición de Encuestas)" as CrearFile
+            file "GestionarPreguntasActivity.kt (Gestión de Preguntas y Alternativas)" as PregFile
+            file "RegistrarVotoActivity.kt (Formulario Dinámico y Control Voto Único)" as VotoFile
+            file "ResultadosActivity.kt (Conteo, Porcentajes, Barras y Ganador)" as ResFile
+        }
+
+        package "res (Recursos de la Interfaz)" #FEF9E7 {
+            package "layout (Diseño de Pantallas XML)" #FFFFFF {
+                file "activity_main.xml (Dashboard con RecyclerView)" as LayMain
+                file "activity_crear_encuesta.xml (Campos de entrada)" as LayCrear
+                file "activity_gestionar_preguntas.xml (Preguntas dinámicas)" as LayPreg
+                file "activity_registrar_voto.xml (Formulario de votación)" as LayVoto
+                file "activity_resultados.xml (Barras ProgressBar)" as LayRes
+            }
+            package "values" #FFFFFF {
+                file "strings.xml (Textos, opciones y categorías)" as ValStrings
+                file "colors.xml (Colores institucionales UNAMAD)" as ValColors
+                file "themes.xml (Estilo Material Components)" as ValThemes
+            }
+            package "drawable" #FFFFFF {
+                file "encuesta.png & recursos vectoriales XML" as DrawIcons
+            }
+        }
+    }
+
+    package "Gradle Scripts" #FDEDEC {
+        file "build.gradle.kts (Project: ProyectoFinal)" as GradleProj
+        file "build.gradle.kts (Module :app) [Kotlin 2.0, minSdk 24, targetSdk 36]" as GradleApp
+        file "libs.versions.toml (Versiones centralizadas)" as GradleToml
+    }
+}
+
+ManifestFile -[hidden]down-> ModelsFile
+ModelsFile -[hidden]down-> DbFile
+DbFile -[hidden]down-> MainFile
+MainFile -[hidden]down-> CrearFile
+CrearFile -[hidden]down-> PregFile
+PregFile -[hidden]down-> VotoFile
+VotoFile -[hidden]down-> ResFile
+
+LayMain -[hidden]down-> LayCrear
+LayCrear -[hidden]down-> LayPreg
+LayPreg -[hidden]down-> LayVoto
+LayVoto -[hidden]down-> LayRes
+
+ValStrings -[hidden]down-> ValColors
+ValColors -[hidden]down-> ValThemes
+
+@enduml

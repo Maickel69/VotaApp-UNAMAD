@@ -1,0 +1,58 @@
+@startuml fig6_base_datos_er
+hide circle
+skinparam dpi 300
+skinparam linetype ortho
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #1A5276
+    HeaderBackgroundColor #D4E6F1
+}
+
+entity "encuestas" as encuestas {
+    * **id_encuesta** : INTEGER <<PK, AUTOINCREMENT>>
+    --
+    * titulo : TEXT NOT NULL
+    * descripcion : TEXT NOT NULL
+    * categoria : TEXT NOT NULL
+    * activa : INTEGER NOT NULL DEFAULT 1
+    * fecha_creacion : TEXT NOT NULL
+}
+
+entity "preguntas" as preguntas {
+    * **id_pregunta** : INTEGER <<PK, AUTOINCREMENT>>
+    --
+    * id_encuesta : INTEGER <<FK>>
+    * texto_pregunta : TEXT NOT NULL
+    * tipo_pregunta : TEXT NOT NULL ('UNICA' | 'MULTIPLE')
+}
+
+entity "alternativas" as alternativas {
+    * **id_alternativa** : INTEGER <<PK, AUTOINCREMENT>>
+    --
+    * id_pregunta : INTEGER <<FK>>
+    * texto_alternativa : TEXT NOT NULL
+    * votos : INTEGER NOT NULL DEFAULT 0
+}
+
+entity "respuestas" as respuestas {
+    * **id_respuesta** : INTEGER <<PK, AUTOINCREMENT>>
+    --
+    * id_encuesta : INTEGER <<FK>>
+    * id_pregunta : INTEGER <<FK>>
+    * id_alternativa : INTEGER <<FK>>
+    * participante : TEXT NOT NULL
+    * fecha_voto : TEXT NOT NULL
+}
+
+encuestas ||--|{ preguntas : "1:N (ON DELETE CASCADE)"
+preguntas ||--|{ alternativas : "1:N (ON DELETE CASCADE)"
+alternativas ||--o{ respuestas : "1:N (registra selección)"
+preguntas ||--o{ respuestas : "1:N (asocia pregunta)"
+encuestas ||--o{ respuestas : "1:N (ON DELETE CASCADE)"
+
+@enduml

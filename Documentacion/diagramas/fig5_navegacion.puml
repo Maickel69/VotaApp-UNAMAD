@@ -1,0 +1,47 @@
+@startuml fig5_navegacion
+skinparam dpi 160
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 10
+
+skinparam ArrowColor #1B4F72
+skinparam ArrowThickness 1.3
+
+skinparam state {
+    BackgroundColor #EBF5FB
+    BorderColor #1A5276
+    FontSize 11
+    FontName Arial
+}
+
+[*] --> MainActivity : "Iniciar VotaApp UNAMAD"
+
+state MainActivity {
+    [*] --> PanelControl
+    PanelControl --> FiltrarRadioGroup : "rgFiltro (Todas/Activas/Cerradas)"
+    FiltrarRadioGroup --> PanelControl : "cargarEncuestas() [llContenedorEncuestas]"
+}
+
+MainActivity --> CrearEncuestaActivity : "btnCrearEncuesta.setOnClickListener\no Clic Editar [EXTRA_ID_ENCUESTA]"
+CrearEncuestaActivity --> MainActivity : "btnGuardarYVolver / btnCancelar\n[finish() -> onResume() recarga]"
+
+CrearEncuestaActivity --> GestionarPreguntasActivity : "btnGuardarYPreguntas\n[Intent con EXTRA_ID_ENCUESTA y finish()]"
+MainActivity --> GestionarPreguntasActivity : "Clic Preguntas en item_encuesta\n[EXTRA_ID_ENCUESTA]"
+GestionarPreguntasActivity --> MainActivity : "btnFinalizar\n[Valida >= 1 pregunta -> finish()]"
+
+MainActivity --> RegistrarVotoActivity : "Clic 'Votar' en item_encuesta\n[EXTRA_ID_ENCUESTA, condición: activa == true]"
+RegistrarVotoActivity --> MainActivity : "btnCancelarVoto\n[finish()]"
+RegistrarVotoActivity --> ResultadosActivity : "procesarVoto() exitoso\n[AlertDialog -> Intent ResultadosActivity + finish()]"
+
+MainActivity --> ResultadosActivity : "Clic 'Resultados' en item_encuesta\n[EXTRA_ID_ENCUESTA]"
+ResultadosActivity --> MainActivity : "btnVolver / Botón Atrás\n[finish()]"
+
+state ResultadosActivity {
+    [*] --> MostrarGraficos
+    MostrarGraficos --> ReiniciarVotos : "btnReiniciarConteo (Confirmación)"
+    ReiniciarVotos --> MostrarGraficos : "dbHelper.reiniciarVotosEncuesta()\nrecarga a 0 votos"
+}
+
+@enduml

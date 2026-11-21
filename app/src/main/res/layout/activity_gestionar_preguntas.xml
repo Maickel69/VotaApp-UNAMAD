@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla de Gestión de Preguntas y Alternativas (CRUD Preguntas/Alternativas) -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollGestionarPreguntas"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:background="@color/background_light"
+    tools:context=".GestionarPreguntasActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!-- 1. ENCABEZADO SUPERIOR -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_topbar"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="22dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preguntas y Opciones"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvEncuestaTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Encuesta: Cargando título..."
+                android:textSize="13sp"
+                android:textColor="#CBD5E1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- 2. FORMULARIO PARA AGREGAR O EDITAR PREGUNTA -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:id="@+id/tvTituloFormPregunta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Agregar Nueva Pregunta"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Enunciado de la Pregunta -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enunciado de la Pregunta (*)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/etTextoPregunta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Ej. ¿Cómo califica la atención recibida?"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:inputType="textCapSentences"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Tipo de Pregunta -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Modalidad de Respuesta"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="4dp" />
+
+                    <RadioGroup
+                        android:id="@+id/rgTipoPregunta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp">
+
+                        <RadioButton
+                            android:id="@+id/rbTipoUnica"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Selección Única (1 respuesta)"
+                            android:checked="true"
+                            android:textSize="13.5sp"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/rbTipoMultiple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Opción Múltiple (varias respuestas)"
+                            android:textSize="13.5sp"
+                            android:textColor="@color/text_primary" />
+                    </RadioGroup>
+
+                    <!-- Alternativas de Respuesta -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alternativas de Respuesta (mínimo 2 obligatorias)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="8dp" />
+
+                    <EditText
+                        android:id="@+id/etAlternativa1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Alternativa 1 (* obligatoria)"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionNext"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="8dp" />
+
+                    <EditText
+                        android:id="@+id/etAlternativa2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Alternativa 2 (* obligatoria)"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionNext"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="8dp" />
+
+                    <EditText
+                        android:id="@+id/etAlternativa3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Alternativa 3 (opcional)"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionNext"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="8dp" />
+
+                    <EditText
+                        android:id="@+id/etAlternativa4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Alternativa 4 (opcional)"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionDone"
+                        android:padding="12dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Botones del Formulario -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGuardarPregunta"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="46dp"
+                            android:layout_weight="1"
+                            android:text="Guardar Pregunta"
+                            android:textSize="13.5sp"
+                            android:textStyle="bold"
+                            app:icon="@drawable/ic_add"
+                            app:iconGravity="textStart"
+                            app:iconPadding="6dp"
+                            app:iconTint="@color/white"
+                            app:cornerRadius="12dp"
+                            android:backgroundTint="@color/accent" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCancelarEdicion"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="46dp"
+                            android:text="Cancelar"
+                            android:textSize="13sp"
+                            app:cornerRadius="12dp"
+                            android:visibility="gone"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. LISTA DE PREGUNTAS REGISTRADAS -->
+            <TextView
+                android:id="@+id/tvTituloListaPreguntas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Preguntas Registradas (0)"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/tvSinPreguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Esta encuesta aún no tiene preguntas. Ingrese una en el formulario superior."
+                android:textAlignment="center"
+                android:padding="20dp"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/llListaPreguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 4. BOTÓN FINALIZAR -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFinalizar"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Finalizar y Volver al Inicio"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_back"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/primary" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

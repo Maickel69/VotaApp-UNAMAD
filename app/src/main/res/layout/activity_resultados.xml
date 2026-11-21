@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla de Conteo y Resultados Estadísticos -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollResultados"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:background="@color/background_light"
+    tools:context=".ResultadosActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
+
+        <!-- 1. ENCABEZADO DE LA ENCUESTA -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_topbar"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="38dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tvResultadosCategoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Satisfacción"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:background="@drawable/bg_badge_category"
+                    android:textColor="@color/info" />
+
+                <TextView
+                    android:id="@+id/tvResultadosEstado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Activa"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:background="@drawable/bg_badge_active"
+                    android:textColor="@color/success"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvResultadosTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Resultados de la Encuesta"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- 2. TARJETA FLOTANTE RESUMEN DE PARTICIPACIÓN -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-22dp"
+                android:layout_marginBottom="18dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTotalParticipantes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 Estudiante(s) han participado"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary" />
+
+                    <TextView
+                        android:id="@+id/tvFechaCreacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha de registro: 2026-11-01"
+                        android:textSize="12.5sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. SECCIÓN DE RESULTADOS POR PREGUNTA -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resultados por Pregunta"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="10dp" />
+
+            <LinearLayout
+                android:id="@+id/llResultadosPreguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 4. REGISTRO DE VOTANTES RECIENTES -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_light">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registro de Participantes"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary"
+                        android:layout_marginBottom="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Auditoría de votantes que completaron la consulta:"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginBottom="10dp" />
+
+                    <TextView
+                        android:id="@+id/tvSinParticipantes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Aún no se registran participantes en esta encuesta."
+                        android:textSize="13sp"
+                        android:textColor="@color/text_muted"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/llListaParticipantes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 5. BOTONES DE ACCIÓN -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnIrAVotar"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Ir a Votar en esta Encuesta"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_vote"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/accent"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReiniciarConteo"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Reiniciar Conteo de Votos"
+                android:textSize="13.5sp"
+                android:textColor="@color/danger"
+                app:icon="@drawable/ic_delete"
+                app:iconSize="17dp"
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconTint="@color/danger"
+                app:strokeColor="@color/danger_border"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVolver"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="Volver al Inicio"
+                android:textSize="14sp"
+                app:icon="@drawable/ic_back"
+                app:iconGravity="textStart"
+                app:iconPadding="6dp"
+                app:iconTint="@color/primary"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
