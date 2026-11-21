@@ -197,6 +197,22 @@
 
             <!-- 5. BOTONES DE ACCIÓN -->
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCompartirResultados"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Compartir Acta Oficial de Resultados"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_share"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/primary"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnIrAVotar"
                 style="@style/Widget.Material3.Button"
                 android:layout_width="match_parent"

@@ -6,10 +6,12 @@ import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -20,21 +22,25 @@ import com.google.firebase.auth.auth
  * ============================================================================
  * PANTALLA DE ACCESO: LoginActivity (Firebase Authentication)
  * ============================================================================
- * Permite iniciar sesión o registrarse con Correo/Contraseña o Google Sign-In,
- * guardando el perfil del usuario en Cloud Firestore (`users/{uid}`).
  */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var tvBienvenidaLogin: TextView
+    private lateinit var tvSubtituloLogin: TextView
     private lateinit var rgAuthModo: RadioGroup
     private lateinit var rbModoLogin: RadioButton
     private lateinit var rbModoRegistro: RadioButton
     private lateinit var llCamposRegistro: LinearLayout
+    private lateinit var tilAuthNombre: TextInputLayout
+    private lateinit var tilAuthEmail: TextInputLayout
+    private lateinit var tilAuthPassword: TextInputLayout
     private lateinit var etAuthNombre: EditText
     private lateinit var etAuthCodigo: EditText
     private lateinit var etAuthEmail: EditText
     private lateinit var etAuthPassword: EditText
+    private lateinit var tvForgotPassword: TextView
     private lateinit var pbAuth: ProgressBar
     private lateinit var btnAuthAccion: Button
     private lateinit var btnGoogleSignIn: Button
@@ -58,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
             }
         } catch (e: ApiException) {
             mostrarCargando(false)
-            Toast.makeText(this, "Error Google Sign-In (${e.statusCode}): ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Acceso con Google cancelado (${e.statusCode}).", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -71,7 +77,6 @@ class LoginActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
-        // Si ya hay sesión iniciada, ir directo al panel principal
         if (auth.currentUser != null) {
             irAMain()
             return
@@ -82,14 +87,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun vincularVistas() {
+        tvBienvenidaLogin = findViewById(R.id.tvBienvenidaLogin)
+        tvSubtituloLogin = findViewById(R.id.tvSubtituloLogin)
         rgAuthModo = findViewById(R.id.rgAuthModo)
         rbModoLogin = findViewById(R.id.rbModoLogin)
         rbModoRegistro = findViewById(R.id.rbModoRegistro)
         llCamposRegistro = findViewById(R.id.llCamposRegistro)
+        tilAuthNombre = findViewById(R.id.tilAuthNombre)
+        tilAuthEmail = findViewById(R.id.tilAuthEmail)
+        tilAuthPassword = findViewById(R.id.tilAuthPassword)
         etAuthNombre = findViewById(R.id.etAuthNombre)
         etAuthCodigo = findViewById(R.id.etAuthCodigo)
         etAuthEmail = findViewById(R.id.etAuthEmail)
         etAuthPassword = findViewById(R.id.etAuthPassword)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
         pbAuth = findViewById(R.id.pbAuth)
         btnAuthAccion = findViewById(R.id.btnAuthAccion)
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn)
@@ -99,10 +110,23 @@ class LoginActivity : AppCompatActivity() {
         rgAuthModo.setOnCheckedChangeListener { _, checkedId ->
             val esRegistro = checkedId == R.id.rbModoRegistro
             llCamposRegistro.visibility = if (esRegistro) View.VISIBLE else View.GONE
-            btnAuthAccion.text = if (esRegistro) "Crear Cuenta" else "Iniciar Sesión"
+            tvForgotPassword.visibility = if (esRegistro) View.GONE else View.VISIBLE
+            btnAuthAccion.text = if (esRegistro) "Crear Cuenta Institucional" else "Iniciar Sesión"
+            tvBienvenidaLogin.text = if (esRegistro) "Registro de participante" else "Bienvenido de nuevo"
+            tvSubtituloLogin.text = if (esRegistro) {
+                "Completa tus datos para participar en encuestas y votaciones."
+            } else {
+                "Ingresa con tu cuenta para participar o gestionar encuestas."
+            }
+            tilAuthNombre.error = null
+            tilAuthEmail.error = null
+            tilAuthPassword.error = null
         }
 
         btnAuthAccion.setOnClickListener {
+            tilAuthNombre.error = null
+            tilAuthEmail.error = null
+            tilAuthPassword.error = null
             if (rbModoRegistro.isChecked) {
                 registrarConCorreo()
             } else {
@@ -110,17 +134,57 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        tvForgotPassword.setOnClickListener {
+            mostrarDialogoRecuperarPassword()
+        }
+
         btnGoogleSignIn.setOnClickListener {
             iniciarGoogleSignIn()
         }
+    }
+
+    private fun mostrarDialogoRecuperarPassword() {
+        val emailActual = etAuthEmail.text.toString().trim()
+        val input = EditText(this).apply {
+            hint = "usuario@unamad.edu.pe"
+            setText(emailActual)
+            setPadding(48, 32, 48, 32)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Recuperar Contraseña")
+            .setMessage("Ingresa tu correo registrado y te enviaremos un enlace de restablecimiento:")
+            .setView(input)
+            .setPositiveButton("Enviar Enlace") { _, _ ->
+                val correo = input.text.toString().trim()
+                if (correo.isEmpty()) {
+                    Toast.makeText(this, "Ingresa un correo válido.", Toast.LENGTH_SHORT).show()
+                } else {
+                    auth.sendPasswordResetEmail(correo)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Enlace enviado a $correo.", Toast.LENGTH_LONG).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(this, "Error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun iniciarSesionConCorreo() {
         val email = etAuthEmail.text.toString().trim()
         val password = etAuthPassword.text.toString()
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Ingrese su correo y contraseña.", Toast.LENGTH_SHORT).show()
+        if (email.isEmpty()) {
+            tilAuthEmail.error = "Ingresa tu correo electrónico"
+            etAuthEmail.requestFocus()
+            return
+        }
+        if (password.isEmpty()) {
+            tilAuthPassword.error = "Ingresa tu contraseña"
+            etAuthPassword.requestFocus()
             return
         }
 
@@ -132,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 mostrarCargando(false)
-                Toast.makeText(this, "Error al iniciar sesión: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "No se pudo iniciar sesión: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
             }
     }
 
@@ -143,17 +207,17 @@ class LoginActivity : AppCompatActivity() {
         val password = etAuthPassword.text.toString()
 
         if (nombre.length < 2) {
-            etAuthNombre.error = "Ingrese su nombre completo"
+            tilAuthNombre.error = "Ingresa tu nombre completo"
             etAuthNombre.requestFocus()
             return
         }
         if (email.isEmpty()) {
-            etAuthEmail.error = "Ingrese su correo"
+            tilAuthEmail.error = "Ingresa tu correo electrónico"
             etAuthEmail.requestFocus()
             return
         }
         if (password.length < 6) {
-            etAuthPassword.error = "La contraseña debe tener al menos 6 caracteres"
+            tilAuthPassword.error = "La contraseña debe tener al menos 6 caracteres"
             etAuthPassword.requestFocus()
             return
         }
@@ -166,11 +230,11 @@ class LoginActivity : AppCompatActivity() {
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(nombre)
                         .build()
-                    user.updateProfile(profileUpdates)
-
-                    FirebaseRepository.guardarPerfilUsuario(user.uid, nombre, codigo, email) { _, _ ->
-                        mostrarCargando(false)
-                        irAMain()
+                    user.updateProfile(profileUpdates).addOnCompleteListener {
+                        FirebaseRepository.guardarPerfilUsuario(user.uid, nombre, codigo, email) { _, _ ->
+                            mostrarCargando(false)
+                            irAMain()
+                        }
                     }
                 } else {
                     mostrarCargando(false)
@@ -179,18 +243,14 @@ class LoginActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 mostrarCargando(false)
-                Toast.makeText(this, "Error al registrar cuenta: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "No se pudo crear la cuenta: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
             }
     }
 
     private fun iniciarGoogleSignIn() {
         val webClientIdRes = resources.getIdentifier("default_web_client_id", "string", packageName)
         if (webClientIdRes == 0) {
-            Toast.makeText(
-                this,
-                "Falta default_web_client_id en google-services.json. Habilita Google Sign-In en Firebase Console y descarga google-services.json.",
-                Toast.LENGTH_LONG
-            ).show()
+            Toast.makeText(this, "Configuración OAuth no disponible.", Toast.LENGTH_LONG).show()
             return
         }
 

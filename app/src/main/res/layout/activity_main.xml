@@ -1,309 +1,406 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pantalla Principal: Panel de Control y Listado de Encuestas -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Pantalla Principal: Panel de Control en la Nube con Búsqueda y Filtros -->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/swipeRefreshMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:clipToPadding="false"
     android:background="@color/background_light"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:clipChildren="false"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
         android:clipToPadding="false"
-        android:paddingBottom="24dp">
+        android:background="@color/background_light">
 
-        <!-- 1. HERO HEADER INSTITUCIONAL -->
-        <LinearLayout
-            android:id="@+id/topBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_header_gradient"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingTop="22dp"
-            android:paddingBottom="44dp">
-
-            <FrameLayout
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@drawable/bg_logo_circle"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/encuesta"
-                    android:contentDescription="Logo Sistema de Encuestas UNAMAD" />
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="14dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="VotaApp UNAMAD"
-                    android:textSize="21sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white" />
-
-                <TextView
-                    android:id="@+id/tvUsuarioActual"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Encuestas y Votaciones • EPISI"
-                    android:textSize="13sp"
-                    android:textColor="#CBD5E1"
-                    android:layout_marginTop="2dp" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCerrarSesion"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="44dp"
-                android:text="Salir"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                app:strokeColor="#40FFFFFF"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp" />
-        </LinearLayout>
-
-        <!-- CONTENIDO PRINCIPAL -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:paddingBottom="28dp">
 
-            <!-- 2. TARJETA FLOTANTE DE MÉTRICAS KPI -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- 1. HERO HEADER INSTITUCIONAL -->
+            <LinearLayout
+                android:id="@+id/topBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-26dp"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/card_background"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/border_light">
+                android:background="@drawable/bg_header_gradient"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="22dp"
+                android:paddingBottom="46dp">
+
+                <FrameLayout
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/bg_logo_circle"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/encuesta"
+                        android:contentDescription="Logo Sistema de Encuestas UNAMAD" />
+                </FrameLayout>
 
                 <LinearLayout
+                    android:id="@+id/llPerfilHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="14dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VotaApp UNAMAD"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvUsuarioActual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cargando perfil..."
+                        android:textSize="12.5sp"
+                        android:textColor="#CBD5E1"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCerrarSesion"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="42dp"
+                    android:text="Cuenta"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:strokeColor="#45FFFFFF"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <!-- 2. TARJETA FLOTANTE DE MÉTRICAS KPI -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-26dp"
+                    android:layout_marginBottom="14dp"
+                    app:cardBackgroundColor="@color/card_background"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="5dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/border_light">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp"
+                        android:baselineAligned="false">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvTotalEncuestas"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Encuestas"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/border_light" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvActivasEncuestas"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/success" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Activas"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/border_light" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvTotalVotos"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/accent" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Votantes"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 3. BOTÓN PRINCIPAL PARA CREAR NUEVA ENCUESTA -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCrearEncuesta"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:text="Crear Nueva Encuesta"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"
+                    app:iconTint="@color/white"
+                    app:cornerRadius="14dp"
+                    android:backgroundTint="@color/accent"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- 4. BUSCADOR EN TIEMPO REAL -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilBuscarEncuesta"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Buscar encuesta por título, tema o autor..."
+                    app:startIconDrawable="@drawable/ic_search"
+                    app:startIconTint="@color/primary"
+                    app:endIconMode="clear_text"
+                    app:boxBackgroundColor="@color/card_background"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etBuscarEncuesta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:textSize="13.5sp"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 5. CHIPS DE CATEGORÍA -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:layout_marginBottom="10dp">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cgCategorias"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCatTodas"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Todas las categorías"
+                            android:checked="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCatVotacion"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Votación" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCatSatisfaccion"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Satisfacción" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCatAcademica"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Académica" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipCatGeneral"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="General" />
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
+
+                <!-- 6. FILTRO SEGMENTADO DE ESTADO -->
+                <RadioGroup
+                    android:id="@+id/rgFiltro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingTop="14dp"
-                    android:paddingBottom="14dp"
-                    android:baselineAligned="false">
+                    android:background="@drawable/bg_filter_container"
+                    android:padding="4dp"
+                    android:layout_marginBottom="16dp">
 
-                    <!-- Contador: Total Encuestas -->
-                    <LinearLayout
+                    <RadioButton
+                        android:id="@+id/rbFiltroTodas"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="42dp"
                         android:layout_weight="1"
+                        android:button="@null"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="Todas"
+                        android:checked="true"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/filter_chip_text"
+                        android:background="@drawable/bg_filter_chip" />
 
-                        <TextView
-                            android:id="@+id/tvTotalEncuestas"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/primary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Encuestas"
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/border_light" />
-
-                    <!-- Contador: Activas -->
-                    <LinearLayout
+                    <RadioButton
+                        android:id="@+id/rbFiltroActivas"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="42dp"
                         android:layout_weight="1"
+                        android:button="@null"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="Activas"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/filter_chip_text"
+                        android:background="@drawable/bg_filter_chip" />
 
-                        <TextView
-                            android:id="@+id/tvActivasEncuestas"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/success" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Activas"
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@color/border_light" />
-
-                    <!-- Contador: Total Votos -->
-                    <LinearLayout
+                    <RadioButton
+                        android:id="@+id/rbFiltroCerradas"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:minHeight="42dp"
                         android:layout_weight="1"
+                        android:button="@null"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:text="Cerradas"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/filter_chip_text"
+                        android:background="@drawable/bg_filter_chip" />
+                </RadioGroup>
 
-                        <TextView
-                            android:id="@+id/tvTotalVotos"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/accent" />
+                <!-- TARJETA CUANDO LA LISTA ESTÁ VACÍA -->
+                <LinearLayout
+                    android:id="@+id/llEstadoVacio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@drawable/bg_card"
+                    android:padding="24dp"
+                    android:visibility="gone">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Votantes"
-                            android:textSize="12sp"
-                            android:textColor="@color/text_secondary" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvSinEncuestas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No se encontraron encuestas con los filtros actuales."
+                        android:textAlignment="center"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCargarDemo"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="44dp"
+                        android:text="Cargar Encuestas Institucionales Demo"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="12dp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- 3. BOTÓN PRINCIPAL PARA CREAR NUEVA ENCUESTA -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCrearEncuesta"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:text="Crear Nueva Encuesta"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:icon="@drawable/ic_add"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="@color/white"
-                app:cornerRadius="14dp"
-                android:backgroundTint="@color/accent"
-                android:layout_marginBottom="16dp" />
-
-            <!-- 4. FILTRO SEGMENTADO DE ENCUESTAS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Explorar encuestas"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:id="@+id/rgFiltro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_filter_container"
-                android:padding="4dp"
-                android:layout_marginBottom="16dp">
-
-                <RadioButton
-                    android:id="@+id/rbFiltroTodas"
-                    android:layout_width="0dp"
+                <!-- 7. CONTENEDOR DINÁMICO DE TARJETAS DE ENCUESTAS -->
+                <LinearLayout
+                    android:id="@+id/llContenedorEncuestas"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Todas"
-                    android:checked="true"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/filter_chip_text"
-                    android:background="@drawable/bg_filter_chip" />
+                    android:orientation="vertical" />
 
-                <RadioButton
-                    android:id="@+id/rbFiltroActivas"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Activas"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/filter_chip_text"
-                    android:background="@drawable/bg_filter_chip" />
-
-                <RadioButton
-                    android:id="@+id/rbFiltroCerradas"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="44dp"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:text="Cerradas"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/filter_chip_text"
-                    android:background="@drawable/bg_filter_chip" />
-            </RadioGroup>
-
-            <!-- Mensaje cuando la lista está vacía -->
-            <TextView
-                android:id="@+id/tvSinEncuestas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="No se encontraron encuestas registradas con el filtro seleccionado."
-                android:textAlignment="center"
-                android:padding="28dp"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card"
-                android:visibility="gone" />
-
-            <!-- 5. CONTENEDOR DINÁMICO DE TARJETAS DE ENCUESTAS -->
-            <LinearLayout
-                android:id="@+id/llContenedorEncuestas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

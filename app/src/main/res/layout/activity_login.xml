@@ -18,7 +18,7 @@
         android:clipToPadding="false"
         android:paddingBottom="28dp">
 
-        <!-- HERO HEADER -->
+        <!-- HERO HEADER INSTITUCIONAL -->
         <LinearLayout
             android:id="@+id/topBar"
             android:layout_width="match_parent"
@@ -28,15 +28,31 @@
             android:gravity="center_horizontal"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:paddingTop="28dp"
-            android:paddingBottom="44dp">
+            android:paddingTop="24dp"
+            android:paddingBottom="48dp">
+
+            <!-- Badge Institucional -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UNAMAD · INGENIERÍA DE SISTEMAS"
+                android:textSize="10.5sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:textColor="#E2E8F0"
+                android:background="@drawable/bg_pill_translucent"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginBottom="14dp" />
 
             <FrameLayout
-                android:layout_width="68dp"
-                android:layout_height="68dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:background="@drawable/bg_logo_circle"
-                android:padding="12dp"
-                android:layout_marginBottom="10dp">
+                android:padding="13dp"
+                android:layout_marginBottom="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -49,17 +65,66 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="VotaApp UNAMAD"
-                android:textSize="23sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Plataforma en la Nube • Firebase"
+                android:text="Consultas académicas y sufragio estudiantil en la nube"
                 android:textSize="13sp"
                 android:textColor="#CBD5E1"
-                android:layout_marginTop="2dp" />
+                android:textAlignment="center"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Píldoras de confianza -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Voto Único"
+                    android:textSize="11sp"
+                    android:textColor="#E2E8F0"
+                    android:background="@drawable/bg_pill_translucent"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cloud Firestore"
+                    android:textSize="11sp"
+                    android:textColor="#E2E8F0"
+                    android:background="@drawable/bg_pill_translucent"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiempo Real"
+                    android:textSize="11sp"
+                    android:textColor="#E2E8F0"
+                    android:background="@drawable/bg_pill_translucent"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -71,15 +136,15 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <!-- TARJETA DE ACCESO -->
+            <!-- TARJETA ELEVADA DE AUTENTICACIÓN -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="-28dp"
+                android:layout_marginBottom="14dp"
                 app:cardBackgroundColor="@color/card_background"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="@color/border_light">
 
@@ -87,9 +152,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="22dp">
 
-                    <!-- Selector Iniciar Sesión / Registrarse -->
+                    <TextView
+                        android:id="@+id/tvBienvenidaLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bienvenido de nuevo"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:id="@+id/tvSubtituloLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ingresa con tu cuenta para participar o gestionar encuestas."
+                        android:textSize="12.5sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Selector Iniciar Sesión / Crear Cuenta -->
                     <RadioGroup
                         android:id="@+id/rgAuthModo"
                         android:layout_width="match_parent"
@@ -97,7 +181,7 @@
                         android:orientation="horizontal"
                         android:background="@drawable/bg_filter_container"
                         android:padding="4dp"
-                        android:layout_marginBottom="18dp">
+                        android:layout_marginBottom="16dp">
 
                         <RadioButton
                             android:id="@+id/rbModoLogin"
@@ -129,7 +213,7 @@
                             android:background="@drawable/bg_filter_chip" />
                     </RadioGroup>
 
-                    <!-- Campos de Registro (Nombre y Código) -->
+                    <!-- Campos de Registro (Nombre y Código Universitario) -->
                     <LinearLayout
                         android:id="@+id/llCamposRegistro"
                         android:layout_width="match_parent"
@@ -137,103 +221,122 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre Completo (*)"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"
-                            android:layout_marginBottom="6dp" />
-
-                        <EditText
-                            android:id="@+id/etAuthNombre"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilAuthNombre"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_input"
-                            android:hint="Ej. Maicol Amezquita Camargo"
-                            android:inputType="textPersonName|textCapWords"
-                            android:padding="13dp"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_primary"
-                            android:textColorHint="@color/text_muted"
-                            android:layout_marginBottom="12dp" />
+                            android:hint="Nombre completo (*)"
+                            app:startIconDrawable="@drawable/ic_person"
+                            app:startIconTint="@color/primary"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            android:layout_marginBottom="12dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Código Universitario (opcional)"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"
-                            android:layout_marginBottom="6dp" />
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAuthNombre"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName|textCapWords"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <EditText
-                            android:id="@+id/etAuthCodigo"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilAuthCodigo"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_input"
-                            android:hint="Ej. 202201045"
-                            android:inputType="text"
-                            android:padding="13dp"
-                            android:textSize="14sp"
-                            android:textColor="@color/text_primary"
-                            android:textColorHint="@color/text_muted"
-                            android:layout_marginBottom="12dp" />
+                            android:hint="Código universitario (ej. 202201045)"
+                            app:startIconDrawable="@drawable/ic_badge"
+                            app:startIconTint="@color/primary"
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            android:layout_marginBottom="12dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etAuthCodigo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary" />
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
-                    <!-- Correo -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Correo Electrónico (*)"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="6dp" />
-
-                    <EditText
-                        android:id="@+id/etAuthEmail"
+                    <!-- Correo Electrónico -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilAuthEmail"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_input"
-                        android:hint="usuario@unamad.edu.pe"
-                        android:inputType="textEmailAddress"
-                        android:padding="13dp"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_muted"
-                        android:layout_marginBottom="12dp" />
+                        android:hint="Correo electrónico (*)"
+                        app:startIconDrawable="@drawable/ic_email"
+                        app:startIconTint="@color/primary"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        android:layout_marginBottom="12dp">
 
-                    <!-- Contraseña -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Contraseña (*)"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="6dp" />
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAuthEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/etAuthPassword"
+                    <!-- Contraseña con Toggle de Visibilidad -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilAuthPassword"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_input"
-                        android:hint="Mínimo 6 caracteres"
-                        android:inputType="textPassword"
-                        android:padding="13dp"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_primary"
-                        android:textColorHint="@color/text_muted"
-                        android:layout_marginBottom="18dp" />
+                        android:hint="Contraseña (mínimo 6 caracteres)"
+                        app:startIconDrawable="@drawable/ic_lock"
+                        app:startIconTint="@color/primary"
+                        app:endIconMode="password_toggle"
+                        app:endIconTint="@color/text_secondary"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        android:layout_marginBottom="4dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAuthPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Enlace ¿Olvidaste tu contraseña? -->
+                    <TextView
+                        android:id="@+id/tvForgotPassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="¿Olvidaste tu contraseña?"
+                        android:textSize="12.5sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/accent"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="10dp" />
 
                     <ProgressBar
                         android:id="@+id/pbAuth"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="12dp"
+                        android:layout_marginBottom="10dp"
                         android:visibility="gone" />
 
                     <!-- Botón Principal -->
@@ -242,11 +345,11 @@
                         style="@style/Widget.Material3.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="50dp"
+                        android:minHeight="52dp"
                         android:text="Iniciar Sesión"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:cornerRadius="12dp"
+                        app:cornerRadius="14dp"
                         android:backgroundTint="@color/accent"
                         android:layout_marginBottom="14dp" />
 
@@ -267,11 +370,11 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="o continúa con"
+                            android:text="o accede con"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp" />
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp" />
 
                         <View
                             android:layout_width="0dp"
@@ -280,22 +383,37 @@
                             android:background="@color/border_light" />
                     </LinearLayout>
 
-                    <!-- Botón Google Sign-In -->
+                    <!-- Botón Oficial Google Sign-In con Logo G Multicolor -->
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnGoogleSignIn"
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="48dp"
+                        android:minHeight="50dp"
                         android:text="Continuar con Google"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
+                        app:icon="@drawable/ic_google_logo"
+                        app:iconSize="20dp"
+                        app:iconGravity="textStart"
+                        app:iconPadding="10dp"
+                        app:iconTint="@null"
                         app:strokeColor="@color/border_input"
-                        app:cornerRadius="12dp" />
+                        app:cornerRadius="14dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Autenticación segura respaldada por Google Firebase • UNAMAD 2026"
+                android:textSize="11.5sp"
+                android:textColor="@color/text_muted"
+                android:textAlignment="center"
+                android:layout_marginTop="4dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

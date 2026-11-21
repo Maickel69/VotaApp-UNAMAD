@@ -27,12 +27,15 @@ class ResultadosActivity : AppCompatActivity() {
     private lateinit var llResultadosPreguntas: LinearLayout
     private lateinit var tvSinParticipantes: TextView
     private lateinit var llListaParticipantes: LinearLayout
+    private lateinit var btnCompartirResultados: Button
     private lateinit var btnIrAVotar: Button
     private lateinit var btnReiniciarConteo: Button
     private lateinit var btnVolver: Button
 
     private var idEncuesta: String = ""
     private var encuestaActual: Encuesta? = null
+    private var estadisticasActuales: List<PreguntaEstadistica> = emptyList()
+    private var participantesActuales: List<ParticipanteRegistro> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +69,7 @@ class ResultadosActivity : AppCompatActivity() {
         llResultadosPreguntas = findViewById(R.id.llResultadosPreguntas)
         tvSinParticipantes = findViewById(R.id.tvSinParticipantes)
         llListaParticipantes = findViewById(R.id.llListaParticipantes)
+        btnCompartirResultados = findViewById(R.id.btnCompartirResultados)
         btnIrAVotar = findViewById(R.id.btnIrAVotar)
         btnReiniciarConteo = findViewById(R.id.btnReiniciarConteo)
         btnVolver = findViewById(R.id.btnVolver)
@@ -86,8 +90,37 @@ class ResultadosActivity : AppCompatActivity() {
             }
         }
 
+        btnCompartirResultados.setOnClickListener { compartirActaResultados() }
         btnReiniciarConteo.setOnClickListener { mostrarDialogoReiniciarConteo() }
         btnVolver.setOnClickListener { finish() }
+    }
+
+    private fun compartirActaResultados() {
+        val enc = encuestaActual ?: return
+        val acta = StringBuilder().apply {
+            append("ACTA DE ESCRUTINIO - VOTAAPP UNAMAD\n")
+            append("===================================\n")
+            append("Encuesta: ${enc.titulo}\n")
+            append("Categoría: ${enc.categoria} | Estado: ${if (enc.activa) "Activa" else "Cerrada"}\n")
+            append("Organizador: ${enc.creadorNombre}\n")
+            append("Total de participantes: ${participantesActuales.size}\n\n")
+            for ((idx, pe) in estadisticasActuales.withIndex()) {
+                append("${idx + 1}. ${pe.pregunta.texto} (${pe.totalVotosPregunta} votos)\n")
+                for (alt in pe.alternativas) {
+                    val pref = if (alt.esGanadora) "[GANADORA] " else "• "
+                    append("   $pref${alt.texto}: ${alt.votos} voto(s) (${String.format(Locale.US, "%.1f", alt.porcentaje)}%)\n")
+                }
+                append("\n")
+            }
+            append("Generado desde VotaApp UNAMAD (Firebase Cloud)")
+        }.toString()
+
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Resultados: ${enc.titulo}")
+            putExtra(Intent.EXTRA_TEXT, acta)
+        }
+        startActivity(Intent.createChooser(sendIntent, "Compartir Acta de Resultados"))
     }
 
     private fun cargarResultados() {
@@ -98,6 +131,8 @@ class ResultadosActivity : AppCompatActivity() {
             }
             if (encuesta == null) return@obtenerResultados
             encuestaActual = encuesta
+            estadisticasActuales = estadisticas
+            participantesActuales = participantes
 
             tvResultadosTitulo.text = encuesta.titulo
             tvResultadosCategoria.text = encuesta.categoria
@@ -174,9 +209,19 @@ class ResultadosActivity : AppCompatActivity() {
                 text = "Total votos: ${pe.totalVotosPregunta}  •  Modalidad: $tipoTexto"
                 textSize = 12f
                 setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
-                setPadding(0, (2 * densidad).toInt(), 0, (10 * densidad).toInt())
+                setPadding(0, (2 * densidad).toInt(), 0, (8 * densidad).toInt())
             }
             cardPregunta.addView(tvResumenP)
+
+            // Gráfico Circular Animado (DonutChartView)
+            val donut = DonutChartView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (115 * densidad).toInt()
+                ).apply { bottomMargin = (8 * densidad).toInt() }
+                setData(pe.alternativas, pe.totalVotosPregunta)
+            }
+            cardPregunta.addView(donut)
 
             for (alt in pe.alternativas) {
                 val contenedorAlternativa = LinearLayout(this).apply {

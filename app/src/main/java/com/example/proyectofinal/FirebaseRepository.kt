@@ -279,6 +279,95 @@ object FirebaseRepository {
         }
     }
 
+    /**
+     * Carga 2 encuestas institucionales de demostración en Cloud Firestore
+     * asignadas al usuario actual como creador.
+     */
+    fun sembrarEncuestasDemo(onComplete: (Boolean, String?) -> Unit) {
+        val uid = currentUid()
+        if (uid == null) {
+            onComplete(false, "Sesión no iniciada.")
+            return
+        }
+        val autor = currentDisplayName()
+        val fecha = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())
+
+        val enc1Ref = db.collection(COL_ENCUESTAS).document()
+        val p1_1 = UUID.randomUUID().toString()
+        val a1_1_1 = UUID.randomUUID().toString()
+        val a1_1_2 = UUID.randomUUID().toString()
+        val a1_1_3 = UUID.randomUUID().toString()
+
+        val p1_2 = UUID.randomUUID().toString()
+        val a1_2_1 = UUID.randomUUID().toString()
+        val a1_2_2 = UUID.randomUUID().toString()
+        val a1_2_3 = UUID.randomUUID().toString()
+
+        val enc1Data = hashMapOf(
+            "titulo" to "Elección de Delegado Estudiantil EPISI 2026-II",
+            "descripcion" to "Proceso democrático de elección del representante estudiantil para el semestre académico actual.",
+            "categoria" to "Votación",
+            "activa" to true,
+            "fechaCreacion" to fecha,
+            "creadorUid" to uid,
+            "creadorNombre" to autor,
+            "preguntas" to listOf(
+                hashMapOf(
+                    "id" to p1_1,
+                    "texto" to "Seleccione a su candidato preferido para Delegado General EPISI:",
+                    "tipo" to "UNICA",
+                    "alternativas" to listOf(
+                        hashMapOf("id" to a1_1_1, "texto" to "Lista 1: Innovación y Liderazgo"),
+                        hashMapOf("id" to a1_1_2, "texto" to "Lista 2: Unidad y Transparencia"),
+                        hashMapOf("id" to a1_1_3, "texto" to "Voto en Blanco")
+                    )
+                ),
+                hashMapOf(
+                    "id" to p1_2,
+                    "texto" to "¿Qué propuesta considera más urgente para el semestre?",
+                    "tipo" to "UNICA",
+                    "alternativas" to listOf(
+                        hashMapOf("id" to a1_2_1, "texto" to "Talleres prácticos de desarrollo móvil y cloud"),
+                        hashMapOf("id" to a1_2_2, "texto" to "Renovación de laboratorios de cómputo"),
+                        hashMapOf("id" to a1_2_3, "texto" to "Feria tecnológica y hackathon amazónica")
+                    )
+                )
+            )
+        )
+
+        val enc2Ref = db.collection(COL_ENCUESTAS).document()
+        val p2_1 = UUID.randomUUID().toString()
+        val enc2Data = hashMapOf(
+            "titulo" to "Encuesta de Satisfacción de Servicios Académicos UNAMAD",
+            "descripcion" to "Evaluación general sobre la calidad académica, laboratorios y conectividad en el campus universitario.",
+            "categoria" to "Satisfacción",
+            "activa" to true,
+            "fechaCreacion" to fecha,
+            "creadorUid" to uid,
+            "creadorNombre" to autor,
+            "preguntas" to listOf(
+                hashMapOf(
+                    "id" to p2_1,
+                    "texto" to "¿Cómo califica la calidad de los laboratorios y servicios recibidos?",
+                    "tipo" to "UNICA",
+                    "alternativas" to listOf(
+                        hashMapOf("id" to UUID.randomUUID().toString(), "texto" to "Excelente"),
+                        hashMapOf("id" to UUID.randomUUID().toString(), "texto" to "Bueno"),
+                        hashMapOf("id" to UUID.randomUUID().toString(), "texto" to "Regular"),
+                        hashMapOf("id" to UUID.randomUUID().toString(), "texto" to "Por mejorar")
+                    )
+                )
+            )
+        )
+
+        val batch = db.batch()
+        batch.set(enc1Ref, enc1Data)
+        batch.set(enc2Ref, enc2Data)
+        batch.commit()
+            .addOnSuccessListener { onComplete(true, null) }
+            .addOnFailureListener { e -> onComplete(false, e.localizedMessage) }
+    }
+
     // ========================================================================
     // VOTACIÓN ÚNICA POR UID Y RESULTADOS EN TIEMPO REAL
     // ========================================================================

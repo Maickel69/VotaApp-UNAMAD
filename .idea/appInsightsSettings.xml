@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.proyectofinal" />
+                  <option name="mobileSdkAppId" value="1:366573920480:android:c0dc82e9b694eca9cef085" />
+                  <option name="projectId" value="votaapp-unamad-2026" />
+                  <option name="projectNumber" value="366573920480" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
