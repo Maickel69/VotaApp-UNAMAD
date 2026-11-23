@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnCargarDemo: Button
 
     private var cacheEncuestas: List<Encuesta> = emptyList()
+    private var perfilActual: UsuarioPerfil? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +72,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun actualizarSaludo() {
         tvUsuarioActual.text = "Hola, ${FirebaseRepository.currentDisplayName()}"
+        val uid = FirebaseRepository.currentUid() ?: return
+        FirebaseRepository.obtenerPerfilUsuario(uid) { perfil ->
+            if (isFinishing || isDestroyed) return@obtenerPerfilUsuario
+            perfilActual = perfil
+            if (perfil != null && perfil.codigoUniversitario.isNotBlank()) {
+                val infoExtra = if (perfil.carrera.isNotBlank()) " • ${perfil.codigoUniversitario}" else " (${perfil.codigoUniversitario})"
+                tvUsuarioActual.text = "Hola, ${perfil.nombre.ifBlank { FirebaseRepository.currentDisplayName() }}$infoExtra"
+            }
+        }
     }
 
     private fun vincularVistas() {
@@ -187,6 +197,24 @@ class MainActivity : AppCompatActivity() {
             }
             contenedor.addView(etCodigo)
 
+            val spCarrera = Spinner(this).apply {
+                setBackgroundResource(R.drawable.bg_input)
+                adapter = ArrayAdapter(
+                    this@MainActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    CatalogoUnamad.CARRERAS_UNAMAD
+                )
+                val idxActual = CatalogoUnamad.CARRERAS_UNAMAD.indexOfFirst {
+                    it.equals(perfil?.carrera ?: "", ignoreCase = true)
+                }
+                if (idxActual >= 0) setSelection(idxActual)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (46 * d).toInt()
+                ).apply { topMargin = (10 * d).toInt() }
+            }
+            contenedor.addView(spCarrera)
+
             val switchTema = com.google.android.material.materialswitch.MaterialSwitch(this).apply {
                 text = "Modo Oscuro"
                 textSize = 14f
@@ -208,6 +236,7 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("Guardar Perfil") { _, _ ->
                     val nuevoNombre = etNombre.text.toString().trim()
                     val nuevoCodigo = etCodigo.text.toString().trim()
+                    val nuevaCarrera = spCarrera.selectedItem?.toString() ?: ""
                     if (nuevoNombre.length >= 2) {
                         user.updateProfile(
                             UserProfileChangeRequest.Builder().setDisplayName(nuevoNombre).build()
@@ -216,11 +245,14 @@ class MainActivity : AppCompatActivity() {
                             uid,
                             nuevoNombre,
                             nuevoCodigo,
-                            user.email ?: ""
-                        ) { ok, _ ->
+                            user.email ?: "",
+                            nuevaCarrera
+                        ) { ok, err ->
                             if (ok) {
                                 actualizarSaludo()
-                                Toast.makeText(this, "Perfil actualizado en la nube.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Perfil y carrera actualizados.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, err ?: "No se pudo guardar el perfil.", Toast.LENGTH_LONG).show()
                             }
                         }
                     }
@@ -324,7 +356,12 @@ class MainActivity : AppCompatActivity() {
             tvCategoria.text = encuesta.categoria
             tvFecha.text = "${encuesta.fechaCreacion} • Por ${encuesta.creadorNombre}"
             tvDescripcion.text = encuesta.descripcion
-            tvInfo.text = "${encuesta.totalPreguntas} Preguntas  •  ${encuesta.totalVotos} Participantes"
+            val infoBase = "${encuesta.totalPreguntas} Preguntas  •  ${encuesta.totalVotos} Participantes"
+            tvInfo.text = if (encuesta.tieneRestriccionAcceso()) {
+                "$infoBase\n🔒 ${encuesta.etiquetaRestriccion()}"
+            } else {
+                infoBase
+            }
 
             if (encuesta.activa) {
                 tvEstado.text = "Activa"
@@ -346,10 +383,18 @@ class MainActivity : AppCompatActivity() {
                 } else if (encuesta.totalPreguntas == 0) {
                     Toast.makeText(this, "Esta encuesta no tiene preguntas registradas aún.", Toast.LENGTH_SHORT).show()
                 } else {
-                    val intent = Intent(this, RegistrarVotoActivity::class.java).apply {
-                        putExtra(EXTRA_ID_ENCUESTA, encuesta.id)
+                    val (permitido, motivo) = encuesta.verificarAcceso(perfilActual, miUid)
+                    if (!permitido) {
+                        Toast.makeText(this, motivo, Toast.LENGTH_LONG).show()
+                        if (perfilActual?.codigoUniversitario.isNullOrBlank()) {
+                            mostrarDialogoPerfilYCuenta()
+                        }
+                    } else {
+                        val intent = Intent(this, RegistrarVotoActivity::class.java).apply {
+                            putExtra(EXTRA_ID_ENCUESTA, encuesta.id)
+                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
                 }
             }
 

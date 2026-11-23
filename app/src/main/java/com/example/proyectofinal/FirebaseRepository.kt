@@ -42,21 +42,49 @@ object FirebaseRepository {
         nombre: String,
         codigoUniversitario: String,
         email: String,
+        carrera: String? = null,
         onComplete: (Boolean, String?) -> Unit
     ) {
         val ref = db.collection(COL_USERS).document(uid)
-        ref.get().addOnSuccessListener { snap ->
-            val fechaReg = snap.getLong("fechaRegistro") ?: System.currentTimeMillis()
+        val codNormalizado = codigoUniversitario.trim().uppercase()
+
+        // Si ingresó un código universitario, verificar que no esté asignado a otro UID
+        val procederGuardado = { snapActual: com.google.firebase.firestore.DocumentSnapshot ->
+            val fechaReg = snapActual.getLong("fechaRegistro") ?: System.currentTimeMillis()
+            val codigoFinal = codNormalizado.ifBlank { snapActual.getString("codigoUniversitario") ?: "" }
+            val carreraFinal = carrera?.trim()?.ifBlank { null } ?: snapActual.getString("carrera") ?: ""
             val data = hashMapOf(
                 "uid" to uid,
                 "nombre" to nombre.trim().ifEmpty { "Usuario UNAMAD" },
-                "codigoUniversitario" to codigoUniversitario.trim(),
+                "codigoUniversitario" to codigoFinal,
+                "carrera" to carreraFinal,
                 "email" to email.trim(),
                 "fechaRegistro" to fechaReg
             )
             ref.set(data)
                 .addOnSuccessListener { onComplete(true, null) }
                 .addOnFailureListener { e -> onComplete(false, e.localizedMessage) }
+        }
+
+        ref.get().addOnSuccessListener { snap ->
+            if (codNormalizado.isNotBlank()) {
+                db.collection(COL_USERS)
+                    .whereEqualTo("codigoUniversitario", codNormalizado)
+                    .get()
+                    .addOnSuccessListener { querySnap ->
+                        val ocupadoPorOtro = querySnap.documents.any { it.id != uid }
+                        if (ocupadoPorOtro) {
+                            onComplete(false, "El código universitario $codNormalizado ya está registrado por otro estudiante.")
+                        } else {
+                            procederGuardado(snap)
+                        }
+                    }
+                    .addOnFailureListener {
+                        procederGuardado(snap)
+                    }
+            } else {
+                procederGuardado(snap)
+            }
         }.addOnFailureListener { e ->
             onComplete(false, e.localizedMessage)
         }
@@ -71,6 +99,7 @@ object FirebaseRepository {
                             uid = doc.getString("uid") ?: uid,
                             nombre = doc.getString("nombre") ?: "",
                             codigoUniversitario = doc.getString("codigoUniversitario") ?: "",
+                            carrera = doc.getString("carrera") ?: "",
                             email = doc.getString("email") ?: "",
                             fechaRegistro = doc.getLong("fechaRegistro") ?: 0L
                         )
@@ -115,6 +144,8 @@ object FirebaseRepository {
             fechaCreacion = data["fechaCreacion"] as? String ?: "",
             creadorUid = data["creadorUid"] as? String ?: "",
             creadorNombre = data["creadorNombre"] as? String ?: "Usuario",
+            carreraRestringida = data["carreraRestringida"] as? String ?: "TODAS",
+            codigosPermitidos = data["codigosPermitidos"] as? String ?: "",
             preguntas = preguntas,
             totalPreguntas = preguntas.size
         )
@@ -204,7 +235,9 @@ object FirebaseRepository {
         descripcion: String,
         categoria: String,
         activa: Boolean,
-        onComplete: (String?, String?) -> Unit
+        onComplete: (String?, String?) -> Unit,
+        carreraRestringida: String = "TODAS",
+        codigosPermitidos: String = ""
     ) {
         val uid = currentUid()
         if (uid == null) {
@@ -221,6 +254,8 @@ object FirebaseRepository {
             "fechaCreacion" to fecha,
             "creadorUid" to uid,
             "creadorNombre" to currentDisplayName(),
+            "carreraRestringida" to carreraRestringida.ifBlank { "TODAS" },
+            "codigosPermitidos" to codigosPermitidos.trim(),
             "preguntas" to emptyList<Map<String, Any>>()
         )
         docRef.set(data)
@@ -234,13 +269,17 @@ object FirebaseRepository {
         descripcion: String,
         categoria: String,
         activa: Boolean,
-        onComplete: (Boolean, String?) -> Unit
+        onComplete: (Boolean, String?) -> Unit,
+        carreraRestringida: String = "TODAS",
+        codigosPermitidos: String = ""
     ) {
         val updates = hashMapOf<String, Any>(
             "titulo" to titulo.trim(),
             "descripcion" to descripcion.trim(),
             "categoria" to categoria,
-            "activa" to activa
+            "activa" to activa,
+            "carreraRestringida" to carreraRestringida.ifBlank { "TODAS" },
+            "codigosPermitidos" to codigosPermitidos.trim()
         )
         db.collection(COL_ENCUESTAS).document(encuestaId).update(updates)
             .addOnSuccessListener { onComplete(true, null) }

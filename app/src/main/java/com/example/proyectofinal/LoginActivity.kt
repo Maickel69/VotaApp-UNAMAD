@@ -32,10 +32,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvSubtituloLogin: TextView
     private lateinit var llCamposRegistro: LinearLayout
     private lateinit var tilAuthNombre: TextInputLayout
+    private lateinit var tilAuthCodigo: TextInputLayout
     private lateinit var tilAuthEmail: TextInputLayout
     private lateinit var tilAuthPassword: TextInputLayout
     private lateinit var etAuthNombre: EditText
     private lateinit var etAuthCodigo: EditText
+    private lateinit var spCarreraRegistro: Spinner
     private lateinit var etAuthEmail: EditText
     private lateinit var etAuthPassword: EditText
     private lateinit var tvToggleAuthModo: TextView
@@ -100,10 +102,17 @@ class LoginActivity : AppCompatActivity() {
         tvSubtituloLogin = findViewById(R.id.tvSubtituloLogin)
         llCamposRegistro = findViewById(R.id.llCamposRegistro)
         tilAuthNombre = findViewById(R.id.tilAuthNombre)
+        tilAuthCodigo = findViewById(R.id.tilAuthCodigo)
         tilAuthEmail = findViewById(R.id.tilAuthEmail)
         tilAuthPassword = findViewById(R.id.tilAuthPassword)
         etAuthNombre = findViewById(R.id.etAuthNombre)
         etAuthCodigo = findViewById(R.id.etAuthCodigo)
+        spCarreraRegistro = findViewById(R.id.spCarreraRegistro)
+        spCarreraRegistro.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            CatalogoUnamad.CARRERAS_UNAMAD
+        )
         etAuthEmail = findViewById(R.id.etAuthEmail)
         etAuthPassword = findViewById(R.id.etAuthPassword)
         tvToggleAuthModo = findViewById(R.id.tvToggleAuthModo)
@@ -220,12 +229,18 @@ class LoginActivity : AppCompatActivity() {
     private fun registrarConCorreo() {
         val nombre = etAuthNombre.text.toString().trim()
         val codigo = etAuthCodigo.text.toString().trim()
+        val carrera = spCarreraRegistro.selectedItem?.toString() ?: ""
         val email = etAuthEmail.text.toString().trim()
         val password = etAuthPassword.text.toString()
 
         if (nombre.length < 2) {
             tilAuthNombre.error = "Ingresa tu nombre completo"
             etAuthNombre.requestFocus()
+            return
+        }
+        if (codigo.length < 4) {
+            tilAuthCodigo.error = "Ingresa tu código universitario UNAMAD"
+            etAuthCodigo.requestFocus()
             return
         }
         if (email.isEmpty()) {
@@ -248,7 +263,9 @@ class LoginActivity : AppCompatActivity() {
                         .setDisplayName(nombre)
                         .build()
                     user.updateProfile(profileUpdates).addOnCompleteListener {
-                        FirebaseRepository.guardarPerfilUsuario(user.uid, nombre, codigo, email) { _, _ ->
+                        FirebaseRepository.guardarPerfilUsuario(
+                            user.uid, nombre, codigo, email, carrera
+                        ) { _, _ ->
                             mostrarCargando(false)
                             irAMain()
                         }

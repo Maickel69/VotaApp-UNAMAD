@@ -138,15 +138,24 @@ class RegistrarVotoActivity : AppCompatActivity() {
             listaPreguntas.clear()
             listaPreguntas.addAll(encuesta.preguntas)
 
-            FirebaseRepository.yaVotoUsuario(idEncuesta, uid) { votoPrevio ->
-                if (isFinishing || isDestroyed) return@yaVotoUsuario
-                yaVoto = votoPrevio
-                if (votoPrevio) {
-                    etParticipante.isEnabled = false
-                    btnEnviarVoto.isEnabled = false
-                    btnEnviarVoto.text = "Ya Emitiste Tu Voto"
+            FirebaseRepository.obtenerPerfilUsuario(uid) { perfil ->
+                if (isFinishing || isDestroyed) return@obtenerPerfilUsuario
+                val (permitido, motivo) = encuesta.verificarAcceso(perfil, uid)
+                if (!permitido) {
+                    Toast.makeText(this, motivo, Toast.LENGTH_LONG).show()
+                    finish()
+                    return@obtenerPerfilUsuario
                 }
-                construirCuestionarioDinamico(seleccionesRestauradas)
+                FirebaseRepository.yaVotoUsuario(idEncuesta, uid) { votoPrevio ->
+                    if (isFinishing || isDestroyed) return@yaVotoUsuario
+                    yaVoto = votoPrevio
+                    if (votoPrevio) {
+                        etParticipante.isEnabled = false
+                        btnEnviarVoto.isEnabled = false
+                        btnEnviarVoto.text = "Ya Emitiste Tu Voto"
+                    }
+                    construirCuestionarioDinamico(seleccionesRestauradas)
+                }
             }
         }
     }

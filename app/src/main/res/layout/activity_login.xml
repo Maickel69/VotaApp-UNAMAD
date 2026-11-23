@@ -235,7 +235,7 @@
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Código universitario (ej. 202201045)"
+                            android:hint="Código universitario (*) ej. 202201045"
                             app:startIconDrawable="@drawable/ic_badge"
                             app:startIconTint="@color/primary"
                             app:boxCornerRadiusTopStart="12dp"
@@ -252,6 +252,15 @@
                                 android:textSize="14sp"
                                 android:textColor="@color/text_primary" />
                         </com.google.android.material.textfield.TextInputLayout>
+
+                        <Spinner
+                            android:id="@+id/spCarreraRegistro"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/bg_input"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_marginBottom="12dp" />
                     </LinearLayout>
 
                     <!-- Correo Electrónico -->

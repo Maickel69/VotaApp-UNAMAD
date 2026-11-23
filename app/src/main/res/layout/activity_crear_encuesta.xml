@@ -176,7 +176,114 @@
                         android:background="@color/border_light"
                         android:layout_marginBottom="14dp" />
 
-                    <!-- Campo 4: Estado Activa / Cerrada -->
+                    <!-- Campo 4: Restricción por Escuela Profesional UNAMAD -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Escuela Profesional UNAMAD (Filtro Automático)"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="6dp" />
+
+                    <Spinner
+                        android:id="@+id/spCarreraRestringida"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Campo 5: Padrón de Códigos de Estudiante (Excel / Bloc de Notas) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Padrón de Códigos de Estudiante (Opcional)"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:id="@+id/tvContadorCodigos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Abierta"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/accent" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Importa tu lista desde un archivo .txt / .csv de Excel o pega una columna completa de códigos universitarios."
+                        android:textSize="11.5sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnImportarArchivoCodigos"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="42dp"
+                            android:layout_weight="1"
+                            android:text="Importar .TXT / .CSV"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="10dp"
+                            android:layout_marginEnd="6dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPegarCodigos"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="42dp"
+                            android:layout_weight="1"
+                            android:text="Pegar de Excel"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold"
+                            app:cornerRadius="10dp"
+                            android:layout_marginStart="6dp" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etCodigosPermitidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:hint="Vacío = cualquier estudiante. Ej: 202201045, 202201089 o prefijo 2022..."
+                        android:padding="12dp"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
+                        android:minLines="2"
+                        android:maxLines="5"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine"
+                        android:layout_marginBottom="16dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/border_light"
+                        android:layout_marginBottom="14dp" />
+
+                    <!-- Campo 6: Estado Activa / Cerrada -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
