@@ -1,18 +1,21 @@
 import os
 import sys
-import shutil
+import subprocess
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from soporte_informe import (
+    reset_bookmark_ids, configure_unamad_styles,
     set_cell_background, set_cell_margins, set_table_borders,
     add_page_number, add_p, add_heading_1, add_heading_2, add_heading_3,
-    add_code_block, add_apa_figure, add_apa_table
+    add_code_block, add_apa_figure, add_apa_table, add_hyperlinked_index_row
 )
 
 def crear_informe_completo(docx_path):
+    reset_bookmark_ids()
     doc = Document()
+    configure_unamad_styles(doc)
     
     # =========================================================================
     # CONFIGURACIÓN DE PÁGINA A4 Y MÁRGENES UNAMAD
@@ -25,8 +28,9 @@ def crear_informe_completo(docx_path):
     section.right_margin = Cm(2.5)
     section.top_margin = Cm(2.5)
     section.bottom_margin = Cm(2.5)
+    section.different_first_page_header_footer = True
 
-    # Encabezado institucional UNAMAD (Arial, Negro)
+    # Encabezado institucional UNAMAD (páginas 2+, Arial, Negro)
     header = section.header
     hp = header.paragraphs[0]
     hp.alignment = WD_ALIGN_PARAGRAPH.RIGHT
@@ -36,7 +40,7 @@ def crear_informe_completo(docx_path):
     hrun.font.italic = True
     hrun.font.color.rgb = RGBColor(0, 0, 0)
 
-    # Pie de página con numeración y nombre del sistema (Arial, Negro)
+    # Pie de página con numeración y nombre del sistema (páginas 2+, Arial, Negro)
     footer = section.footer
     tbl_footer = footer.add_table(rows=1, cols=2, width=Cm(15.5))
     tbl_footer.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -64,7 +68,9 @@ def crear_informe_completo(docx_path):
     base_dir = r"C:\Users\HP\AndroidStudioProjects\ProyectoFinal\Documentacion"
     diag_dir = os.path.join(base_dir, "diagramas")
     cap_dir = os.path.join(base_dir, "capturas")
-    icon_path = r"C:\Users\HP\AndroidStudioProjects\ProyectoFinal\app\src\main\res\drawable\encuesta.png"
+    crest_path = os.path.join(base_dir, "logo_votaapp_crest.png")
+    fallback_icon_path = r"C:\Users\HP\AndroidStudioProjects\ProyectoFinal\app\src\main\res\drawable\encuesta.png"
+    icon_path = crest_path if os.path.exists(crest_path) else fallback_icon_path
 
     # =========================================================================
     # 4.1. PORTADA OFICIAL (Arial, 100% Negro)
@@ -121,82 +127,22 @@ def crear_informe_completo(docx_path):
     doc.add_page_break()
 
     # =========================================================================
-    # 4.2. ÍNDICE GENERAL, ÍNDICE DE FIGURAS E ÍNDICE DE TABLAS
+    # 4.2. ÍNDICE GENERAL INTERACTIVO (TOC NATIVO DE WORD CON HIPERVÍNCULOS)
     # =========================================================================
     p_ind_title = doc.add_paragraph()
     p_ind_title.paragraph_format.space_before = Pt(4)
-    p_ind_title.paragraph_format.space_after = Pt(2)
+    p_ind_title.paragraph_format.space_after = Pt(4)
     p_ind_title.paragraph_format.keep_with_next = True
     r_itit = p_ind_title.add_run("ÍNDICE GENERAL")
     r_itit.font.name = 'Arial'
     r_itit.font.size = Pt(12)
     r_itit.bold = True
     r_itit.font.color.rgb = RGBColor(0, 0, 0)
-    
-    indice_items = [
-        ("INTRODUCCIÓN", "3"),
-        ("CAPÍTULO I. DESCRIPCIÓN DEL PROYECTO", "4"),
-        ("    1.1. Nombre del Proyecto", "4"),
-        ("    1.2. Descripción del Problema", "4"),
-        ("    1.3. Objetivos (General y Específicos)", "5"),
-        ("    1.4. Justificación (Técnica, Práctica, Académica y Social)", "6"),
-        ("    1.5. Alcance y Limitaciones", "6"),
-        ("    1.6. Usuarios Beneficiarios y Escuelas Profesionales UNAMAD", "7"),
-        ("CAPÍTULO II. ANÁLISIS DE REQUERIMIENTOS", "7"),
-        ("    2.1. Requerimientos Funcionales (RF01 - RF12)", "7"),
-        ("    2.2. Requerimientos No Funcionales (RNF01 - RNF07)", "8"),
-        ("    2.3. Diagrama de Casos de Uso del Sistema", "9"),
-        ("    2.4. Especificación Detallada de Casos de Uso Principales (CU01 - CU03)", "10"),
-        ("CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL Y ARQUITECTURA CLOUD", "11"),
-        ("    3.1. Arquitectura de la Aplicación en Tres Capas y Backend Cloud", "11"),
-        ("    3.2. Diseño de Interfaces de Usuario (6 Activities y Modo Oscuro Obsidian MD3)", "12"),
-        ("    3.3. Diagrama de Navegación y Flujo de Pantallas", "14"),
-        ("    3.4. Diseño de Datos en Cloud Firestore, Reglas de Seguridad y SQLite Local", "15"),
-        ("CAPÍTULO IV. DESARROLLO E IMPLEMENTACIÓN", "18"),
-        ("    4.1. Herramientas, Tecnologías y Pipeline CI/CD con GitHub Actions", "18"),
-        ("    4.2. Estructura Modular del Proyecto en Android Studio", "19"),
-        ("    4.3. Implementación de Funcionalidades por Módulos y Código Fuente Real", "20"),
-        ("    4.4. Seguridad en la Nube (firestore.rules) y Persistencia Híbrida", "25"),
-        ("    4.5. Experiencia de Usuario, Modo Oscuro Obsidian MD3 y Edge-to-Edge", "26"),
-        ("CAPÍTULO V. PRUEBAS Y RESULTADOS", "27"),
-        ("    5.1. Matriz Exhaustiva de Pruebas Funcionales (CP01 - CP12)", "27"),
-        ("    5.2. Evidencias de Ejecución y Validación en Emulador Android 16", "28"),
-        ("    5.3. Dificultades Técnicas Identificadas y Soluciones de Ingeniería", "30"),
-        ("    5.4. Evaluación de Cumplimiento y Resultados", "31"),
-        ("CONCLUSIONES Y RECOMENDACIONES", "31"),
-        ("REFERENCIAS BIBLIOGRÁFICAS", "32")
-    ]
 
-    t_toc = doc.add_table(rows=0, cols=2)
-    t_toc.alignment = WD_TABLE_ALIGNMENT.CENTER
-    t_toc.autofit = False
-    set_table_borders(t_toc, color="FFFFFF", sz="0", val="none")
-    
-    for tit, pag in indice_items:
-        r_toc = t_toc.add_row().cells
-        r_toc[0].width = Cm(14.0)
-        r_toc[1].width = Cm(1.5)
-        
-        p0 = r_toc[0].paragraphs[0]
-        p0.paragraph_format.space_before = Pt(0.2)
-        p0.paragraph_format.space_after = Pt(0.2)
-        p0.paragraph_format.line_spacing = 1.0
-        rt = p0.add_run(tit)
-        rt.font.name = 'Arial'
-        rt.font.size = Pt(8.5)
-        rt.bold = True if ("CAPÍTULO" in tit or "INTRODUCCIÓN" in tit or "CONCLUSIONES" in tit or "REFERENCIAS" in tit) else False
-        rt.font.color.rgb = RGBColor(0, 0, 0)
-            
-        p1 = r_toc[1].paragraphs[0]
-        p1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        p1.paragraph_format.space_before = Pt(0.2)
-        p1.paragraph_format.space_after = Pt(0.2)
-        p1.paragraph_format.line_spacing = 1.0
-        rp = p1.add_run(pag)
-        rp.font.name = 'Arial'
-        rp.font.size = Pt(8.5)
-        rp.bold = True if ("CAPÍTULO" in tit or "INTRODUCCIÓN" in tit) else False
-        rp.font.color.rgb = RGBColor(0, 0, 0)
+    p_toc_marker = doc.add_paragraph()
+    r_marker = p_toc_marker.add_run("[[TOC_INTERACTIVO_WORD]]")
+    r_marker.font.name = 'Arial'
+    r_marker.font.size = Pt(9.5)
 
     # Índice de Figuras
     p_fig_title = doc.add_paragraph()
@@ -210,42 +156,22 @@ def crear_informe_completo(docx_path):
     r_ftit.font.color.rgb = RGBColor(0, 0, 0)
 
     figuras_items = [
-        ("Figura 1. Diagrama de Casos de Uso del Sistema VotaApp UNAMAD", "9"),
-        ("Figura 2. Diagrama de Arquitectura Modular en Tres Capas y Backend Firebase Cloud", "12"),
-        ("Figura 3. Prototipos de Pantallas: Acceso, Panel Principal Cloud, Creación y Preguntas", "13"),
-        ("Figura 4. Prototipos de Pantallas: Registro de Votación y Resultados con DonutChartView", "14"),
-        ("Figura 5. Diagrama de Estados y Navegación entre las 6 Activities del Sistema", "15"),
-        ("Figura 6. Modelo de Datos Híbrido: Colecciones Cloud Firestore y Esquema Relacional SQLite", "16"),
-        ("Figura 7. Estructura Oficial de Paquetes, Módulos Kotlin y Recursos en Android Studio", "19"),
-        ("Figura 8. Capturas Reales en Emulador: Login OAuth, Panel Principal, Creación y Preguntas", "29"),
-        ("Figura 9. Capturas Reales en Emulador: Votación Tonal y Resultados con DonutChartView", "30")
+        "Figura 1. Diagrama de Casos de Uso del Sistema VotaApp UNAMAD",
+        "Figura 2. Diagrama de Arquitectura Modular en Tres Capas y Backend Firebase Cloud",
+        "Figura 3. Prototipos de Pantallas: Acceso, Panel Principal Cloud, Creación y Preguntas",
+        "Figura 4. Prototipos de Pantallas: Registro de Votación y Resultados con DonutChartView",
+        "Figura 5. Diagrama de Estados y Navegación entre las 6 Activities del Sistema",
+        "Figura 6. Modelo de Datos Híbrido: Colecciones Cloud Firestore y Esquema Relacional SQLite",
+        "Figura 7. Estructura Oficial de Paquetes, Módulos Kotlin y Recursos en Android Studio",
+        "Figura 8. Capturas Reales en Emulador: Login OAuth, Panel Principal, Creación y Preguntas",
+        "Figura 9. Capturas Reales en Emulador: Votación Tonal y Resultados con DonutChartView"
     ]
     t_fig_toc = doc.add_table(rows=0, cols=2)
     t_fig_toc.alignment = WD_TABLE_ALIGNMENT.CENTER
     t_fig_toc.autofit = False
     set_table_borders(t_fig_toc, color="FFFFFF", sz="0", val="none")
-    for tit, pag in figuras_items:
-        r_f = t_fig_toc.add_row().cells
-        r_f[0].width = Cm(14.0)
-        r_f[1].width = Cm(1.5)
-        pf0 = r_f[0].paragraphs[0]
-        pf0.paragraph_format.space_before = Pt(0.2)
-        pf0.paragraph_format.space_after = Pt(0.2)
-        pf0.paragraph_format.line_spacing = 1.0
-        rf0 = pf0.add_run(tit)
-        rf0.font.name = 'Arial'
-        rf0.font.size = Pt(8.0)
-        rf0.font.italic = True
-        rf0.font.color.rgb = RGBColor(0, 0, 0)
-        pf1 = r_f[1].paragraphs[0]
-        pf1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        pf1.paragraph_format.space_before = Pt(0.2)
-        pf1.paragraph_format.space_after = Pt(0.2)
-        pf1.paragraph_format.line_spacing = 1.0
-        rf1 = pf1.add_run(pag)
-        rf1.font.name = 'Arial'
-        rf1.font.size = Pt(8.0)
-        rf1.font.color.rgb = RGBColor(0, 0, 0)
+    for idx, tit in enumerate(figuras_items, start=1):
+        add_hyperlinked_index_row(t_fig_toc, tit, f"fig_{idx}", italic_title=True, font_size=8.5)
 
     # Índice de Tablas
     p_tab_title = doc.add_paragraph()
@@ -259,43 +185,23 @@ def crear_informe_completo(docx_path):
     r_ttit.font.color.rgb = RGBColor(0, 0, 0)
 
     tablas_items = [
-        ("Tabla 1. Especificación de Requerimientos Funcionales (RF01 - RF12)", "8"),
-        ("Tabla 2. Especificación de Requerimientos No Funcionales (RNF01 - RNF07)", "9"),
-        ("Tabla 3. Diccionario de Datos Cloud Firestore: Colección 'users/{uid}'", "16"),
-        ("Tabla 4. Diccionario de Datos Cloud Firestore: Colección 'encuestas/{encuestaId}'", "17"),
-        ("Tabla 5. Diccionario de Datos Cloud Firestore: Subcolección 'encuestas/{encuestaId}/votos/{voterUid}'", "17"),
-        ("Tabla 6. Estructura de Respaldo Local SQLite (encuestas_unamad.db)", "18"),
-        ("Tabla 7. Stack de Herramientas, Servicios Cloud y Pipeline CI/CD", "18"),
-        ("Tabla 8. Matriz de Casos de Prueba Funcionales (CP01 - CP12)", "27"),
-        ("Tabla 9. Matriz de Dificultades Técnicas y Soluciones de Ingeniería", "30"),
-        ("Tabla 10. Matriz de Trazabilidad y Evaluación de Cumplimiento", "31")
+        "Tabla 1. Especificación de Requerimientos Funcionales (RF01 - RF12)",
+        "Tabla 2. Especificación de Requerimientos No Funcionales (RNF01 - RNF07)",
+        "Tabla 3. Diccionario de Datos Cloud Firestore: Colección 'users/{uid}'",
+        "Tabla 4. Diccionario de Datos Cloud Firestore: Colección 'encuestas/{encuestaId}'",
+        "Tabla 5. Diccionario de Datos Cloud Firestore: Subcolección 'encuestas/{encuestaId}/votos/{voterUid}'",
+        "Tabla 6. Estructura de Respaldo Local SQLite (encuestas_unamad.db)",
+        "Tabla 7. Stack de Herramientas, Servicios Cloud y Pipeline CI/CD",
+        "Tabla 8. Matriz de Casos de Prueba Funcionales (CP01 - CP12)",
+        "Tabla 9. Matriz de Dificultades Técnicas y Soluciones de Ingeniería",
+        "Tabla 10. Matriz de Trazabilidad y Evaluación de Cumplimiento"
     ]
     t_tab_toc = doc.add_table(rows=0, cols=2)
     t_tab_toc.alignment = WD_TABLE_ALIGNMENT.CENTER
     t_tab_toc.autofit = False
     set_table_borders(t_tab_toc, color="FFFFFF", sz="0", val="none")
-    for tit, pag in tablas_items:
-        r_t = t_tab_toc.add_row().cells
-        r_t[0].width = Cm(14.0)
-        r_t[1].width = Cm(1.5)
-        pt0 = r_t[0].paragraphs[0]
-        pt0.paragraph_format.space_before = Pt(0.2)
-        pt0.paragraph_format.space_after = Pt(0.2)
-        pt0.paragraph_format.line_spacing = 1.0
-        rt0 = pt0.add_run(tit)
-        rt0.font.name = 'Arial'
-        rt0.font.size = Pt(8.0)
-        rt0.font.italic = True
-        rt0.font.color.rgb = RGBColor(0, 0, 0)
-        pt1 = r_t[1].paragraphs[0]
-        pt1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        pt1.paragraph_format.space_before = Pt(0.2)
-        pt1.paragraph_format.space_after = Pt(0.2)
-        pt1.paragraph_format.line_spacing = 1.0
-        rt1 = pt1.add_run(pag)
-        rt1.font.name = 'Arial'
-        rt1.font.size = Pt(8.0)
-        rt1.font.color.rgb = RGBColor(0, 0, 0)
+    for idx, tit in enumerate(tablas_items, start=1):
+        add_hyperlinked_index_row(t_tab_toc, tit, f"tab_{idx}", italic_title=True, font_size=8.5)
 
     doc.add_page_break()
 
@@ -900,12 +806,32 @@ private fun importarCodigosDesdeUri(uri: Uri) {
         r3.font.color.rgb = RGBColor(0, 0, 0)
 
     doc.save(docx_path)
-    print(f"Documento DOCX generado exitosamente en: {docx_path}")
+    print(f"Documento DOCX base generado exitosamente en: {docx_path}")
 
-    # Copia sincronizada en Informe_WordCraft_VotaApp_UNAMAD.docx
-    wordcraft_copy = os.path.join(os.path.dirname(docx_path), "Informe_WordCraft_VotaApp_UNAMAD.docx")
-    shutil.copy2(docx_path, wordcraft_copy)
-    print(f"Copia WordCraft generada exitosamente en: {wordcraft_copy}")
+    # Actualizar TOC nativo, campos PAGEREF, exportar PDF con marcadores y sincronizar copia WordCraft
+    doc_dir = os.path.dirname(os.path.abspath(docx_path))
+    wordcraft_copy = os.path.join(doc_dir, "Informe_WordCraft_VotaApp_UNAMAD.docx")
+    pdf_path = os.path.splitext(docx_path)[0] + ".pdf"
+    ps1_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "actualizar_toc_y_pdf.ps1")
+
+    subprocess.run(
+        [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            ps1_path,
+            "-DocxPath",
+            docx_path,
+            "-WordCraftCopyPath",
+            wordcraft_copy,
+            "-PdfPath",
+            pdf_path,
+        ],
+        check=True,
+    )
+    print(f"TOC interactivo, PDF y copia WordCraft actualizados exitosamente.")
 
 if __name__ == "__main__":
     out_docx = r"C:\Users\HP\AndroidStudioProjects\ProyectoFinal\Documentacion\Informe_Tecnico_Encuestas_Votaciones_UNAMAD.docx"

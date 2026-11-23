@@ -4,8 +4,144 @@ from docx import Document
 from docx.shared import Inches, Pt, RGBColor, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
+from docx.oxml import OxmlElement, parse_xml
+from docx.oxml.ns import nsdecls, qn
+
+_BOOKMARK_ID = 1000
+
+def reset_bookmark_ids():
+    global _BOOKMARK_ID
+    _BOOKMARK_ID = 1000
+
+def add_bookmark_to_paragraph(p, bookmark_name):
+    global _BOOKMARK_ID
+    bm_id = str(_BOOKMARK_ID)
+    _BOOKMARK_ID += 1
+    p_el = p._p
+    pPr = p_el.find(qn('w:pPr'))
+    bm_start = OxmlElement('w:bookmarkStart')
+    bm_start.set(qn('w:id'), bm_id)
+    bm_start.set(qn('w:name'), bookmark_name)
+    bm_end = OxmlElement('w:bookmarkEnd')
+    bm_end.set(qn('w:id'), bm_id)
+    if pPr is not None:
+        pPr.addnext(bm_start)
+    else:
+        p_el.insert(0, bm_start)
+    p_el.append(bm_end)
+    return bm_id
+
+def _build_run_rPr(font_size=8.5, italic=False, bold=False, color="000000"):
+    rPr = OxmlElement('w:rPr')
+    rFonts = OxmlElement('w:rFonts')
+    rFonts.set(qn('w:ascii'), 'Arial')
+    rFonts.set(qn('w:hAnsi'), 'Arial')
+    rFonts.set(qn('w:cs'), 'Arial')
+    rPr.append(rFonts)
+    if bold:
+        rPr.append(OxmlElement('w:b'))
+        rPr.append(OxmlElement('w:bCs'))
+    if italic:
+        rPr.append(OxmlElement('w:i'))
+        rPr.append(OxmlElement('w:iCs'))
+    color_el = OxmlElement('w:color')
+    color_el.set(qn('w:val'), color)
+    rPr.append(color_el)
+    sz_val = str(int(round(font_size * 2)))
+    sz = OxmlElement('w:sz')
+    sz.set(qn('w:val'), sz_val)
+    rPr.append(sz)
+    szCs = OxmlElement('w:szCs')
+    szCs.set(qn('w:val'), sz_val)
+    rPr.append(szCs)
+    u = OxmlElement('w:u')
+    u.set(qn('w:val'), 'none')
+    rPr.append(u)
+    return rPr
+
+def configure_unamad_styles(doc):
+    style_specs = [
+        ('Normal', 11, False),
+        ('Heading 1', 13, True),
+        ('Heading 2', 11.5, True),
+        ('Heading 3', 11, True),
+    ]
+    for style_name, size_pt, is_bold in style_specs:
+        style = doc.styles[style_name]
+        style.font.name = 'Arial'
+        style.font.size = Pt(size_pt)
+        style.font.bold = is_bold
+        style.font.color.rgb = RGBColor(0, 0, 0)
+        rPr = style._element.get_or_add_rPr()
+        rFonts = rPr.find(qn('w:rFonts'))
+        if rFonts is None:
+            rFonts = OxmlElement('w:rFonts')
+            rPr.insert(0, rFonts)
+        for attr in ('w:ascii', 'w:hAnsi', 'w:cs', 'w:eastAsia'):
+            rFonts.set(qn(attr), 'Arial')
+        for theme_attr in ('w:asciiTheme', 'w:hAnsiTheme', 'w:cstheme', 'w:eastAsiaTheme'):
+            if qn(theme_attr) in rFonts.attrib:
+                del rFonts.attrib[qn(theme_attr)]
+
+def add_hyperlinked_index_row(table, title_text, bookmark_name, italic_title=True, font_size=8.5):
+    row_cells = table.add_row().cells
+    row_cells[0].width = Cm(14.0)
+    row_cells[1].width = Cm(1.5)
+    set_cell_margins(row_cells[0], top=15, bottom=15, left=20, right=40)
+    set_cell_margins(row_cells[1], top=15, bottom=15, left=20, right=20)
+
+    # Columna 0: Hipervínculo interno hacia el marcador
+    p0 = row_cells[0].paragraphs[0]
+    p0.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    p0.paragraph_format.space_before = Pt(0.2)
+    p0.paragraph_format.space_after = Pt(0.2)
+    p0.paragraph_format.line_spacing = 1.0
+
+    hyperlink = OxmlElement('w:hyperlink')
+    hyperlink.set(qn('w:anchor'), bookmark_name)
+    hyperlink.set(qn('w:history'), '1')
+    r_link = OxmlElement('w:r')
+    r_link.append(_build_run_rPr(font_size=font_size, italic=italic_title, color="000000"))
+    t_link = OxmlElement('w:t')
+    t_link.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    t_link.text = title_text
+    r_link.append(t_link)
+    hyperlink.append(r_link)
+    p0._p.append(hyperlink)
+
+    # Columna 1: Campo Word PAGEREF interactivo (\h)
+    p1 = row_cells[1].paragraphs[0]
+    p1.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p1.paragraph_format.space_before = Pt(0.2)
+    p1.paragraph_format.space_after = Pt(0.2)
+    p1.paragraph_format.line_spacing = 1.0
+
+    def _make_field_run(child_el):
+        r = OxmlElement('w:r')
+        r.append(_build_run_rPr(font_size=font_size, italic=False, color="000000"))
+        r.append(child_el)
+        return r
+
+    fld_begin = OxmlElement('w:fldChar')
+    fld_begin.set(qn('w:fldCharType'), 'begin')
+    p1._p.append(_make_field_run(fld_begin))
+
+    instr = OxmlElement('w:instrText')
+    instr.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    instr.text = f' PAGEREF {bookmark_name} \\h '
+    p1._p.append(_make_field_run(instr))
+
+    fld_sep = OxmlElement('w:fldChar')
+    fld_sep.set(qn('w:fldCharType'), 'separate')
+    p1._p.append(_make_field_run(fld_sep))
+
+    t_placeholder = OxmlElement('w:t')
+    t_placeholder.text = '0'
+    p1._p.append(_make_field_run(t_placeholder))
+
+    fld_end = OxmlElement('w:fldChar')
+    fld_end.set(qn('w:fldCharType'), 'end')
+    p1._p.append(_make_field_run(fld_end))
 
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -82,11 +218,18 @@ def add_p(doc, text="", style='Normal', space_before=0, space_after=1.8, line_sp
         run.font.color.rgb = font_color
     return p
 
+def _set_outline_level(p, level):
+    pPr = p._p.get_or_add_pPr()
+    for old in pPr.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}outlineLvl'):
+        pPr.remove(old)
+    pPr.append(parse_xml(f'<w:outlineLvl {nsdecls("w")} w:val="{level}"/>'))
+
 def add_heading_1(doc, text):
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(7)
-    p.paragraph_format.space_after = Pt(2.5)
+    p = doc.add_paragraph(style='Heading 1')
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(3)
     p.paragraph_format.keep_with_next = True
+    _set_outline_level(p, 0)
     run = p.add_run(text)
     run.font.name = 'Arial'
     run.font.size = Pt(13)
@@ -95,10 +238,11 @@ def add_heading_1(doc, text):
     return p
 
 def add_heading_2(doc, text):
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(5)
-    p.paragraph_format.space_after = Pt(1.5)
+    p = doc.add_paragraph(style='Heading 2')
+    p.paragraph_format.space_before = Pt(6)
+    p.paragraph_format.space_after = Pt(2)
     p.paragraph_format.keep_with_next = True
+    _set_outline_level(p, 1)
     run = p.add_run(text)
     run.font.name = 'Arial'
     run.font.size = Pt(11.5)
@@ -107,10 +251,11 @@ def add_heading_2(doc, text):
     return p
 
 def add_heading_3(doc, text):
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(3.5)
-    p.paragraph_format.space_after = Pt(1)
+    p = doc.add_paragraph(style='Heading 3')
+    p.paragraph_format.space_before = Pt(4)
+    p.paragraph_format.space_after = Pt(1.5)
     p.paragraph_format.keep_with_next = True
+    _set_outline_level(p, 2)
     run = p.add_run(text)
     run.font.name = 'Arial'
     run.font.size = Pt(11)
@@ -171,6 +316,7 @@ def add_apa_figure(doc, figure_num, figure_title, img_path, note_text=None, widt
     r_num.font.size = Pt(10)
     r_num.bold = True
     r_num.font.color.rgb = RGBColor(0, 0, 0)
+    add_bookmark_to_paragraph(p_num, f"fig_{figure_num}")
     
     # Línea 2: Título en Cursiva
     p_title = doc.add_paragraph()
@@ -235,6 +381,7 @@ def add_apa_table(doc, table_num, table_title, col_widths, headers, rows_data, n
     r_num.font.size = Pt(10)
     r_num.bold = True
     r_num.font.color.rgb = RGBColor(0, 0, 0)
+    add_bookmark_to_paragraph(p_num, f"tab_{table_num}")
     
     # Línea 2: Título en Cursiva
     p_title = doc.add_paragraph()
