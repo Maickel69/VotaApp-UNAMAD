@@ -1,43 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Escudo Heráldico Institucional VotaApp UNAMAD (Zona Segura 66dp en Viewport 108dp) -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
     <group
-        android:scaleX="0.72"
-        android:scaleY="0.72"
-        android:translateX="15.12"
-        android:translateY="15.12">
+        android:scaleX="0.66"
+        android:scaleY="0.66"
+        android:translateX="22.32"
+        android:translateY="21.99">
+
+        <!-- Sombra suave inferior para relieve sobre el fondo Obsidian -->
+        <path
+            android:fillColor="#48000000"
+            android:pathData="M48,10 L83,24 L83,52 C83,73.5 68.5,88.5 48,95 C27.5,88.5 13,73.5 13,52 L13,24 Z" />
+
+        <!-- Escudo Institucional Exterior con Borde Dorado UNAMAD -->
         <path
             android:fillColor="#0F2460"
             android:strokeColor="#FBBF24"
             android:strokeWidth="3.2"
-            android:pathData="M54,10 L88,24 L88,52 C88,73.5 73.5,88.5 54,95 C34.5,88.5 20,73.5 20,52 L20,24 Z" />
+            android:strokeLineJoin="round"
+            android:pathData="M48,6 L82,20 L82,48 C82,69.5 67.5,84.5 48,91 C28.5,84.5 14,69.5 14,48 L14,20 Z" />
+
+        <!-- Resplandor Interior del Escudo -->
         <path
             android:fillColor="#1E3A8A"
-            android:pathData="M54,15 L83,27.5 L83,51.5 C83,70 70.5,83.5 54,89.5 C37.5,83.5 25,70 25,51.5 L25,27.5 Z" />
+            android:pathData="M48,11 L77,23.5 L77,47.5 C77,66 64.5,79.5 48,85.5 C31.5,79.5 19,66 19,47.5 L19,23.5 Z" />
+
+        <!-- Cuerpo de la Urna Electoral (Base Frontal) -->
         <path
             android:fillColor="#DBEAFE"
-            android:pathData="M32,52 L76,52 L73,77 C72.6,79.5 70.5,81 68,81 L40,81 C37.5,81 35.4,79.5 35,77 Z" />
+            android:pathData="M26,48 L70,48 L67,73 C66.6,75.5 64.5,77 62,77 L34,77 C31.5,77 29.4,75.5 29,73 Z" />
+
+        <!-- Sombra Lateral Derecha de la Urna para Profundidad 3D -->
         <path
             android:fillColor="#93C5FD"
-            android:pathData="M54,52 L76,52 L73,77 C72.6,79.5 70.5,81 68,81 L54,81 Z" />
+            android:pathData="M48,48 L70,48 L67,73 C66.6,75.5 64.5,77 62,77 L48,77 Z" />
+
+        <!-- Tapa Superior de la Urna -->
         <path
             android:fillColor="#F8FAFC"
-            android:pathData="M29,47 C29,45.3 30.3,44 32,44 L76,44 C77.7,44 79,45.3 79,47 L79,52 L29,52 Z" />
+            android:pathData="M23,43 C23,41.3 24.3,40 26,40 L70,40 C71.7,40 73,41.3 73,43 L73,48 L23,48 Z" />
+
+        <!-- Ranura de Sufragio en la Tapa -->
+        <path
+            android:fillColor="#090E1A"
+            android:pathData="M34,43 L62,43 C63.1,43 64,43.9 64,45 C64,46.1 63.1,47 62,47 L34,47 C32.9,47 32,46.1 32,45 C32,43.9 32.9,43 34,43 Z" />
+
+        <!-- Cédula de Votación Ingresando en la Urna -->
         <path
             android:fillColor="#FFFFFF"
             android:strokeColor="#60A5FA"
-            android:strokeWidth="1.5"
-            android:pathData="M42,23 L66,23 C67.7,23 69,24.3 69,26 L69,49 L39,49 L39,26 C39,24.3 40.3,23 42,23 Z" />
+            android:strokeWidth="1.6"
+            android:pathData="M36,19 L60,19 C61.7,19 63,20.3 63,22 L63,45 L33,45 L33,22 C33,20.3 34.3,19 36,19 Z" />
+
+        <!-- Círculo de Verificación Verde Esmeralda en la Cédula -->
         <path
             android:fillColor="#10B981"
-            android:pathData="M54,36 m-9,0 a9,9 0 1,0 18,0 a9,9 0 1,0 -18,0" />
+            android:pathData="M48,32 m-9.2,0 a9.2,9.2 0 1,0 18.4,0 a9.2,9.2 0 1,0 -18.4,0" />
+
+        <!-- Check Blanco de Voto Verificado -->
         <path
             android:strokeColor="#FFFFFF"
             android:strokeWidth="3.0"
             android:strokeLineCap="round"
             android:strokeLineJoin="round"
-            android:pathData="M49.8,36.2 L52.8,39.2 L58.6,33.2" />
+            android:pathData="M43.6,32.2 L46.8,35.4 L52.8,29.0" />
+
+        <!-- Barras Estadísticas en la Base de la Urna -->
+        <path
+            android:fillColor="#1E3A8A"
+            android:pathData="M37,63 L42,63 L42,71 L37,71 Z M45.5,57 L50.5,57 L50.5,71 L45.5,71 Z M54,60 L59,60 L59,71 L54,71 Z" />
     </group>
 </vector>
