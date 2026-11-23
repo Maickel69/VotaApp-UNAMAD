@@ -1,14 +1,16 @@
 package com.example.proyectofinal
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -259,7 +261,8 @@ class ResultadosActivity : AppCompatActivity() {
                 val porcentajeFormateado = String.format(Locale.US, "%.1f", alt.porcentaje)
                 val tvVotosAlt = TextView(this).apply {
                     text = "${alt.votos} voto(s) ($porcentajeFormateado%)"
-                    textSize = 12f
+                    textSize = 12.5f
+                    fontFeatureSettings = "tnum"
                     setTypeface(null, if (alt.esGanadora) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
                     setTextColor(ContextCompat.getColor(context, if (alt.esGanadora) R.color.warning else R.color.accent))
                 }
@@ -268,9 +271,10 @@ class ResultadosActivity : AppCompatActivity() {
                 filaTexto.addView(tvVotosAlt)
                 contenedorAlternativa.addView(filaTexto)
 
+                val progresoObjetivo = (alt.porcentaje * 10f).roundToInt()
                 val pb = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply {
                     max = 1000
-                    progress = (alt.porcentaje * 10f).roundToInt()
+                    progress = 0
                     progressDrawable = ContextCompat.getDrawable(
                         this@ResultadosActivity,
                         if (alt.esGanadora) R.drawable.bg_progress_bar_winner else R.drawable.bg_progress_bar
@@ -279,6 +283,11 @@ class ResultadosActivity : AppCompatActivity() {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         (10 * densidad).toInt()
                     ).apply { topMargin = (6 * densidad).toInt() }
+                }
+                ObjectAnimator.ofInt(pb, "progress", 0, progresoObjetivo).apply {
+                    duration = 550L
+                    interpolator = DecelerateInterpolator()
+                    start()
                 }
                 contenedorAlternativa.addView(pb)
                 cardPregunta.addView(contenedorAlternativa)
@@ -322,7 +331,7 @@ class ResultadosActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoReiniciarConteo() {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Confirmar Reinicio de Conteo")
             .setMessage("¿Está seguro de reiniciar los votos a 0 para esta encuesta?\n\nEsta acción eliminará todas las respuestas registradas en la nube.")
             .setIcon(android.R.drawable.ic_dialog_alert)

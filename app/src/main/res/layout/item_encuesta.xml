@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tarjeta individual para mostrar una encuesta en la lista de MainActivity -->
+<!-- Tarjeta individual Material 3 Expressive para mostrar una encuesta en MainActivity -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="14dp"
+    android:layout_marginBottom="16dp"
     app:cardBackgroundColor="@color/card_background"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/border_light">
@@ -15,44 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="18dp">
 
-        <!-- Fila 1: Título y Badge de Estado (Activa / Cerrada) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/tvItemTitulo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Título de la Encuesta"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:lineSpacingExtra="2dp" />
-
-            <TextView
-                android:id="@+id/tvItemEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Activa"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:background="@drawable/bg_badge_active"
-                android:textColor="@color/success"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
-
-        <!-- Fila 2: Categoría y Fecha de creación -->
+        <!-- Fila 1: Chips de Categoría, Restricción de Acceso y Estado (Activa / Cerrada) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,22 +32,68 @@
                 android:text="Satisfacción"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:letterSpacing="0.02"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:background="@drawable/bg_badge_category"
                 android:textColor="@color/info" />
 
             <TextView
-                android:id="@+id/tvItemFecha"
+                android:id="@+id/tvItemAcceso"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2026-11-01 10:00"
-                android:textSize="12sp"
-                android:textColor="@color/text_muted"
-                android:layout_marginStart="10dp" />
+                android:text="Padrón UNAMAD"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:drawablePadding="4dp"
+                app:drawableStartCompat="@drawable/ic_lock"
+                android:paddingStart="9dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_badge_restricted"
+                android:textColor="@color/purple_badge"
+                android:layout_marginStart="6dp"
+                android:visibility="gone" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/tvItemEstado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Activa"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_badge_active"
+                android:textColor="@color/success"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
+
+        <!-- Fila 2: Título principal con jerarquía tipográfica clara -->
+        <TextView
+            android:id="@+id/tvItemTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Título de la Encuesta"
+            android:textSize="17.5sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/text_primary"
+            android:lineSpacingExtra="2dp"
+            android:layout_marginBottom="6dp" />
 
         <!-- Fila 3: Descripción de la encuesta -->
         <TextView
@@ -92,28 +103,39 @@
             android:text="Descripción detallada de la encuesta para orientar al participante..."
             android:textSize="13.5sp"
             android:textColor="@color/text_secondary"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="3dp"
             android:maxLines="3"
             android:ellipsize="end"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Fila 4: Autor y fecha -->
+        <TextView
+            android:id="@+id/tvItemFecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2026-11-01 10:00 • Por Autor"
+            android:textSize="11.5sp"
+            android:textColor="@color/text_muted"
             android:layout_marginBottom="12dp" />
 
-        <!-- Fila 4: Métricas rápidas -->
+        <!-- Fila 5: Franja tonal de métricas rápidas (Tabular Numerals) -->
         <TextView
             android:id="@+id/tvItemInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="3 Preguntas  •  4 Participantes"
-            android:textSize="12sp"
+            android:textSize="12.5sp"
             android:textStyle="bold"
-            android:textColor="@color/primary"
-            android:background="@drawable/bg_info_pill"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"
-            android:layout_marginBottom="12dp" />
+            android:fontFeatureSettings="tnum"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/bg_surface_tonal"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:layout_marginBottom="14dp" />
 
-        <!-- Fila 5: Acciones Principales (Votar y Resultados) -->
+        <!-- Fila 6: Acciones Principales (48dp touch targets per Android MD3 guidelines) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -124,10 +146,9 @@
                 android:id="@+id/btnItemVotar"
                 style="@style/Widget.Material3.Button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:minHeight="44dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="Votar"
+                android:text="Emitir Voto"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:maxLines="1"
@@ -135,11 +156,11 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/ic_vote"
-                app:iconSize="16dp"
+                app:iconSize="17dp"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
                 app:iconTint="@color/white"
-                app:cornerRadius="10dp"
+                app:cornerRadius="12dp"
                 android:layout_marginEnd="6dp"
                 android:backgroundTint="@color/accent" />
 
@@ -147,8 +168,7 @@
                 android:id="@+id/btnItemResultados"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:minHeight="44dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="Resultados"
                 android:textSize="13sp"
@@ -158,11 +178,11 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 app:icon="@drawable/ic_chart"
-                app:iconSize="16dp"
+                app:iconSize="17dp"
                 app:iconGravity="textStart"
                 app:iconPadding="6dp"
                 app:iconTint="@color/primary"
-                app:cornerRadius="10dp"
+                app:cornerRadius="12dp"
                 android:layout_marginStart="6dp" />
         </LinearLayout>
 

@@ -20,11 +20,17 @@
     <color name="info">#0369A1</color>             <!-- Celeste Informativo -->
     <color name="info_light">#E0F2FE</color>       <!-- Celeste Claro -->
 
-    <!-- Colores Neutros y Superficies -->
+    <!-- Colores Neutros y Superficies Tonales MD3 (Modo Claro) -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="background_light">#F1F5F9</color> <!-- Fondo General -->
-    <color name="card_background">#FFFFFF</color>  <!-- Fondo de Tarjetas -->
+    <color name="card_background">#FFFFFF</color>  <!-- Superficie Principal de Tarjetas -->
+    <color name="surface_container_low">#F8FAFC</color> <!-- Contenedor Tonal Bajo -->
+    <color name="surface_container_high">#EEF2F6</color> <!-- Contenedor Tonal Alto / Footer -->
+    <color name="surface_option_selected">#EFF6FF</color> <!-- Opción Seleccionada -->
+    <color name="border_option_selected">#2563EB</color> <!-- Borde Opción Seleccionada -->
+    <color name="purple_badge">#6D28D9</color>     <!-- Texto Badge Restricción Código -->
+    <color name="purple_badge_bg">#F3E8FF</color>  <!-- Fondo Badge Restricción Código -->
     <color name="border_light">#E2E8F0</color>     <!-- Borde Sutil -->
     <color name="border_input">#CBD5E1</color>     <!-- Borde de Inputs -->
     <color name="text_primary">#0F172A</color>     <!-- Texto Principal -->

@@ -20,12 +20,18 @@
     <color name="info">#38BDF8</color>             <!-- Celeste Brillante -->
     <color name="info_light">#0C4A6E</color>       <!-- Fondo Badge Categoría Oscuro -->
 
-    <!-- Colores Neutros y Superficies Nocturnas -->
+    <!-- Colores Neutros y Superficies Tonales MD3 (Modo Oscuro Obsidian) -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="background_light">#0B1120</color> <!-- Fondo Obsidian Midnight -->
-    <color name="card_background">#131C31</color>  <!-- Superficie Elevada de Tarjetas -->
-    <color name="border_light">#1E293B</color>     <!-- Borde Slate Oscuro -->
+    <color name="background_light">#090E1A</color> <!-- Fondo Obsidian Midnight -->
+    <color name="card_background">#121B2E</color>  <!-- Superficie Elevada de Tarjetas -->
+    <color name="surface_container_low">#0D1526</color> <!-- Contenedor Tonal Bajo -->
+    <color name="surface_container_high">#1A2640</color> <!-- Contenedor Tonal Alto / Footer -->
+    <color name="surface_option_selected">#172B56</color> <!-- Opción Seleccionada Oscura -->
+    <color name="border_option_selected">#60A5FA</color> <!-- Borde Opción Seleccionada -->
+    <color name="purple_badge">#C4B5FD</color>     <!-- Texto Badge Restricción Código -->
+    <color name="purple_badge_bg">#2E1065</color>  <!-- Fondo Badge Restricción Código -->
+    <color name="border_light">#1E2D4A</color>     <!-- Borde Slate Oscuro -->
     <color name="border_input">#334155</color>     <!-- Borde de Inputs en Oscuro -->
     <color name="text_primary">#F8FAFC</color>     <!-- Texto Principal Blanco Nítido -->
     <color name="text_secondary">#CBD5E1</color>   <!-- Texto Secundario Gris Claro -->

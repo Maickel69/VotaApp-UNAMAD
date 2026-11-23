@@ -2,15 +2,18 @@ package com.example.proyectofinal
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -145,6 +148,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         tvToggleAuthModo.setOnClickListener {
+            (llCamposRegistro.parent as? ViewGroup)?.let {
+                TransitionManager.beginDelayedTransition(it)
+            }
             modoRegistro = !modoRegistro
             aplicarEstadoModo()
         }
@@ -171,16 +177,25 @@ class LoginActivity : AppCompatActivity() {
 
     private fun mostrarDialogoRecuperarPassword() {
         val emailActual = etAuthEmail.text.toString().trim()
+        val d = resources.displayMetrics.density
+        val pad = (20 * d).toInt()
+        val contenedor = FrameLayout(this).apply {
+            setPadding(pad, (10 * d).toInt(), pad, 0)
+        }
         val input = EditText(this).apply {
             hint = "usuario@unamad.edu.pe"
             setText(emailActual)
-            setPadding(48, 32, 48, 32)
+            setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+            setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
+            setBackgroundResource(R.drawable.bg_input)
+            setPadding((14 * d).toInt(), (12 * d).toInt(), (14 * d).toInt(), (12 * d).toInt())
         }
+        contenedor.addView(input)
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Recuperar Contraseña")
             .setMessage("Ingresa tu correo registrado y te enviaremos un enlace de restablecimiento:")
-            .setView(input)
+            .setView(contenedor)
             .setPositiveButton("Enviar Enlace") { _, _ ->
                 val correo = input.text.toString().trim()
                 if (correo.isEmpty()) {

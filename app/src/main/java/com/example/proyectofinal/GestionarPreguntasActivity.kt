@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.UUID
 
 /**
@@ -122,7 +122,7 @@ class GestionarPreguntasActivity : AppCompatActivity() {
 
     private fun intentarSalir() {
         if (preguntasActuales.isEmpty()) {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle("Atención")
                 .setMessage("Debe registrar al menos 1 pregunta en esta encuesta antes de finalizar.")
                 .setPositiveButton("Entendido", null)
@@ -265,7 +265,7 @@ class GestionarPreguntasActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoEliminarPregunta(pregunta: Pregunta) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Confirmar Eliminación")
             .setMessage("¿Desea eliminar la pregunta:\n\"${pregunta.texto}\"?")
             .setPositiveButton("Eliminar") { dialog, _ ->

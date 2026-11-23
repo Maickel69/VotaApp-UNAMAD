@@ -7,12 +7,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import android.view.animation.DecelerateInterpolator
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
@@ -230,7 +231,7 @@ class MainActivity : AppCompatActivity() {
             }
             contenedor.addView(switchTema)
 
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle("Mi Cuenta UNAMAD")
                 .setView(contenedor)
                 .setPositiveButton("Guardar Perfil") { _, _ ->
@@ -338,12 +339,13 @@ class MainActivity : AppCompatActivity() {
         val inflater = LayoutInflater.from(this)
         val miUid = FirebaseRepository.currentUid()
 
-        for (encuesta in listaEncuestas) {
+        for ((index, encuesta) in listaEncuestas.withIndex()) {
             val itemVista = inflater.inflate(R.layout.item_encuesta, llContenedorEncuestas, false)
 
             val tvTitulo = itemVista.findViewById<TextView>(R.id.tvItemTitulo)
             val tvEstado = itemVista.findViewById<TextView>(R.id.tvItemEstado)
             val tvCategoria = itemVista.findViewById<TextView>(R.id.tvItemCategoria)
+            val tvAcceso = itemVista.findViewById<TextView>(R.id.tvItemAcceso)
             val tvFecha = itemVista.findViewById<TextView>(R.id.tvItemFecha)
             val tvDescripcion = itemVista.findViewById<TextView>(R.id.tvItemDescripcion)
             val tvInfo = itemVista.findViewById<TextView>(R.id.tvItemInfo)
@@ -354,13 +356,15 @@ class MainActivity : AppCompatActivity() {
 
             tvTitulo.text = encuesta.titulo
             tvCategoria.text = encuesta.categoria
-            tvFecha.text = "${encuesta.fechaCreacion} • Por ${encuesta.creadorNombre}"
+            tvFecha.text = "${encuesta.fechaCreacion}  •  Por ${encuesta.creadorNombre}"
             tvDescripcion.text = encuesta.descripcion
-            val infoBase = "${encuesta.totalPreguntas} Preguntas  •  ${encuesta.totalVotos} Participantes"
-            tvInfo.text = if (encuesta.tieneRestriccionAcceso()) {
-                "$infoBase\n🔒 ${encuesta.etiquetaRestriccion()}"
+            tvInfo.text = "${encuesta.totalPreguntas} Preguntas   •   ${encuesta.totalVotos} Participantes"
+
+            if (encuesta.tieneRestriccionAcceso()) {
+                tvAcceso.visibility = View.VISIBLE
+                tvAcceso.text = encuesta.etiquetaRestriccion()
             } else {
-                infoBase
+                tvAcceso.visibility = View.GONE
             }
 
             if (encuesta.activa) {
@@ -417,11 +421,22 @@ class MainActivity : AppCompatActivity() {
             }
 
             llContenedorEncuestas.addView(itemVista)
+
+            // Animación escalonada MD3 Expressive al mostrar las tarjetas
+            itemVista.alpha = 0f
+            itemVista.translationY = 24f * resources.displayMetrics.density
+            itemVista.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setStartDelay((index.coerceAtMost(6) * 45).toLong())
+                .setDuration(260L)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
         }
     }
 
     private fun mostrarDialogoEliminar(encuesta: Encuesta) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Confirmar Eliminación")
             .setMessage("¿Está seguro de eliminar permanentemente la encuesta:\n\"${encuesta.titulo}\"?\n\nSe eliminarán todas sus preguntas, alternativas y registros de votación en la nube.")
             .setIcon(android.R.drawable.ic_dialog_alert)

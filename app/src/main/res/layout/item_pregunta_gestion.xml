@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="14dp"
     app:cardBackgroundColor="@color/card_background"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="1dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
     app:strokeWidth="1dp"
     app:strokeColor="@color/border_light">
 
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="top"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/tvItemPreguntaTexto"
@@ -31,8 +31,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="1. ¿Cómo califica la atención recibida?"
-                android:textSize="15sp"
+                android:textSize="15.5sp"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/text_primary" />
 
             <TextView
@@ -42,16 +43,16 @@
                 android:text="Selección Única"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:background="@drawable/bg_badge_type"
                 android:textColor="@color/primary"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <!-- Fila 2: Texto con las alternativas registradas -->
+        <!-- Fila 2: Contenedor tonal con las alternativas registradas -->
         <TextView
             android:id="@+id/tvItemPreguntaAlternativas"
             android:layout_width="match_parent"
@@ -59,7 +60,9 @@
             android:text="• Opción 1\n• Opción 2\n• Opción 3"
             android:textSize="13.5sp"
             android:textColor="@color/text_secondary"
-            android:lineSpacingExtra="4dp"
+            android:background="@drawable/bg_surface_tonal"
+            android:padding="12dp"
+            android:lineSpacingExtra="5dp"
             android:layout_marginBottom="12dp" />
 
         <View

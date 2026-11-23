@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * ============================================================================
@@ -223,6 +223,7 @@ class RegistrarVotoActivity : AppCompatActivity() {
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
                 }
+                val botonesPregunta = ArrayList<RadioButton>()
                 for (alt in pregunta.alternativas) {
                     val rb = RadioButton(this).apply {
                         text = alt.texto
@@ -231,33 +232,54 @@ class RegistrarVotoActivity : AppCompatActivity() {
                         minHeight = minTouchPx
                         isEnabled = puedeVotar
                         setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-                        setPadding((6 * densidad).toInt(), (4 * densidad).toInt(), 0, (4 * densidad).toInt())
+                        setBackgroundResource(R.drawable.bg_option_card)
+                        setPadding((12 * densidad).toInt(), (10 * densidad).toInt(), (12 * densidad).toInt(), (10 * densidad).toInt())
                         layoutParams = RadioGroup.LayoutParams(
                             RadioGroup.LayoutParams.MATCH_PARENT,
                             RadioGroup.LayoutParams.WRAP_CONTENT
+                        ).apply { bottomMargin = (8 * densidad).toInt() }
+                    }
+                    botonesPregunta.add(rb)
+                    radioGroup.addView(rb)
+                    if (alt.id in seleccionesPrevias) {
+                        rb.isChecked = true
+                        rb.setBackgroundResource(R.drawable.bg_option_card_selected)
+                    }
+                }
+                radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                    for (btn in botonesPregunta) {
+                        btn.setBackgroundResource(
+                            if (btn.id == checkedId) R.drawable.bg_option_card_selected else R.drawable.bg_option_card
                         )
                     }
-                    radioGroup.addView(rb)
-                    if (alt.id in seleccionesPrevias) rb.isChecked = true
                 }
                 mapaRadioGroups[pregunta.id] = radioGroup
                 contenedorPregunta.addView(radioGroup)
             } else {
                 val listaChecks = ArrayList<CheckBox>()
                 for (alt in pregunta.alternativas) {
+                    val marcadoInicial = alt.id in seleccionesPrevias
                     val cb = CheckBox(this).apply {
                         text = alt.texto
                         tag = alt.id
                         textSize = 14f
                         minHeight = minTouchPx
                         isEnabled = puedeVotar
-                        isChecked = alt.id in seleccionesPrevias
+                        isChecked = marcadoInicial
                         setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-                        setPadding((6 * densidad).toInt(), (4 * densidad).toInt(), 0, (4 * densidad).toInt())
+                        setBackgroundResource(
+                            if (marcadoInicial) R.drawable.bg_option_card_selected else R.drawable.bg_option_card
+                        )
+                        setPadding((12 * densidad).toInt(), (10 * densidad).toInt(), (12 * densidad).toInt(), (10 * densidad).toInt())
                         layoutParams = LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
-                        )
+                        ).apply { bottomMargin = (8 * densidad).toInt() }
+                        setOnCheckedChangeListener { buttonView, isChecked ->
+                            buttonView.setBackgroundResource(
+                                if (isChecked) R.drawable.bg_option_card_selected else R.drawable.bg_option_card
+                            )
+                        }
                     }
                     listaChecks.add(cb)
                     contenedorPregunta.addView(cb)
@@ -328,7 +350,7 @@ class RegistrarVotoActivity : AppCompatActivity() {
                     append("¡Su voto ha sido registrado en la nube exitosamente!")
                 }.toString()
 
-                AlertDialog.Builder(this)
+                MaterialAlertDialogBuilder(this)
                     .setTitle("¡Voto Registrado con Éxito!")
                     .setMessage(mensajeResumen)
                     .setIcon(android.R.drawable.ic_dialog_info)

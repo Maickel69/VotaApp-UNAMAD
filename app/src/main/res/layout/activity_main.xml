@@ -107,11 +107,11 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="-26dp"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginTop="-28dp"
+                    android:layout_marginBottom="16dp"
                     app:cardBackgroundColor="@color/card_background"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="6dp"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/border_light">
 
@@ -119,8 +119,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingTop="14dp"
-                        android:paddingBottom="14dp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
                         android:baselineAligned="false">
 
                         <LinearLayout
@@ -135,21 +135,23 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
+                                android:fontFeatureSettings="tnum"
                                 android:textColor="@color/primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Encuestas"
-                                android:textSize="12sp"
+                                android:textSize="11.5sp"
+                                android:letterSpacing="0.02"
                                 android:textColor="@color/text_secondary" />
                         </LinearLayout>
 
                         <View
                             android:layout_width="1dp"
-                            android:layout_height="36dp"
+                            android:layout_height="38dp"
                             android:layout_gravity="center_vertical"
                             android:background="@color/border_light" />
 
@@ -165,21 +167,23 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
+                                android:fontFeatureSettings="tnum"
                                 android:textColor="@color/success" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Activas"
-                                android:textSize="12sp"
+                                android:textSize="11.5sp"
+                                android:letterSpacing="0.02"
                                 android:textColor="@color/text_secondary" />
                         </LinearLayout>
 
                         <View
                             android:layout_width="1dp"
-                            android:layout_height="36dp"
+                            android:layout_height="38dp"
                             android:layout_gravity="center_vertical"
                             android:background="@color/border_light" />
 
@@ -195,15 +199,17 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
+                                android:fontFeatureSettings="tnum"
                                 android:textColor="@color/accent" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Votantes"
-                                android:textSize="12sp"
+                                android:textSize="11.5sp"
+                                android:letterSpacing="0.02"
                                 android:textColor="@color/text_secondary" />
                         </LinearLayout>
                     </LinearLayout>
