@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -46,7 +47,7 @@ def crear_informe_completo(docx_path):
     
     p_fleft = c_left.paragraphs[0]
     p_fleft.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    r_fleft = p_fleft.add_run("VotaApp UNAMAD – Sistema Móvil de Encuestas y Votaciones")
+    r_fleft = p_fleft.add_run("VotaApp UNAMAD – Sistema Móvil Cloud de Encuestas y Votaciones")
     r_fleft.font.name = 'Arial'
     r_fleft.font.size = Pt(8.5)
     r_fleft.font.color.rgb = RGBColor(0, 0, 0)
@@ -81,8 +82,8 @@ def crear_informe_completo(docx_path):
         r_ic.add_picture(icon_path, width=Cm(3.0))
 
     add_p(doc, "INFORME TÉCNICO DE PROYECTO FINAL", space_before=2, space_after=3, align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, font_size=11.5, font_color=RGBColor(0, 0, 0))
-    add_p(doc, "“DESARROLLO E IMPLEMENTACIÓN DE UNA APLICACIÓN MÓVIL NATIVA EN KOTLIN PARA LA GESTIÓN DE ENCUESTAS, VOTACIONES Y CONTEO DE RESULTADOS”", space_before=1, space_after=8, align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, font_size=12.5, font_color=RGBColor(0, 0, 0))
-    add_p(doc, "(Sistema VotaApp UNAMAD - com.example.proyectofinal)", space_before=0, space_after=14, align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, italic=True, font_size=10, font_color=RGBColor(0, 0, 0))
+    add_p(doc, "“DESARROLLO E IMPLEMENTACIÓN DE UNA APLICACIÓN MÓVIL NATIVA EN KOTLIN Y FIREBASE CLOUD PARA LA GESTIÓN DE ENCUESTAS, VOTACIONES Y CONTEO DE RESULTADOS”", space_before=1, space_after=8, align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, font_size=12.5, font_color=RGBColor(0, 0, 0))
+    add_p(doc, "(Sistema VotaApp UNAMAD - com.example.proyectofinal | Cloud Firestore & Auth)", space_before=0, space_after=14, align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, italic=True, font_size=10, font_color=RGBColor(0, 0, 0))
 
     # Tabla de Datos de Portada
     t_portada = doc.add_table(rows=4, cols=2)
@@ -136,34 +137,34 @@ def crear_informe_completo(docx_path):
         ("INTRODUCCIÓN", "3"),
         ("CAPÍTULO I. DESCRIPCIÓN DEL PROYECTO", "4"),
         ("    1.1. Nombre del Proyecto", "4"),
-        ("    1.2. Descripción del problema", "4"),
+        ("    1.2. Descripción del Problema", "4"),
         ("    1.3. Objetivos (General y Específicos)", "5"),
         ("    1.4. Justificación (Técnica, Práctica, Académica y Social)", "6"),
         ("    1.5. Alcance y Limitaciones", "6"),
-        ("    1.6. Usuarios Beneficiarios", "7"),
+        ("    1.6. Usuarios Beneficiarios y Escuelas Profesionales UNAMAD", "7"),
         ("CAPÍTULO II. ANÁLISIS DE REQUERIMIENTOS", "7"),
-        ("    2.1. Requerimientos Funcionales (RF01 - RF08)", "7"),
-        ("    2.2. Requerimientos No Funcionales (RNF01 - RNF05)", "8"),
-        ("    2.3. Diagrama de Casos de Uso del Sistema", "8"),
-        ("    2.4. Especificación Detallada de Casos de Uso (CU01 - CU02)", "9"),
-        ("CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL", "11"),
-        ("    3.1. Arquitectura de la Aplicación en Tres Capas", "11"),
-        ("    3.2. Diseño de Interfaces de Usuario (Prototipos Móviles)", "12"),
+        ("    2.1. Requerimientos Funcionales (RF01 - RF12)", "7"),
+        ("    2.2. Requerimientos No Funcionales (RNF01 - RNF07)", "8"),
+        ("    2.3. Diagrama de Casos de Uso del Sistema", "9"),
+        ("    2.4. Especificación Detallada de Casos de Uso Principales (CU01 - CU03)", "10"),
+        ("CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL Y ARQUITECTURA CLOUD", "11"),
+        ("    3.1. Arquitectura de la Aplicación en Tres Capas y Backend Cloud", "11"),
+        ("    3.2. Diseño de Interfaces de Usuario (6 Activities y Modo Oscuro Obsidian MD3)", "12"),
         ("    3.3. Diagrama de Navegación y Flujo de Pantallas", "14"),
-        ("    3.4. Diseño de Base de Datos y Diccionario de Datos Relacional", "14"),
-        ("CAPÍTULO IV. DESARROLLO E IMPLEMENTACIÓN", "17"),
-        ("    4.1. Herramientas y Tecnologías Utilizadas", "17"),
-        ("    4.2. Estructura del Proyecto en Android Studio", "17"),
-        ("    4.3. Implementación de Funcionalidades por Módulos y Código Fuente Real", "18"),
-        ("    4.4. Gestión y Almacenamiento de Datos en SQLite", "21"),
-        ("    4.5. Componentes Adicionales de Validación y Experiencia de Usuario", "21"),
-        ("CAPÍTULO V. PRUEBAS Y RESULTADOS", "22"),
-        ("    5.1. Matriz Exhaustiva de Pruebas Funcionales (CP01 - CP10)", "22"),
-        ("    5.2. Evidencias de Ejecución y Validación en Emulador", "23"),
-        ("    5.3. Dificultades Técnicas Identificadas y Soluciones Implementadas", "25"),
-        ("    5.4. Evaluación de Cumplimiento y Resultados", "26"),
-        ("CONCLUSIONES Y RECOMENDACIONES", "26"),
-        ("REFERENCIAS BIBLIOGRÁFICAS", "27")
+        ("    3.4. Diseño de Datos en Cloud Firestore, Reglas de Seguridad y SQLite Local", "15"),
+        ("CAPÍTULO IV. DESARROLLO E IMPLEMENTACIÓN", "18"),
+        ("    4.1. Herramientas, Tecnologías y Pipeline CI/CD con GitHub Actions", "18"),
+        ("    4.2. Estructura Modular del Proyecto en Android Studio", "19"),
+        ("    4.3. Implementación de Funcionalidades por Módulos y Código Fuente Real", "20"),
+        ("    4.4. Seguridad en la Nube (firestore.rules) y Persistencia Híbrida", "25"),
+        ("    4.5. Experiencia de Usuario, Modo Oscuro Obsidian MD3 y Edge-to-Edge", "26"),
+        ("CAPÍTULO V. PRUEBAS Y RESULTADOS", "27"),
+        ("    5.1. Matriz Exhaustiva de Pruebas Funcionales (CP01 - CP12)", "27"),
+        ("    5.2. Evidencias de Ejecución y Validación en Emulador Android 16", "28"),
+        ("    5.3. Dificultades Técnicas Identificadas y Soluciones de Ingeniería", "30"),
+        ("    5.4. Evaluación de Cumplimiento y Resultados", "31"),
+        ("CONCLUSIONES Y RECOMENDACIONES", "31"),
+        ("REFERENCIAS BIBLIOGRÁFICAS", "32")
     ]
 
     t_toc = doc.add_table(rows=0, cols=2)
@@ -210,14 +211,14 @@ def crear_informe_completo(docx_path):
 
     figuras_items = [
         ("Figura 1. Diagrama de Casos de Uso del Sistema VotaApp UNAMAD", "9"),
-        ("Figura 2. Diagrama de Arquitectura Modular en Tres Capas Sincronizado", "12"),
-        ("Figura 3. Prototipos de Pantallas: Panel Principal, Creación y Preguntas", "13"),
-        ("Figura 4. Prototipos de Pantallas: Registro de Votación y Conteo de Resultados", "14"),
-        ("Figura 5. Diagrama de Estados y Navegación entre Pantallas Móviles", "14"),
-        ("Figura 6. Diagrama Entidad-Relación de la Base de Datos SQLite", "15"),
-        ("Figura 7. Estructura Oficial de Paquetes y Recursos en Android Studio", "18"),
-        ("Figura 8. Capturas Reales en Emulador: Panel Principal, Edición y Preguntas", "24"),
-        ("Figura 9. Capturas Reales en Emulador: Votación Dinámica y Conteo de Resultados", "25")
+        ("Figura 2. Diagrama de Arquitectura Modular en Tres Capas y Backend Firebase Cloud", "12"),
+        ("Figura 3. Prototipos de Pantallas: Acceso, Panel Principal Cloud, Creación y Preguntas", "13"),
+        ("Figura 4. Prototipos de Pantallas: Registro de Votación y Resultados con DonutChartView", "14"),
+        ("Figura 5. Diagrama de Estados y Navegación entre las 6 Activities del Sistema", "15"),
+        ("Figura 6. Modelo de Datos Híbrido: Colecciones Cloud Firestore y Esquema Relacional SQLite", "16"),
+        ("Figura 7. Estructura Oficial de Paquetes, Módulos Kotlin y Recursos en Android Studio", "19"),
+        ("Figura 8. Capturas Reales en Emulador: Login OAuth, Panel Principal, Creación y Preguntas", "29"),
+        ("Figura 9. Capturas Reales en Emulador: Votación Tonal y Resultados con DonutChartView", "30")
     ]
     t_fig_toc = doc.add_table(rows=0, cols=2)
     t_fig_toc.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -258,16 +259,16 @@ def crear_informe_completo(docx_path):
     r_ttit.font.color.rgb = RGBColor(0, 0, 0)
 
     tablas_items = [
-        ("Tabla 1. Especificación de Requerimientos Funcionales (RF01 - RF08)", "7"),
-        ("Tabla 2. Especificación de Requerimientos No Funcionales (RNF01 - RNF05)", "8"),
-        ("Tabla 3. Diccionario de Datos: Tabla 'encuestas'", "15"),
-        ("Tabla 4. Diccionario de Datos: Tabla 'preguntas'", "16"),
-        ("Tabla 5. Diccionario de Datos: Tabla 'alternativas'", "16"),
-        ("Tabla 6. Diccionario de Datos: Tabla 'respuestas'", "16"),
-        ("Tabla 7. Stack de Herramientas y Tecnologías de Desarrollo", "17"),
-        ("Tabla 8. Matriz de Casos de Prueba Funcionales (CP01 - CP10)", "22"),
-        ("Tabla 9. Matriz de Dificultades Técnicas y Soluciones de Ingeniería", "25"),
-        ("Tabla 10. Matriz de Trazabilidad y Evaluación de Cumplimiento", "26")
+        ("Tabla 1. Especificación de Requerimientos Funcionales (RF01 - RF12)", "8"),
+        ("Tabla 2. Especificación de Requerimientos No Funcionales (RNF01 - RNF07)", "9"),
+        ("Tabla 3. Diccionario de Datos Cloud Firestore: Colección 'users/{uid}'", "16"),
+        ("Tabla 4. Diccionario de Datos Cloud Firestore: Colección 'encuestas/{encuestaId}'", "17"),
+        ("Tabla 5. Diccionario de Datos Cloud Firestore: Subcolección 'encuestas/{encuestaId}/votos/{voterUid}'", "17"),
+        ("Tabla 6. Estructura de Respaldo Local SQLite (encuestas_unamad.db)", "18"),
+        ("Tabla 7. Stack de Herramientas, Servicios Cloud y Pipeline CI/CD", "18"),
+        ("Tabla 8. Matriz de Casos de Prueba Funcionales (CP01 - CP12)", "27"),
+        ("Tabla 9. Matriz de Dificultades Técnicas y Soluciones de Ingeniería", "30"),
+        ("Tabla 10. Matriz de Trazabilidad y Evaluación de Cumplimiento", "31")
     ]
     t_tab_toc = doc.add_table(rows=0, cols=2)
     t_tab_toc.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -302,11 +303,11 @@ def crear_informe_completo(docx_path):
     # 4.3. INTRODUCCIÓN (Con Citas APA 7 Integradas, 100% Negro)
     # =========================================================================
     add_heading_1(doc, "INTRODUCCIÓN")
-    add_p(doc, "La evolución continua de las tecnologías móviles y la masificación de los teléfonos inteligentes basados en el sistema operativo Android han transformado radicalmente la manera en que las organizaciones y comunidades académicas interactúan, recopilan opiniones y toman decisiones colegiadas. Tal como señalan Pressman y Maxim (2021), la ingeniería de software aplicada a dispositivos móviles exige metodologías rigurosas que armonicen la agilidad del desarrollo con la robustez arquitectónica y la satisfacción de requerimientos del usuario final. En el ámbito universitario contemporáneo, particularmente en la Universidad Nacional Amazónica de Madre de Dios (UNAMAD), la participación activa y democrática de la comunidad estudiantil y docente en consultas académicas, encuestas de percepción sobre la calidad del servicio educativo, y elecciones de delegados o representantes gremiales constituye un pilar esencial para la gobernanza y el aseguramiento continuo de la calidad formativa, en concordancia con los estándares de calidad en sistemas de información (ISO/IEC, 2011).")
-    add_p(doc, "A pesar de estos imperativos democráticos y de gestión de calidad, tradicionalmente una considerable proporción de estos procesos se ha venido ejecutando de forma manual mediante cédulas de votación impresas en papel o a través de plataformas web genéricas que no siempre se adecúan al contexto local. Como advierte Sommerville (2019), los procesos basados en soportes físicos o plataformas desconectadas del contexto operativo introducen cuellos de botella críticos: consumo excesivo de papel, demoras sustanciales en el escrutinio y conteo de votos, vulnerabilidad ante errores humanos de tabulación, elevados costos logísticos y una marcada ausencia de inmediatez en la publicación de resultados. Por otro lado, aunque existen servicios de formularios en línea, estos suelen exigir una conectividad permanente a internet de alta velocidad —la cual resulta intermitente en diversas áreas de la región de Madre de Dios— y carecen de un control robusto de unicidad de voto a nivel local que garantice la transparencia del escrutinio en el aula.")
-    add_p(doc, "Ante esta problemática concreta, el presente proyecto final, desarrollado en el marco de la asignatura Desarrollo de Aplicaciones Móviles II del semestre académico 2026-II en la Escuela Profesional de Ingeniería de Sistemas e Informática, propone el diseño, construcción e implementación del “Sistema Móvil de Encuestas y Votaciones (VotaApp UNAMAD)”. Dicha solución consiste en una aplicación móvil nativa desarrollada íntegramente en el lenguaje de programación Kotlin (JetBrains, 2024) utilizando el entorno de desarrollo integrado Android Studio, con persistencia local relacional estructurada mediante SQLiteOpenHelper en la base de datos encuestas_unamad.db, siguiendo las directrices oficiales de desarrollo móvil (Google Developers, 2024).")
-    add_p(doc, "El sistema VotaApp UNAMAD se concibe con una arquitectura robusta de tres capas (Presentación, Lógica de Negocio y Persistencia de Datos), permitiendo a los creadores de encuestas y administradores formular instrumentos de consulta clasificados por categorías, parametrizar preguntas dinámicas tanto de selección única como de selección múltiple, gestionar alternativas de respuesta con reglas de integridad referencial, registrar la participación de los votantes verificando de forma estricta la no duplicidad de votos por persona mediante el método yaVotoParticipante, y procesar en tiempo real métricas estadísticas con representaciones visuales horizontales de barras de progreso ProgressBar y determinación automática de la opción ganadora.")
-    add_p(doc, "El presente informe técnico expone detalladamente cada una de las fases de ingeniería de software aplicadas en la concepción y materialización de la aplicación, abarcando la delimitación del problema, la formalización de requerimientos funcionales y no funcionales, el modelado formal de casos de uso y arquitectura, el diseño de interfaces y prototipos móviles, el modelado entidad-relación de la base de datos SQLite, la descripción de la implementación con fragmentos de código fuente en Kotlin sincronizados al 100% con el proyecto compilado, y la batería exhaustiva de pruebas funcionales ejecutadas para garantizar la estabilidad, rendimiento y confiabilidad del sistema en dispositivos Android conforme al estándar ISO/IEC 25010 (ISO/IEC, 2011).")
+    add_p(doc, "La evolución continua de las tecnologías móviles, la computación en la nube (Cloud Computing) y la masificación de los teléfonos inteligentes basados en el sistema operativo Android han transformado radicalmente la manera en que las instituciones académicas interactúan, recopilan opiniones y toman decisiones democráticas. Tal como señalan Pressman y Maxim (2021), la ingeniería de software aplicada a dispositivos móviles modernos exige arquitecturas distribuidas que combinen la agilidad del desarrollo nativo con la sincronización en tiempo real, la seguridad criptográfica de identidades y la experiencia de usuario adaptativa. En la Universidad Nacional Amazónica de Madre de Dios (UNAMAD), la participación activa de la comunidad estudiantil y docente de sus 12 Escuelas Profesionales en consultas académicas, evaluaciones de satisfacción de servicios y elecciones de delegados estudiantiles constituye un pilar esencial para la gobernanza universitaria y el aseguramiento de la calidad educativa, en concordancia con los estándares internacionales de sistemas de información (ISO/IEC, 2011).")
+    add_p(doc, "A pesar de estos imperativos democráticos, tradicionalmente una proporción significativa de las consultas estudiantiles se ha ejecutado mediante cédulas impresas en papel o formularios genéricos sin validación de padrón electoral ni filtro por escuela profesional. Como advierte Sommerville (2019), los procesos sustentados en soportes físicos o herramientas no integradas al padrón institucional introducen cuellos de botella críticos: consumo de papel, lentitud en el escrutinio, errores de tabulación manual, imposibilidad de restringir automáticamente una votación a una escuela profesional específica o a una nómina de códigos de matrícula, y vulnerabilidad frente a sufragios duplicados.")
+    add_p(doc, "Ante esta problemática, el presente proyecto final, desarrollado en la asignatura Desarrollo de Aplicaciones Móviles II (Semestre Académico 2026-II) de la Escuela Profesional de Ingeniería de Sistemas e Informática, presenta el diseño, desarrollo, despliegue en la nube y entrega continua del “Sistema Móvil de Encuestas y Votaciones (VotaApp UNAMAD)”. La solución consiste en una aplicación móvil nativa construida en Kotlin (JetBrains, 2024) sobre Android Studio, integrada con una arquitectura híbrida en la nube utilizando Firebase Authentication (Correo/Contraseña y Google Sign-In OAuth 2.0) y Cloud Firestore en el proyecto cloud votaapp-unamad-2026, junto con soporte de persistencia relacional local en SQLite (DatabaseHelper), siguiendo las directrices oficiales de arquitectura móvil (Google Developers, 2024).")
+    add_p(doc, "El sistema VotaApp UNAMAD incorpora seis pantallas especializadas (LoginActivity, MainActivity, CrearEncuestaActivity, GestionarPreguntasActivity, RegistrarVotoActivity y ResultadosActivity) diseñadas bajo el sistema visual Material Design 3 con Modo Oscuro Obsidian predeterminado (values-night/colors.xml) y soporte Edge-to-Edge (UiInsetsHelper.kt). Entre sus innovaciones técnicas destacan: la restricción inteligente de encuestas hacia cualquiera de las 12 Escuelas Profesionales de la UNAMAD; la importación masiva de padrones de códigos estudiantiles desde archivos Excel (.csv), bloques de texto (.txt) o portapapeles mediante expresiones regulares en CatalogoUnamad; el blindaje de un voto único por cuenta autenticada (UID) gobernado por reglas declarativas de seguridad en firestore.rules; la visualización estadística en tiempo real mediante un gráfico circular animado personalizado en Canvas (DonutChartView) y barras horizontales animadas; la exportación inmediata del Acta Oficial de Resultados; y un pipeline de integración y despliegue continuo (CI/CD) con GitHub Actions (.github/workflows/android-release.yml) en el repositorio oficial https://github.com/Maickel69/VotaApp-UNAMAD.")
+    add_p(doc, "El presente informe técnico documenta de forma exhaustiva cada fase del ciclo de vida de ingeniería de software: la descripción del problema y objetivos, el análisis de requerimientos funcionales y no funcionales, el modelado UML de casos de uso, la arquitectura en tres capas conectada a Firebase Cloud, los prototipos e interfaces de las seis Activities, el modelo de datos en Cloud Firestore y SQLite, los fragmentos reales de código fuente en Kotlin y reglas de seguridad, la matriz de pruebas funcionales verificadas en Android 16 (API 36), y las conclusiones técnicas del proyecto.")
 
     # =========================================================================
     # CAPÍTULO I. DESCRIPCIÓN DEL PROYECTO (100% Negro)
@@ -315,48 +316,49 @@ def crear_informe_completo(docx_path):
     
     add_heading_2(doc, "1.1. Nombre del Proyecto")
     add_p(doc, "El proyecto se denomina oficialmente:")
-    add_p(doc, "“Sistema Móvil de Encuestas y Votaciones (VotaApp UNAMAD)”", align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, font_size=11, font_color=RGBColor(0, 0, 0))
-    add_p(doc, "Paquete oficial Android: com.example.proyectofinal. Esta aplicación móvil nativa está concebida como una herramienta integral, portable y offline-first para la gestión de consultas de opinión, diagnósticos situacionales y sufragios internos en la Universidad Nacional Amazónica de Madre de Dios.")
+    add_p(doc, "“Sistema Móvil de Encuestas y Votaciones en Tiempo Real (VotaApp UNAMAD)”", align=WD_ALIGN_PARAGRAPH.CENTER, bold=True, font_size=11, font_color=RGBColor(0, 0, 0))
+    add_p(doc, "Identificador de paquete Android: com.example.proyectofinal | Proyecto Firebase Cloud: votaapp-unamad-2026 | Repositorio Oficial CI/CD: https://github.com/Maickel69/VotaApp-UNAMAD. Esta plataforma móvil nativa permite gestionar procesos electorales estudiantiles, diagnósticos académicos y encuestas de satisfacción sincronizadas en tiempo real entre múltiples dispositivos Android de la comunidad universitaria.")
 
     add_heading_2(doc, "1.2. Descripción del Problema")
-    add_p(doc, "En las instituciones universitarias públicas peruanas, y específicamente en la UNAMAD, los procesos participativos de recolección de información constituyen actividades de frecuencia cotidiana. Estos abarcan desde la elección de delegados de aula en cada ciclo académico, la evaluación diagnóstica de infraestructura y laboratorios, hasta encuestas de satisfacción sobre servicios universitarios como comedor, biblioteca, conectividad y actividades extracurriculares.")
-    add_p(doc, "No obstante, la gestión operativa de estos procesos enfrenta tres deficiencias estructurales:")
-    add_p(doc, "1. Ineficiencia y lentitud operativa: La recolección manual de votos mediante boletas físicas demanda horas de preparación de material impreso, distribución física y un proceso de conteo manual propenso a equivocaciones involuntarias, tachas dudosas y fatiga de los escrutadores.")
-    add_p(doc, "2. Brechas de conectividad y dependencia de la nube: El uso improvisado de formularios web comerciales en aulas a menudo colapsa debido a la sobrecarga de la red Wi-Fi institucional o la ausencia de planes de datos móviles en los teléfonos de los estudiantes, impidiendo que el 100% de los convocados pueda votar sincrónicamente. Frente a este escenario, Hipp (2024) fundamenta que los motores de base de datos embebidos como SQLite proporcionan una solución idónea para entornos offline-first, garantizando transacciones atómicas e inmediatas directamente en el almacenamiento local del dispositivo anfitrión.")
-    add_p(doc, "3. Carencia de control de duplicidad y auditoría local: Muchos sistemas informales carecen de validaciones estrictas para garantizar que un participante no emita votos reiterados bajo identidades falsas o selecciones incompletas, comprometiendo la legitimidad del escrutinio final.")
-    add_p(doc, "Por consiguiente, se identificó la urgente necesidad de concebir una aplicación móvil nativa que opere con almacenamiento local en SQLite (garantizando total autonomía operativa aun sin acceso a internet), dotada de validaciones de integridad referencial, verificación de voto único por participante y generación automática de métricas visuales.")
+    add_p(doc, "En la Universidad Nacional Amazónica de Madre de Dios (UNAMAD), los procesos participativos de toma de decisiones y recolección de datos académicos se realizan constantemente en sus 12 carreras profesionales. Estos procesos incluyen elecciones de delegados de curso y representantes estudiantiles, diagnósticos de equipamiento de laboratorios, encuestas de tutoría y evaluación de servicios universitarios.")
+    add_p(doc, "Sin embargo, la ejecución tradicional de estas consultas presenta cuatro limitaciones críticas:")
+    add_p(doc, "1. Demora y errores en el escrutinio manual: El uso de ánforas y cédulas físicas demanda logística de impresión y conteo manual, generando retrasos y posibles inconsistencias aritméticas en el cálculo de porcentajes.")
+    add_p(doc, "2. Ausencia de segmentación por Escuela Profesional y Padrón Electoral: Los formularios web convencionales no validan de forma nativa a qué carrera pertenece el estudiante ni permiten importar instantáneamente una lista de códigos de matrícula desde archivos Excel (.csv) o texto (.txt) para cerrar una votación únicamente a los alumnos matriculados en un curso o facultad.")
+    add_p(doc, "3. Vulnerabilidad de sufragio duplicado y falta de trazabilidad: Sin una autenticación vinculada a un identificador único criptográfico (UID) y a un código universitario verificado sin duplicidad en la base de datos, existe el riesgo de que un mismo participante emita múltiples votos o suplante la identidad de otro compañero.")
+    add_p(doc, "4. Carencia de visualización analítica instantánea y actas oficiales: Los organizadores requieren observar en tiempo real gráficos de distribución porcentual (gráficos de dona y barras comparativas) y compartir de inmediato un Acta Oficial de Resultados auditable por todos los participantes.")
+    add_p(doc, "En respuesta a esta problemática, se diseñó e implementó VotaApp UNAMAD, combinando autenticación federada e institucional en Firebase Authentication, sincronización distribuida en Cloud Firestore protegida por reglas de seguridad del lado del servidor (firestore.rules), respaldo local SQLite y visualización gráfica nativa en Kotlin.")
 
     add_heading_2(doc, "1.3. Objetivos")
     add_heading_3(doc, "1.3.1. Objetivo General")
-    add_p(doc, "Desarrollar e implementar una aplicación móvil nativa en Kotlin para el sistema operativo Android, que permita la administración integral de encuestas, la configuración dinámica de preguntas y alternativas, el registro controlado de votaciones con verificación de voto único y el procesamiento visual de resultados estadísticos en tiempo real para la comunidad de la Universidad Nacional Amazónica de Madre de Dios.")
+    add_p(doc, "Desarrollar e implementar una aplicación móvil nativa en Kotlin para Android integrada con Firebase Authentication y Cloud Firestore, que permita la gestión integral de encuestas segmentadas por escuela profesional y padrón de códigos estudiantiles, el registro seguro de votaciones con garantía de un voto único por UID y el análisis visual de resultados en tiempo real para la Universidad Nacional Amazónica de Madre de Dios.")
     
     add_heading_3(doc, "1.3.2. Objetivos Específicos")
-    add_p(doc, "• OE1: Diseñar e implementar el modelo de persistencia local relacional en SQLite mediante la clase DatabaseHelper, aplicando claves primarias autoincrementales, restricciones de clave foránea y borrado en cascada para cuatro tablas normalizadas (encuestas, preguntas, alternativas y respuestas).")
-    add_p(doc, "• OE2: Construir interfaces de usuario intuitivas y responsivas bajo los lineamientos de Material Design en XML nativo, que faciliten la navegación fluida entre cinco pantallas funcionales (Activities) optimizadas para smartphones Android.")
-    add_p(doc, "• OE3: Desarrollar la lógica de negocio y validación de formularios dinámicos que garantice la integridad de los datos ingresados, la obligatoriedad de campos críticos y el control estricto de emisión de voto único por participante.")
-    add_p(doc, "• OE4: Implementar un motor de cálculo y visualización gráfica de resultados en tiempo real que calcule porcentajes relativos, detecte automáticamente la opción ganadora y represente los sufragios mediante barras de progreso horizontales con capacidad de reinicio seguro.")
+    add_p(doc, "• OE1: Implementar un módulo de identidad y seguridad en LoginActivity mediante Firebase Authentication (Correo/Contraseña y Google Sign-In OAuth 2.0), recuperación de contraseña por correo y registro de perfil estudiantil con validación de código universitario único y pertenencia a una de las 12 Escuelas Profesionales de la UNAMAD.")
+    add_p(doc, "• OE2: Diseñar y programar seis Activities nativas bajo el sistema Material Design 3 con Modo Oscuro Obsidian predeterminado (values-night/colors.xml) y soporte Edge-to-Edge (UiInsetsHelper.kt), integrando búsqueda en tiempo real, filtros por ChipGroup de categorías y tarjetas interactivas.")
+    add_p(doc, "• OE3: Desarrollar la arquitectura de datos en la nube con FirebaseRepository.kt y reglas de seguridad declarativas (firestore.rules) sobre las colecciones users, encuestas y votos, incorporando filtrado por carrera e importación masiva de códigos estudiantiles desde archivos .txt / .csv o portapapeles.")
+    add_p(doc, "• OE4: Construir un motor de escrutinio y visualización estadística en ResultadosActivity que integre un gráfico circular animado personalizado en Canvas (DonutChartView), barras horizontales animadas, padrón de auditoría de votantes y exportación del Acta Oficial de Resultados, automatizando la entrega del APK mediante GitHub Actions CI/CD.")
 
     add_heading_2(doc, "1.4. Justificación")
-    add_p(doc, "• Justificación Técnica: La adopción de Kotlin como lenguaje oficial moderno para Android, respaldado por Google Developers (2024) y JetBrains (2024), junto con el uso del motor SQLite nativo a través de SQLiteOpenHelper (Hipp, 2024), asegura un rendimiento óptimo con un mínimo consumo de memoria RAM y batería (Deitel y Deitel, 2020). La arquitectura desacoplada en tres capas garantiza un código mantenible, modular y escalable, facilitando la futura incorporación de sincronización remota sin alterar la lógica de presentación (Phillips et al., 2021).")
-    add_p(doc, "• Justificación Práctica: VotaApp UNAMAD provee una solución portable que puede ser ejecutada por cualquier docente, directivo o delegado desde su smartphone para lanzar votaciones presenciales inmediatas en el aula, recolectar opiniones y obtener resultados consolidados en cuestión de segundos, reduciendo a cero el tiempo de espera por conteos manuales.")
-    add_p(doc, "• Justificación Académica: El proyecto aplica de forma integrada y rigurosa los estándares de la ingeniería de software promovidos por Pressman y Maxim (2021) y Sommerville (2019), evidenciando el dominio de ciclos de vida de Activities, persistencia ACID en bases de datos relacionales, layouts dinámicos, listeners reactivos y pruebas funcionales de software.")
-    add_p(doc, "• Justificación Social y Ambiental: La sustitución de formularios físicos de papel contribuye a la reducción de la huella ecológica universitaria y promueve una cultura de sostenibilidad ambiental y modernización digital en la región amazónica.")
+    add_p(doc, "• Justificación Técnica: El empleo de Kotlin 2.2.10 junto con el SDK nativo de Firebase BoM 34.7.0 (Firebase Auth, Cloud Firestore y Google Play Services Auth) permite sincronizar encuestas y sufragios en milisegundos entre todos los dispositivos conectados, mientras que las reglas firestore.rules garantizan en el servidor la inmutabilidad del voto y la restricción de un sufragio por UID (Google Developers, 2024; OWASP Foundation, 2024). Además, el flujo de integración continua con GitHub Actions compila, ejecuta pruebas unitarias y publica automáticamente el instalador APK ante cada actualización en la rama principal.")
+    add_p(doc, "• Justificación Práctica: Docentes, comités electorales y delegados estudiantiles pueden crear una encuesta desde su celular, restringirla a una de las 12 carreras de la UNAMAD o pegar desde Excel la columna de códigos de matrícula habilitados, logrando que los estudiantes voten desde sus propios dispositivos con resultados consolidados al instante.")
+    add_p(doc, "• Justificación Académica: El proyecto sintetiza competencias avanzadas de ingeniería de software móvil: diseño de vistas personalizadas en Canvas (DonutChartView), autenticación OAuth 2.0, modelado NoSQL documental en Cloud Firestore, persistencia relacional en SQLite, seguridad declarativa y DevOps móvil con GitHub Actions.")
+    add_p(doc, "• Justificación Social y Ambiental: Elimina el uso de papel en elecciones de aula y encuestas universitarias, fomentando la transparencia electoral, la inclusión digital y la modernización tecnológica en la región Madre de Dios.")
 
     add_heading_2(doc, "1.5. Alcance y Limitaciones")
     add_p(doc, "Alcance del Sistema:")
-    add_p(doc, "• Creación, edición, consulta, filtrado y eliminación física en cascada de encuestas clasificadas por categorías (Académica, Satisfacción, Votación, General).")
-    add_p(doc, "• Parametrización dinámica de preguntas vinculadas a encuestas, admitiendo modalidades de selección única (RadioButtons) y selección múltiple (CheckBoxes).")
-    add_p(doc, "• Adición dinámica de opciones/alternativas de respuesta (mínimo dos obligatorias por cada pregunta) con persistencia inmediata.")
-    add_p(doc, "• Formulario de sufragio con verificación estricta de nombre/código de votante para evitar votos duplicados, control de respuestas completas y confirmación interactiva mediante AlertDialog.")
-    add_p(doc, "• Módulo de resultados con conteo en tiempo real, porcentajes calculados dinámicamente, barras horizontales de progreso (ProgressBar), identificación del ganador, registro de auditoría de votantes y opción de reseteo para administradores.")
+    add_p(doc, "• Autenticación completa en la nube con Correo/Contraseña, inicio de sesión con un toque mediante Google Sign-In (OAuth 2.0), restablecimiento de contraseña por correo electrónico y alternancia de Modo Oscuro/Claro en tiempo real.")
+    add_p(doc, "• Gestión del perfil del estudiante en la colección users/{uid}, garantizando que ningún código universitario pueda ser duplicado por otra cuenta y vinculando al alumno con una de las 12 Escuelas Profesionales de la UNAMAD.")
+    add_p(doc, "• Creación, edición, filtrado multicriterio (texto, ChipGroup de categorías y estado Activa/Cerrada) y eliminación de encuestas en Cloud Firestore.")
+    add_p(doc, "• Control de acceso electoral por encuesta: abierta a toda la UNAMAD, exclusiva para una Escuela Profesional específica o restringida a un padrón de códigos importado masivamente desde archivos .txt, .csv (Excel) o portapapeles.")
+    add_p(doc, "• Configuración dinámica de preguntas de selección única (UNICA) y selección múltiple (MULTIPLE) con alternativas de respuesta embebidas y sincronizadas en Firestore.")
+    add_p(doc, "• Emisión de voto con tarjetas tonales interactivas, preservación de selección ante rotación de pantalla y verificación criptográfica de voto único por UID en la subcolección encuestas/{encuestaId}/votos/{voterUid}.")
+    add_p(doc, "• Escrutinio en tiempo real con gráfico de dona animado (DonutChartView), barras de progreso horizontales animadas, medalla a la opción ganadora, auditoría de participantes y generación compartible del Acta Oficial de Resultados.")
     add_p(doc, "Limitaciones:")
-    add_p(doc, "• El almacenamiento opera de manera local en el dispositivo Android anfitrión (offline-first); no incluye en esta versión sincronización de base de datos distribuida en la nube.")
-    add_p(doc, "• La verificación del participante se realiza a través de su código o nombre ingresado; no cuenta con autenticación biométrica ni conexión a servicios LDAP universitarios centralizados.")
+    add_p(doc, "• La sincronización multi-dispositivo en tiempo real requiere conectividad a internet (Wi-Fi o datos móviles) para comunicarse con los servidores de Google Cloud Firestore, disponiendo de DatabaseHelper (SQLite) como módulo de respaldo local.")
 
-    add_heading_2(doc, "1.6. Usuarios Beneficiarios")
-    add_p(doc, "• Estudiantes de la UNAMAD: Quienes disfrutan de una experiencia ágil y transparente al participar en consultas de delegados, comisiones de aniversario y evaluaciones de servicios universitarios.")
-    add_p(doc, "• Docentes Universitarios: Quienes disponen de una herramienta inmediata para realizar sondeos de aprendizaje previo, evaluaciones de clase y recolección de retroalimentación pedagógica.")
-    add_p(doc, "• Delegados y Comisiones Estudiantiles: Quienes pueden organizar sufragios internos con total legitimidad técnica, auditoría de participantes y visualización gráfica instantánea.")
+    add_heading_2(doc, "1.6. Usuarios Beneficiarios y Escuelas Profesionales UNAMAD")
+    add_p(doc, "El sistema incluye soporte nativo en CatalogoUnamad para las 12 Escuelas Profesionales oficiales de la Universidad Nacional Amazónica de Madre de Dios:")
+    add_p(doc, "1. Ingeniería de Sistemas e Informática (EPISI) | 2. Ingeniería Forestal y Medio Ambiente | 3. Ingeniería Agroindustrial | 4. Medicina Veterinaria y Zootecnia | 5. Enfermería | 6. Derecho y Ciencias Políticas | 7. Educación: Matemática y Computación | 8. Educación: Primaria e Informática | 9. Educación: Inicial y Especial | 10. Ecoturismo | 11. Administración y Negocios Internacionales | 12. Contabilidad y Finanzas.")
 
     # =========================================================================
     # CAPÍTULO II. ANÁLISIS DE REQUERIMIENTOS (Con Tablas y Figuras APA 7)
@@ -364,416 +366,412 @@ def crear_informe_completo(docx_path):
     add_heading_1(doc, "CAPÍTULO II. ANÁLISIS DE REQUERIMIENTOS")
     
     add_heading_2(doc, "2.1. Requerimientos Funcionales")
-    add_p(doc, "Los requerimientos funcionales definen las capacidades operativas, comportamientos y servicios específicos que el sistema VotaApp UNAMAD provee a sus usuarios. De acuerdo con Sommerville (2019), la especificación formal de requerimientos funcionales permite delimitar el comportamiento del sistema ante estímulos concretos y establecer criterios precisos de aceptación. A continuación se presenta la matriz detallada de requerimientos funcionales en la Tabla 1:")
+    add_p(doc, "Los requerimientos funcionales especifican las capacidades operativas, reglas de validación y flujos transaccionales que el sistema VotaApp UNAMAD provee a sus usuarios autenticados. De acuerdo con Sommerville (2019), la trazabilidad entre requerimientos funcionales y módulos de código garantiza la completitud del software. En la Tabla 1 se detallan los 12 requerimientos funcionales implementados:")
 
     rf_headers = ["Código", "Requerimiento Funcional", "Descripción Operativa del Requerimiento", "Prioridad"]
     rf_data = [
-        ["RF01", "Crear Encuesta con Validación", "El sistema debe permitir registrar una nueva encuesta capturando título, descripción, categoría y estado activo, validando que los campos no estén vacíos.", "Alta"],
-        ["RF02", "Consultar y Filtrar Encuestas", "El sistema debe listar las encuestas registradas en llContenedorEncuestas permitiendo filtrarlas de forma reactiva por estado: Todas, Activas o Cerradas.", "Alta"],
-        ["RF03", "Actualizar Encuesta y Estado", "El sistema debe permitir editar los metadatos de una encuesta existente (título, descripción, categoría) y alternar su estado entre Activa y Cerrada.", "Media"],
-        ["RF04", "Eliminar Encuesta en Cascada", "El sistema debe permitir suprimir una encuesta seleccionada eliminando automáticamente todas sus preguntas, alternativas y respuestas asociadas.", "Alta"],
-        ["RF05", "Gestionar Preguntas Dinámicas", "El sistema debe permitir agregar preguntas a una encuesta, seleccionando el tipo de respuesta: Selección Única (UNICA) o Selección Múltiple (MULTIPLE).", "Alta"],
-        ["RF06", "Gestionar Alternativas de Respuesta", "El sistema debe permitir agregar un conjunto dinámico de alternativas a una pregunta, exigiendo un mínimo obligatorio de dos opciones válidas.", "Alta"],
-        ["RF07", "Registrar Voto con Control Único", "El sistema debe desplegar las preguntas de una encuesta activa, validar que el votante ingrese su identidad, verificar que no haya votado previamente y guardar su voto.", "Crítica"],
-        ["RF08", "Calcular Estadísticas y Resultados", "El sistema debe tabular el total de votos por alternativa, calcular porcentajes relativos, graficar barras de progreso, destacar al ganador y permitir reiniciar conteo.", "Alta"]
+        ["RF01", "Autenticación Firebase y Google OAuth 2.0", "El sistema debe permitir iniciar sesión y registrar usuarios mediante Correo/Contraseña y Google Sign-In OAuth 2.0, además de enviar correos de recuperación de contraseña.", "Crítica"],
+        ["RF02", "Gestión de Perfil y 12 Carreras UNAMAD", "El sistema debe almacenar en users/{uid} el nombre, correo, Escuela Profesional (entre las 12 carreras UNAMAD) y código universitario, validando que el código no esté usado por otro UID.", "Alta"],
+        ["RF03", "Dashboard Cloud, KPIs y Filtros Reactivos", "El sistema debe mostrar en MainActivity indicadores KPI con numerales tabulares, búsqueda instantánea por texto, ChipGroup por categoría y filtro por estado (Todas, Activas, Cerradas).", "Alta"],
+        ["RF04", "Crear y Editar Encuesta en Firestore", "El sistema debe permitir crear y actualizar encuestas en encuestas/{encuestaId} definiendo título, descripción, categoría, estado activo y metadatos del creador.", "Alta"],
+        ["RF05", "Filtro por Carrera e Importación de Padrón", "El sistema debe permitir restringir una encuesta a una de las 12 carreras UNAMAD y/o importar masivamente códigos estudiantiles autorizados desde archivos .txt/.csv (Excel) o portapapeles.", "Crítica"],
+        ["RF06", "Eliminar Encuesta por Creador Autorizado", "El sistema debe permitir eliminar una encuesta y toda su subcolección de votos en cascada mediante WriteBatch únicamente cuando el usuario autenticado sea el creador.", "Alta"],
+        ["RF07", "Gestionar Preguntas y Alternativas Cloud", "El sistema debe permitir agregar y eliminar preguntas dinámicas de Selección Única (UNICA) o Selección Múltiple (MULTIPLE) con un mínimo de 2 alternativas por pregunta.", "Alta"],
+        ["RF08", "Verificación de Acceso Electoral al Votar", "Antes de permitir el sufragio, el sistema debe verificar con encuesta.verificarAcceso() si el votante pertenece a la Escuela Profesional requerida y si su código figura en el padrón autorizado.", "Crítica"],
+        ["RF09", "Registro de Voto Único por UID con Tarjetas Tonales", "El sistema debe presentar tarjetas de votación interactivas y registrar el sufragio en encuestas/{encuestaId}/votos/{voterUid}, bloqueando cualquier intento de doble voto por cuenta.", "Crítica"],
+        ["RF10", "Gráfico DonutChartView y Barras Animadas", "El sistema debe calcular en tiempo real los votos y porcentajes por alternativa, renderizando un gráfico circular animado en Canvas (DonutChartView), barras ProgressBar animadas y opción ganadora.", "Alta"],
+        ["RF11", "Auditoría de Votantes y Reinicio de Conteo", "El sistema debe listar el padrón auditable de participantes con fecha/hora de sufragio y permitir al creador reiniciar el conteo de votos con confirmación modal.", "Media"],
+        ["RF12", "Exportación de Acta Oficial de Resultados", "El sistema debe generar y compartir el Acta Oficial de Resultados formateada en texto plano hacia WhatsApp, correo o portapapeles mediante Intent.ACTION_SEND.", "Alta"]
     ]
-    add_apa_table(doc, "1", "Especificación de Requerimientos Funcionales (RF01 - RF08)", [1.8, 4.2, 7.8, 1.7], rf_headers, rf_data, note_text="Elaboración propia basada en los requerimientos del sistema VotaApp UNAMAD (2026).")
+    add_apa_table(doc, "1", "Especificación de Requerimientos Funcionales (RF01 - RF12)", [1.6, 3.8, 8.4, 1.7], rf_headers, rf_data, note_text="Elaboración propia basada en los módulos Cloud y móviles del sistema VotaApp UNAMAD (2026).")
 
     add_heading_2(doc, "2.2. Requerimientos No Funcionales")
-    add_p(doc, "Los requerimientos no funcionales estipulan las restricciones de calidad, rendimiento, seguridad y compatibilidad técnica que rigen la operación de la aplicación. Estos requerimientos han sido categorizados conforme al estándar internacional de calidad de producto software ISO/IEC 25010 (ISO/IEC, 2011), considerando atributos clave como usabilidad, eficiencia de desempeño, compatibilidad, fiabilidad y mantenibilidad expuestos en la Tabla 2:")
+    add_p(doc, "Los requerimientos no funcionales establecen los atributos de calidad, seguridad, diseño visual, rendimiento y automatización del ciclo de entrega conforme a la norma internacional ISO/IEC 25010 (ISO/IEC, 2011), presentados en la Tabla 2:")
 
     rnf_headers = ["Código", "Dimensión", "Criterio Técnico y Especificación de Calidad", "Métrica / Parámetro"]
     rnf_data = [
-        ["RNF01", "Usabilidad (UX/UI)", "La interfaz gráfica debe seguir las guías de Material Design, con contrastes visuales adecuados, fuentes legibles y retroalimentación interactiva (Toast, AlertDialog).", "Aceptación SUS > 85%"],
-        ["RNF02", "Rendimiento y Tiempo de Respuesta", "Las transacciones locales en SQLite (inserción de votos, consultas filtradas y cálculos porcentuales) deben ejecutarse en menos de 300 ms en dispositivos de gama media.", "Latencia < 300 ms"],
-        ["RNF03", "Compatibilidad de Plataforma", "La aplicación debe operar de forma nativa desde Android 7.0 (API nivel 24 - Nougat) hasta Android 16 (API nivel 36), asegurando cobertura en smartphones de diversas marcas.", "MinSdk: 24 | TargetSdk: 36"],
-        ["RNF04", "Integridad y Persistencia ACID", "La base de datos debe aplicar restricciones PRAGMA foreign_keys = ON para evitar registros huérfanos y garantizar atomicidad en transacciones de voto y borrado.", "Integridad referencial 100%"],
-        ["RNF05", "Mantenibilidad y Arquitectura", "El código debe estar estructurado bajo el paradigma de separación de responsabilidades en tres capas, utilizando data classes de Kotlin y patrones modulares.", "Complejidad ciclomática baja"]
+        ["RNF01", "Usabilidad y Modo Oscuro Obsidian MD3", "La interfaz debe implementar Material Design 3 con paleta Obsidian Midnight (#090E1A) por defecto, alternancia Día/Noche instantánea, diseño Edge-to-Edge y numerales tabulares.", "Contraste WCAG AAA / SUS > 90%"],
+        ["RNF02", "Rendimiento y Sincronización Cloud", "Las consultas a Cloud Firestore, el filtrado local multicriterio y las animaciones a 60 fps de DonutChartView (650 ms) deben ejecutarse sin bloquear el hilo principal (UI Thread).", "Latencia < 300 ms | 60 FPS"],
+        ["RNF03", "Seguridad Declarativa en Servidor", "El backend Cloud Firestore debe aplicar reglas firestore.rules que validen autenticación, propiedad de documentos (isOwner), esquemas de datos e inmutabilidad del voto por UID.", "100% rutas protegidas"],
+        ["RNF04", "Compatibilidad Multi-Versión Android", "La aplicación debe ejecutarse de forma nativa desde Android 7.0 (API 24) hasta Android 16 (API 36), adaptando insets de barras del sistema y teclado virtual (IME).", "MinSdk: 24 | TargetSdk: 36"],
+        ["RNF05", "Tolerancia y Persistencia Híbrida", "El sistema debe combinar la sincronización en la nube (FirebaseRepository) con el soporte de esquema relacional SQLite (DatabaseHelper) y preservación de estado ante rotación.", "Integridad ACID / Cloud"],
+        ["RNF06", "Mantenibilidad y Modularidad Kotlin", "El código fuente debe estructurarse en componentes desacoplados con data classes inmutables, catálogo institucional (CatalogoUnamad) y extensiones reutilizables.", "11 archivos Kotlin limpios"],
+        ["RNF07", "Automatización CI/CD (DevOps)", "Cada push a la rama main en GitHub debe disparar un flujo en GitHub Actions que ejecute pruebas unitarias, compile el APK y publique el release latest-apk automáticamente.", "Build & Release 100% automático"]
     ]
-    add_apa_table(doc, "2", "Especificación de Requerimientos No Funcionales (RNF01 - RNF05)", [1.8, 3.2, 8.5, 2.0], rnf_headers, rnf_data, note_text="Elaboración propia basada en la norma técnica internacional ISO/IEC 25010 (2011).")
+    add_apa_table(doc, "2", "Especificación de Requerimientos No Funcionales (RNF01 - RNF07)", [1.6, 3.3, 8.3, 2.3], rnf_headers, rnf_data, note_text="Elaboración propia basada en la norma técnica internacional ISO/IEC 25010 (2011).")
 
     add_heading_2(doc, "2.3. Diagrama de Casos de Uso del Sistema")
-    add_p(doc, "El modelado de casos de uso describe las interacciones entre los actores del sistema y los servicios que brinda la aplicación. Como sostienen Pressman y Maxim (2021), el diagrama de casos de uso en notación UML proporciona una vista contextual indispensable para comunicar los límites y el alcance funcional del software a los interesados. Se identifican dos actores principales: el Administrador / Creador (docente, delegado o personal administrativo que diseña y supervisa las encuestas) y el Participante / Votante (estudiante o miembro universitario que responde a las consultas). En la Figura 1 se ilustra el diagrama formal en notación UML 2.5.")
+    add_p(doc, "El modelado de casos de uso representa las interacciones entre los actores universitarios y los procesos de VotaApp UNAMAD. Como exponen Pressman y Maxim (2021), la notación UML 2.5 permite visualizar las fronteras del sistema y la delegación de responsabilidades. Se distinguen dos roles operativos sobre la misma cuenta autenticada: el Organizador / Creador (docente, delegado o comité que crea la encuesta, define restricciones de carrera/padrón, gestiona preguntas y administra el escrutinio) y el Estudiante / Votante (miembro de cualquiera de las 12 Escuelas Profesionales que se autentica, configura su perfil académico, emite su voto único y consulta resultados). La Figura 1 muestra el diagrama de casos de uso del sistema.")
 
     fig1_path = os.path.join(diag_dir, "fig1_casos_uso.png")
-    add_apa_figure(doc, "1", "Diagrama de Casos de Uso del Sistema VotaApp UNAMAD", fig1_path, note_text="Diagrama modelado conforme a la especificación UML 2.5 para la interacción de actores y casos de uso (Elaboración propia, 2026).", width_cm=10.5)
+    add_apa_figure(doc, "1", "Diagrama de Casos de Uso del Sistema VotaApp UNAMAD", fig1_path, note_text="Diagrama modelado conforme a la especificación UML 2.5 incluyendo autenticación Cloud, restricción por escuela/padrón y escrutinio (Elaboración propia, 2026).", width_cm=11.0)
 
     add_heading_2(doc, "2.4. Especificación Detallada de Casos de Uso Principales")
-    add_p(doc, "A continuación se presentan las especificaciones formales de los dos casos de uso de mayor impacto técnico y operativo del sistema, incorporando validaciones de entrada conforme a las buenas prácticas de seguridad de software móvil (OWASP Foundation, 2024):")
+    add_p(doc, "A continuación se documentan los tres casos de uso críticos que gobiernan la seguridad de acceso, la restricción electoral y el escrutinio en la nube:")
 
-    add_heading_3(doc, "CU01: Registrar Voto / Respuestas (Asociado a RF07)")
-    add_p(doc, "• Actores: Participante / Votante.")
-    add_p(doc, "• Precondiciones: La encuesta seleccionada debe encontrarse en estado ACTIVA y poseer preguntas configuradas con alternativas.")
+    add_heading_3(doc, "CU01: Autenticar Usuario y Configurar Perfil Académico UNAMAD (Asociado a RF01, RF02)")
+    add_p(doc, "• Actor: Estudiante / Docente UNAMAD.")
+    add_p(doc, "• Precondiciones: El dispositivo cuenta con conexión a internet y servicios de Google Play activos.")
     add_p(doc, "• Flujo Principal:")
-    add_p(doc, "  1. El votante selecciona una encuesta activa en el panel principal y pulsa el botón 'Votar'.")
-    add_p(doc, "  2. El sistema recupera las preguntas y alternativas desde SQLite y construye dinámicamente las vistas (RadioGroups para opción única y CheckBoxes para opción múltiple en llContenedorPreguntasVoto).")
-    add_p(doc, "  3. El usuario ingresa su código institucional o nombre en etParticipante y marca sus preferencias en cada pregunta.")
-    add_p(doc, "  4. El usuario presiona el botón 'Confirmar y Emitir Mi Voto' (btnEnviarVoto).")
-    add_p(doc, "  5. El sistema ejecuta procesarVoto(), validando que etParticipante no esté vacío y verificando con dbHelper.yaVotoParticipante() que el votante no haya sufragado previamente.")
-    add_p(doc, "  6. El sistema comprueba que todas las preguntas hayan recibido respuesta válida.")
-    add_p(doc, "  7. El sistema ejecuta dbHelper.registrarVotos() dentro de una transacción atómica.")
-    add_p(doc, "  8. Se despliega un AlertDialog de confirmación exitosa y se navega hacia ResultadosActivity.")
+    add_p(doc, "  1. El usuario abre la aplicación; LoginActivity verifica si existe una sesión activa en FirebaseAuth.")
+    add_p(doc, "  2. Si no hay sesión, se presenta la interfaz con soporte de Modo Oscuro Obsidian (btnTemaLogin), campos de correo y contraseña, botón de Google Sign-In OAuth 2.0 y la fila interactiva con las opciones 'Crear cuenta' junto a '¿Olvidaste tu contraseña?'.")
+    add_p(doc, "  3. Al pulsar 'Crear cuenta', se despliega con transición animada el formulario de registro que solicita Nombre Completo, Código Universitario y Escuela Profesional (Spinner con las 12 carreras de la UNAMAD).")
+    add_p(doc, "  4. FirebaseRepository.guardarPerfilUsuario() verifica en la colección users que el código universitario no esté registrado por otro UID y almacena el documento users/{uid} en Cloud Firestore.")
+    add_p(doc, "  5. El sistema redirige automáticamente a MainActivity mostrando el saludo personalizado con nombre y código.")
     add_p(doc, "• Flujos Alternos:")
-    add_p(doc, "  - 5a. Participante ya votó: Se despliega un AlertDialog con título 'Voto Ya Registrado' indicando que el participante ya emitió su voto previamente en esta encuesta y se cancela el registro.")
-    add_p(doc, "  - 6a. Preguntas sin responder: Se notifica qué pregunta requiere selección obligatoria.")
+    add_p(doc, "  - 2a. Recuperación de contraseña: Al pulsar '¿Olvidaste tu contraseña?', se abre un cuadro de diálogo que invoca auth.sendPasswordResetEmail(correo) enviando el enlace oficial de restablecimiento.")
+    add_p(doc, "  - 4a. Código universitario duplicado: Si otro estudiante ya registró ese código de matrícula, el sistema rechaza la asignación y muestra un mensaje de alerta protegiendo la unicidad del padrón.")
 
-    add_heading_3(doc, "CU02: Visualizar Conteo y Resultados Estadísticos (Asociado a RF08)")
-    add_p(doc, "• Actores: Administrador / Creador y Participante / Votante.")
-    add_p(doc, "• Precondiciones: La encuesta debe existir en la base de datos.")
+    add_heading_3(doc, "CU02: Crear Encuesta con Filtro de Escuela Profesional e Importación Masiva de Códigos (Asociado a RF04, RF05)")
+    add_p(doc, "• Actor: Organizador / Creador.")
     add_p(doc, "• Flujo Principal:")
-    add_p(doc, "  1. El usuario pulsa 'Resultados' desde la tarjeta item_encuesta o accede tras votar.")
-    add_p(doc, "  2. ResultadosActivity ejecuta cargarResultados(), obteniendo estadísticas estructuradas mediante dbHelper.obtenerEstadisticasPreguntas().")
-    add_p(doc, "  3. El sistema renderiza dinámicamente en llResultadosPreguntas las barras horizontales ProgressBar y etiquetas porcentuales con precisión decimal.")
-    add_p(doc, "  4. El sistema destaca con un distintivo visual (🏆) la alternativa ganadora de cada pregunta.")
-    add_p(doc, "  5. Se lista en llListaParticipantes el registro de auditoría de votantes con marca de tiempo.")
-    add_p(doc, "• Flujo Alterno (Reinicio de Votos por Administrador):")
-    add_p(doc, "  - 1a. El administrador presiona btnReiniciarConteo: Se despliega mostrarDialogoReiniciarConteo(). Tras confirmar, dbHelper.reiniciarVotosEncuesta() resetea los sufragios y respuestas a 0.")
+    add_p(doc, "  1. Desde MainActivity, el organizador pulsa '+ Crear Nueva Encuesta' para abrir CrearEncuestaActivity.")
+    add_p(doc, "  2. Ingresa el título (mínimo 5 caracteres), descripción y selecciona la categoría (Académica, Satisfacción, Votación Estudiantil o General).")
+    add_p(doc, "  3. En la sección de Control de Acceso Electoral, selecciona en spCarreraRestringida si la encuesta está abierta a 'Todas las carreras' o restringida exclusivamente a una de las 12 Escuelas Profesionales.")
+    add_p(doc, "  4. Opcionalmente, pulsa 'Importar .txt / .csv' (selector de archivos nativo) o 'Pegar de Excel' (lectura directa del portapapeles). El motor CatalogoUnamad.extraerCodigosDesdeTexto() extrae y normaliza automáticamente todos los códigos de matrícula válidos, actualizando el contador en tiempo real.")
+    add_p(doc, "  5. Al pulsar 'Guardar y Configurar Preguntas', el documento se crea en Cloud Firestore y navega a GestionarPreguntasActivity.")
+
+    add_heading_3(doc, "CU03: Emitir Voto Único Verificado y Auditar Resultados con DonutChartView (Asociado a RF08 - RF12)")
+    add_p(doc, "• Actor: Estudiante / Votante.")
+    add_p(doc, "• Flujo Principal:")
+    add_p(doc, "  1. El votante selecciona una encuesta activa; el sistema evalúa encuesta.verificarAcceso(perfilActual, uid).")
+    add_p(doc, "  2. En RegistrarVotoActivity, el sistema consulta FirebaseRepository.yaVotoUsuario(idEncuesta, uid). Si no ha votado, renderiza tarjetas tonales interactivas para cada pregunta (RadioGroup para selección única y CheckBoxes para selección múltiple).")
+    add_p(doc, "  3. Al confirmar el sufragio, se escribe el documento encuestas/{idEncuesta}/votos/{uid} en Cloud Firestore, donde las reglas firestore.rules garantizan que el ID del documento coincida exactamente con request.auth.uid.")
+    add_p(doc, "  4. El sistema redirige a ResultadosActivity, donde se calcula la distribución estadística en tiempo real, dibujando el gráfico circular animado DonutChartView, las barras horizontales animadas, la opción ganadora, la lista de auditoría y el botón para compartir el Acta Oficial de Resultados.")
 
     # =========================================================================
-    # CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL
+    # CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL Y ARQUITECTURA CLOUD
     # =========================================================================
-    add_heading_1(doc, "CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL")
+    add_heading_1(doc, "CAPÍTULO III. DISEÑO DE LA APLICACIÓN MÓVIL Y ARQUITECTURA CLOUD")
     
-    add_heading_2(doc, "3.1. Arquitectura de la Aplicación en Tres Capas")
-    add_p(doc, "La aplicación VotaApp UNAMAD ha sido estructurada siguiendo el patrón arquitectónico en tres capas (Layered Architecture), recomendado por Google Developers (2024) y analizado por Phillips et al. (2021), lo que promueve una alta cohesión interna y un bajo acoplamiento entre los módulos del sistema:")
-    add_p(doc, "1. Capa de Presentación (Presentation / UI Layer): Conformada por las Activities nativas de Android (MainActivity, CrearEncuestaActivity, GestionarPreguntasActivity, RegistrarVotoActivity, ResultadosActivity) y los archivos de maquetación XML en res/layout (activity_main.xml, activity_crear_encuesta.xml, activity_gestionar_preguntas.xml, activity_registrar_voto.xml, activity_resultados.xml, item_encuesta.xml e item_pregunta_gestion.xml).")
-    add_p(doc, "2. Capa de Lógica de Negocio y Modelos (Domain / Business Logic Layer): Contiene los modelos inmutables de datos en Models.kt (Encuesta, Pregunta, Alternativa, Respuesta, ParticipanteRegistro, AlternativaEstadistica, PreguntaEstadistica) y las rutinas de validación algorítmica.")
-    add_p(doc, "3. Capa de Persistencia y Acceso a Datos (Data Access Layer): Centralizada en la clase DatabaseHelper, la cual extiende de SQLiteOpenHelper. Implementa los contratos de datos, las sentencias DDL de creación de tablas, la configuración de llaves foráneas y 18 métodos CRUD transaccionales sobre la base de datos encuestas_unamad.db.")
+    add_heading_2(doc, "3.1. Arquitectura de la Aplicación en Tres Capas y Backend Cloud")
+    add_p(doc, "La arquitectura de VotaApp UNAMAD sigue un diseño modular en tres capas desacopladas (Presentación, Dominio/Lógica de Negocio y Persistencia Cloud/Local), alineado con las recomendaciones oficiales de Google Developers (2024) y Phillips et al. (2021):")
+    add_p(doc, "1. Capa de Presentación y Componentes UI (Presentation Layer): Integrada por las 6 Activities del sistema (LoginActivity, MainActivity, CrearEncuestaActivity, GestionarPreguntasActivity, RegistrarVotoActivity y ResultadosActivity), el componente gráfico personalizado DonutChartView (basado en Android Canvas y ValueAnimator), el gestor de tema e insets UiInsetsHelper.kt y los layouts XML con soporte nativo para Modo Oscuro Obsidian MD3 (values-night/colors.xml).")
+    add_p(doc, "2. Capa de Dominio y Modelos (Domain Layer): Conformada por Models.kt, que encapsula las estructuras de datos (UsuarioPerfil, Encuesta, Pregunta, Alternativa, ParticipanteRegistro, AlternativaEstadistica, PreguntaEstadistica) junto con el objeto singleton CatalogoUnamad, responsable del catálogo oficial de las 12 carreras profesionales, el extractor regex de códigos desde archivos Excel/.csv/.txt y el algoritmo de validación electoral verificarAcceso().")
+    add_p(doc, "3. Capa de Datos y Servicios Cloud (Data & Persistence Layer): Orquestada por el repositorio singleton FirebaseRepository.kt, que centraliza las operaciones asíncronas con Firebase Authentication y Cloud Firestore (proyecto votaapp-unamad-2026), respaldada por las reglas de seguridad firestore.rules en el servidor y el gestor relacional local DatabaseHelper.kt (SQLiteOpenHelper sobre encuestas_unamad.db) para persistencia estructurada.")
 
     fig2_path = os.path.join(diag_dir, "fig2_arquitectura.png")
-    add_apa_figure(doc, "2", "Diagrama de Arquitectura Modular en Tres Capas Sincronizado", fig2_path, note_text="Arquitectura desacoplada en tres capas basada en los lineamientos de Google Developers (2024) y Pressman y Maxim (2021) (Elaboración propia, 2026).", width_cm=10.5)
+    add_apa_figure(doc, "2", "Diagrama de Arquitectura Modular en Tres Capas y Backend Firebase Cloud", fig2_path, note_text="Arquitectura en tres capas integrando las 6 Activities, DonutChartView, CatalogoUnamad, FirebaseRepository y Cloud Firestore (Elaboración propia, 2026).", width_cm=11.0)
 
-    add_heading_2(doc, "3.2. Diseño de Interfaces de Usuario (Prototipos Móviles)")
-    add_p(doc, "El diseño visual de la interfaz se concibió bajo las premisas de simplicidad, alta legibilidad y rapidez de interacción en pantallas táctiles de diversos tamaños. En la Figura 3 y Figura 4 se exponen los prototipos de alta fidelidad que sirvieron como referencia directa para la maquetación en XML:")
-    add_p(doc, "• Pantalla 1 (MainActivity): Diseñada como un centro de control operativo. Incorpora tarjetas superiores de indicadores clave (KPI) con el total de encuestas, encuestas activas y votos globales emitidos; un selector RadioGroup (rgFiltro) con opciones Todas, Activas y Cerradas; un contenedor LinearLayout vertical (llContenedorEncuestas) donde se inflan dinámicamente las tarjetas item_encuesta; y un botón prominente btnCrearEncuesta para dar de alta nuevas consultas.")
-    add_p(doc, "• Pantalla 2 (CrearEncuestaActivity): Presenta un formulario estructurado con campos etTituloEncuesta, etDescripcionEncuesta, un RadioGroup (rgCategoria) para seleccionar entre Académica, Satisfacción, Votación Estudiantil o General, un MaterialSwitch (swActiva) para habilitar o inhabilitar la votación, y botones duales btnGuardarYPreguntas y btnGuardarYVolver.")
-    add_p(doc, "• Pantalla 3 (GestionarPreguntasActivity): Brinda un entorno ágil para agregar preguntas a una encuesta, permitiendo definir el texto (etTextoPregunta), alternar entre modalidad UNICA y MULTIPLE mediante rgTipoPregunta, y registrar de 2 a 4 alternativas en etAlternativa1 a etAlternativa4, listando las preguntas actuales en llListaPreguntas mediante item_pregunta_gestion.")
+    add_heading_2(doc, "3.2. Diseño de Interfaces de Usuario (6 Activities y Modo Oscuro Obsidian MD3)")
+    add_p(doc, "El sistema de diseño de VotaApp UNAMAD implementa Material Design 3 con un tema predeterminado Modo Oscuro Obsidian (Obsidian Midnight #090E1A y superficies elevadas #121B2E) que reduce la fatiga visual y maximiza el contraste de los indicadores estadísticos, permitiendo conmutar al Modo Claro en cualquier momento. En las Figuras 3 y 4 se presentan los prototipos y flujos visuales de las 6 pantallas del sistema:")
+    add_p(doc, "• Pantalla 1 (LoginActivity): Cabecera institucional UNAMAD con botón superior de cambio de tema (Modo Claro / Modo Oscuro), tarjeta elevada con campos TextInputLayout para correo y contraseña, fila horizontal simétrica que ubica el enlace 'Crear cuenta' al costado izquierdo de '¿Olvidaste tu contraseña?', sección colapsable de registro con selector Spinner de las 12 Escuelas Profesionales y código universitario, y botón oficial de Google Sign-In OAuth 2.0.")
+    add_p(doc, "• Pantalla 2 (MainActivity): Centro de mando en la nube con SwipeRefreshLayout, barra superior con saludo personalizado ('Hola, Nombre • Código'), botones de edición de perfil ('Cuenta'), cambio de tema y cierre de sesión. Incluye tarjeta de 3 KPIs en tiempo real con numerales tabulares (fontFeatureSettings=\"tnum\"), buscador instantáneo etBuscarEncuesta, ChipGroup horizontal de categorías (cgCategorias), filtro segmentado (Todas, Activas, Cerradas) y listado de tarjetas item_encuesta con insignias de estado y restricción de carrera/padrón.")
+    add_p(doc, "• Pantalla 3 (CrearEncuestaActivity): Formulario de alta y edición de encuestas con selector de categoría, tarjeta especial de Restricción de Acceso Electoral con Spinner de las 12 Escuelas Profesionales (spCarreraRestringida), botones de importación masiva de códigos ('Importar .txt / .csv' y 'Pegar de Excel'), contador dinámico de alumnos habilitados (tvContadorCodigos) y MaterialSwitch de estado activo.")
+    add_p(doc, "• Pantalla 4 (GestionarPreguntasActivity): Constructor dinámico de preguntas de Selección Única (UNICA) o Selección Múltiple (MULTIPLE) con 2 a 4 alternativas y sincronización directa del arreglo de preguntas en Cloud Firestore.")
 
     fig3_path = os.path.join(diag_dir, "fig3_prototipos_ui.png")
-    add_apa_figure(doc, "3", "Prototipos de Pantallas: Panel Principal, Creación y Preguntas", fig3_path, note_text="Prototipos de alta fidelidad diseñados según los principios de Material Design (Elaboración propia, 2026).", width_cm=10.8)
+    add_apa_figure(doc, "3", "Prototipos de Pantallas: Acceso, Panel Principal Cloud, Creación y Preguntas", fig3_path, note_text="Diseño de interfaces de usuario bajo lineamientos Material Design 3 (Elaboración propia, 2026).", width_cm=11.0)
 
-    add_p(doc, "• Pantalla 4 (RegistrarVotoActivity): Diseñada para ofrecer la máxima claridad al participante. Presenta un encabezado institucional, un campo obligatorio etParticipante y un contenedor vertical (llContenedorPreguntasVoto en ScrollView) en el que se inyectan dinámicamente las preguntas configuradas, utilizando RadioGroups agrupados para selección única y listas de CheckBoxes para selección múltiple, finalizando con el botón btnEnviarVoto.")
-    add_p(doc, "• Pantalla 5 (ResultadosActivity): Ofrece una visualización analítica integral. Despliega un encabezado con el total de votantes únicos (tvTotalParticipantes), barras de progreso ProgressBar horizontales con porcentajes exactos, el distintivo visual de la opción ganadora ('Ganadora • ...' con fondo ámbar), la lista de auditoría en llListaParticipantes y el botón btnReiniciarConteo.")
+    add_p(doc, "• Pantalla 5 (RegistrarVotoActivity): Cédula de votación digital de alta legibilidad. Precarga automáticamente el nombre y código universitario verificado del estudiante autenticado, valida su elegibilidad según carrera y padrón, y construye tarjetas de opción tonales interactivas (surface_option_selected y border_option_selected) que cambian de relieve y color al ser seleccionadas.")
+    add_p(doc, "• Pantalla 6 (ResultadosActivity): Panel analítico de escrutinio en tiempo real. Por cada pregunta renderiza un gráfico circular animado DonutChartView con leyenda lateral y total de votos centrado, seguido de barras horizontales ProgressBar animadas, insignia dorada en la alternativa ganadora ('Ganadora • ...'), padrón auditable de votantes con marca de tiempo, botón de reinicio de conteo (exclusivo para el creador) y botón 'Compartir Acta Oficial de Resultados'.")
 
     fig4_path = os.path.join(diag_dir, "fig4_prototipos_votacion_resultados.png")
-    add_apa_figure(doc, "4", "Prototipos de Pantallas: Registro de Votación y Conteo de Resultados", fig4_path, note_text="Interfaces móviles para captura de sufragios y visualización con barras de progreso (Elaboración propia, 2026).", width_cm=10.5)
+    add_apa_figure(doc, "4", "Prototipos de Pantallas: Registro de Votación y Resultados con DonutChartView", fig4_path, note_text="Interfaces móviles de votación tonal y escrutinio estadístico en tiempo real (Elaboración propia, 2026).", width_cm=10.8)
 
     add_heading_2(doc, "3.3. Diagrama de Navegación y Flujo de Pantallas")
-    add_p(doc, "La navegación de la aplicación se gestiona de forma desacoplada mediante objetos Intent explícitos de Android, transfiriendo el identificador MainActivity.EXTRA_ID_ENCUESTA en los Extras del Intent. Al finalizar operaciones de guardado o cancelación, las Activities secundarias invocan finish(), retornando el control a MainActivity, la cual en su ciclo onResume() refresca automáticamente la información desde SQLite. En la Figura 5 se detalla el diagrama formal de navegación:")
+    add_p(doc, "La navegación entre las 6 Activities se coordina mediante Intents explícitos que transportan el identificador documental EXTRA_ID_ENCUESTA. LoginActivity actúa como guardián de autenticación (Auth Gate): si Firebase.auth.currentUser está activo, redirige de inmediato a MainActivity. Desde MainActivity se bifurca el flujo hacia la creación/edición (CrearEncuestaActivity -> GestionarPreguntasActivity), la emisión del sufragio verificado (RegistrarVotoActivity) y la visualización o exportación del escrutinio (ResultadosActivity), como se ilustra en la Figura 5:")
 
     fig5_path = os.path.join(diag_dir, "fig5_navegacion.png")
-    add_apa_figure(doc, "5", "Diagrama de Estados y Navegación entre Pantallas Móviles", fig5_path, note_text="Flujo de navegación e intercambio de Intents entre componentes Activity (Elaboración propia, 2026).", width_cm=10.2)
+    add_apa_figure(doc, "5", "Diagrama de Estados y Navegación entre las 6 Activities del Sistema", fig5_path, note_text="Flujo de navegación e intercambio de Intents entre las 6 pantallas de VotaApp UNAMAD (Elaboración propia, 2026).", width_cm=10.5)
 
-    add_heading_2(doc, "3.4. Diseño de Base de Datos y Diccionario de Datos Relacional")
-    add_p(doc, "El almacenamiento del sistema se diseñó sobre un esquema relacional normalizado en Tercera Forma Normal (3FN), siguiendo los principios de modelado de datos establecidos por Elmasri y Navathe (2017). La estructura está compuesta por cuatro entidades fuertemente vinculadas: encuestas, preguntas, alternativas y respuestas. Para preservar la integridad del modelo, se habilitaron las restricciones de clave foránea de SQLite mediante la directiva PRAGMA foreign_keys = ON (Hipp, 2024), garantizando que la supresión de una encuesta erradique de forma atómica y en cascada todas sus preguntas, opciones y sufragios dependientes sin dejar registros huérfanos.")
+    add_heading_2(doc, "3.4. Diseño de Datos en Cloud Firestore, Reglas de Seguridad y SQLite Local")
+    add_p(doc, "El sistema implementa un modelo de datos híbrido orientado a documentos en la nube mediante Google Cloud Firestore (proyecto votaapp-unamad-2026) complementado por un esquema relacional en Tercera Forma Normal (3FN) en SQLite (Elmasri y Navathe, 2017; Hipp, 2024). En Cloud Firestore, la estructura se organiza en dos colecciones raíz (users y encuestas) y una subcolección jerárquica de sufragios (encuestas/{encuestaId}/votos/{voterUid}). El diseño asigna como ID del documento de voto el propio UID criptográfico del votante autenticado, lo cual garantiza matemáticamente a nivel de motor de base de datos y de reglas de seguridad que un estudiante solo pueda registrar un documento de voto por encuesta.")
 
     fig6_path = os.path.join(diag_dir, "fig6_base_datos_er.png")
-    add_apa_figure(doc, "6", "Diagrama Entidad-Relación de la Base de Datos SQLite", fig6_path, note_text="Modelo relacional en tercera forma normal (3FN) con relaciones 1:N y borrado en cascada (Elaboración propia, 2026).", width_cm=10.2)
+    add_apa_figure(doc, "6", "Modelo de Datos Híbrido: Colecciones Cloud Firestore y Esquema Relacional SQLite", fig6_path, note_text="Estructura documental en Cloud Firestore y esquema relacional 3FN de respaldo en SQLite (Elaboración propia, 2026).", width_cm=10.5)
 
-    add_p(doc, "A continuación se presentan las tablas del diccionario de datos técnico en formato APA 7:")
+    add_p(doc, "A continuación se detallan los diccionarios de datos de las colecciones en Cloud Firestore y del esquema relacional local en formato APA 7 (Tablas 3 a 6):")
 
-    # Diccionario Tabla encuestas
-    t_enc_headers = ["Campo / Columna", "Tipo SQLite", "Restricción", "Descripción Funcional"]
+    # Tabla 3: Colección users
+    t_usr_headers = ["Campo / Atributo", "Tipo Firestore", "Restricción / Regla", "Descripción Funcional"]
+    t_usr_data = [
+        ["uid (Document ID)", "String", "PK == request.auth.uid (Inmutable)", "Identificador único de Firebase Authentication del usuario."],
+        ["nombre", "String", "Requerido (2 a 120 caracteres)", "Nombre completo del estudiante o docente universitario."],
+        ["codigoUniversitario", "String", "Único en colección (0 a 30 chars)", "Código institucional de matrícula UNAMAD verificado sin duplicidad."],
+        ["carrera", "String", "Catálogo 12 Escuelas UNAMAD", "Escuela Profesional oficial a la que pertenece el estudiante."],
+        ["email", "String", "Formato Email válido (<= 254 chars)", "Correo electrónico institucional o personal vinculado a la cuenta."],
+        ["fechaRegistro", "Number (Long)", "Timestamp >= 0 (Inmutable)", "Marca de tiempo epoch en milisegundos del alta inicial."]
+    ]
+    add_apa_table(doc, "3", "Diccionario de Datos Cloud Firestore: Colección 'users/{uid}'", [3.0, 2.3, 3.8, 6.4], t_usr_headers, t_usr_data, note_text="Elaboración propia a partir del modelo UsuarioPerfil en Models.kt y firestore.rules (2026).")
+
+    # Tabla 4: Colección encuestas
+    t_enc_headers = ["Campo / Atributo", "Tipo Firestore", "Restricción / Regla", "Descripción Funcional"]
     t_enc_data = [
-        ["id_encuesta", "INTEGER", "PRIMARY KEY AUTOINCREMENT", "Identificador numérico único de la encuesta."],
-        ["titulo", "TEXT", "NOT NULL", "Título principal o denominación de la encuesta."],
-        ["descripcion", "TEXT", "NOT NULL", "Detalle descriptivo, objetivo o justificación de la consulta."],
-        ["categoria", "TEXT", "NOT NULL", "Categoría temática (Académica, Satisfacción, Votación, General)."],
-        ["activa", "INTEGER", "NOT NULL DEFAULT 1", "Bandera de estado: 1 = Habilitada para votar, 0 = Cerrada."],
-        ["fecha_creacion", "TEXT", "NOT NULL", "Marca de tiempo con la fecha y hora de registro local."]
+        ["id (Document ID)", "String", "Auto-ID Firestore", "Identificador único global del documento de encuesta en la nube."],
+        ["titulo", "String", "Requerido (5 a 160 caracteres)", "Título oficial de la encuesta o proceso electoral estudiantil."],
+        ["descripcion", "String", "Requerido (1 a 1000 caracteres)", "Objetivo, instrucciones o contexto detallado de la consulta."],
+        ["categoria", "String", "Enum (Académica, Satisfacción, Votación, General)", "Clasificación temática para filtrado rápido mediante ChipGroup."],
+        ["activa", "Boolean", "true = Abierta | false = Cerrada", "Estado operativo que habilita o bloquea la recepción de votos."],
+        ["fechaCreacion", "String", "Formato yyyy-MM-dd HH:mm (Inmutable)", "Estampa de tiempo de publicación original de la encuesta."],
+        ["creadorUid", "String", "== request.auth.uid (Inmutable)", "UID del autor con privilegios exclusivos de edición y borrado."],
+        ["creadorNombre", "String", "Requerido (1 a 120 caracteres)", "Nombre visible del docente o delegado organizador."],
+        ["carreraRestringida", "String", "'TODAS' o 1 de las 12 Escuelas", "Filtro automático que restringe la votación a una carrera UNAMAD."],
+        ["codigosPermitidos", "String", "Lista CSV/TXT o vacío (Abierta)", "Padrón de códigos universitarios autorizados importados de Excel/TXT."],
+        ["preguntas", "Array<Map>", "Lista de 0 a 50 preguntas", "Arreglo estructurado con objetos Pregunta (id, texto, tipo, alternativas)."]
     ]
-    add_apa_table(doc, "3", "Diccionario de Datos: Tabla 'encuestas'", [2.5, 2.2, 3.8, 7.0], t_enc_headers, t_enc_data, note_text="Elaboración propia a partir del esquema DDL implementado en DatabaseHelper (2026).")
+    add_apa_table(doc, "4", "Diccionario de Datos Cloud Firestore: Colección 'encuestas/{encuestaId}'", [3.0, 2.3, 3.8, 6.4], t_enc_headers, t_enc_data, note_text="Elaboración propia a partir del esquema documental de FirebaseRepository.kt (2026).")
 
-    # Diccionario Tabla preguntas
-    t_preg_headers = ["Campo / Columna", "Tipo SQLite", "Restricción", "Descripción Funcional"]
-    t_preg_data = [
-        ["id_pregunta", "INTEGER", "PRIMARY KEY AUTOINCREMENT", "Identificador numérico único de la pregunta."],
-        ["id_encuesta", "INTEGER", "FOREIGN KEY REFERENCES encuestas", "Llave foránea vinculada a la encuesta contenedora."],
-        ["texto_pregunta", "TEXT", "NOT NULL", "Enunciado interrogativo presentado al votante."],
-        ["tipo_pregunta", "TEXT", "NOT NULL ('UNICA' | 'MULTIPLE')", "Modalidad de respuesta admitida para renderizado dinámico."]
+    # Tabla 5: Subcolección votos
+    t_vot_headers = ["Campo / Atributo", "Tipo Firestore", "Restricción / Regla", "Descripción Funcional"]
+    t_vot_data = [
+        ["voterUid (Doc ID)", "String", "PK == request.auth.uid (1 voto/UID)", "ID del documento idéntico al UID del votante; impide votos duplicados."],
+        ["uid", "String", "Requerido (== voterUid)", "UID autenticado del estudiante que emite el sufragio."],
+        ["participante", "String", "Requerido (2 a 120 caracteres)", "Etiqueta auditable del votante ('Nombre Completo - Código')."],
+        ["fechaVoto", "String", "Formato yyyy-MM-dd HH:mm", "Fecha y hora exacta de emisión del sufragio en la nube."],
+        ["respuestas", "Map<String, List>", "Máximo 50 entradas (Inmutable)", "Mapa que asocia cada idPregunta con la lista de idAlternativa elegidas."]
     ]
-    add_apa_table(doc, "4", "Diccionario de Datos: Tabla 'preguntas'", [2.5, 2.2, 3.8, 7.0], t_preg_headers, t_preg_data, note_text="Elaboración propia a partir del esquema DDL implementado en DatabaseHelper (2026).")
+    add_apa_table(doc, "5", "Diccionario de Datos Cloud Firestore: Subcolección 'encuestas/{encuestaId}/votos/{voterUid}'", [3.0, 2.3, 3.8, 6.4], t_vot_headers, t_vot_data, note_text="Elaboración propia a partir de la subcolección de sufragios protegida por firestore.rules (2026).")
 
-    # Diccionario Tabla alternativas
-    t_alt_headers = ["Campo / Columna", "Tipo SQLite", "Restricción", "Descripción Funcional"]
-    t_alt_data = [
-        ["id_alternativa", "INTEGER", "PRIMARY KEY AUTOINCREMENT", "Identificador numérico único de la opción de respuesta."],
-        ["id_pregunta", "INTEGER", "FOREIGN KEY REFERENCES preguntas", "Llave foránea asociada a la pregunta respectiva."],
-        ["texto_alternativa", "TEXT", "NOT NULL", "Texto visible de la opción para marcar."],
-        ["votos", "INTEGER", "NOT NULL DEFAULT 0", "Contador acumulado de sufragios obtenidos por la alternativa."]
+    # Tabla 6: Esquema SQLite de Respaldo Local
+    t_sql_headers = ["Tabla SQLite Local", "Clave Primaria (PK)", "Claves Foráneas (FK) y Cascada", "Rol en el Módulo de Persistencia Local"]
+    t_sql_data = [
+        ["encuestas", "id_encuesta (INTEGER AUTOINCREMENT)", "Ninguna (Tabla Padre)", "Almacena metadatos locales de encuestas con estado activa (0/1)."],
+        ["preguntas", "id_pregunta (INTEGER AUTOINCREMENT)", "id_encuesta -> encuestas ON DELETE CASCADE", "Registra enunciados asociados a una encuesta (UNICA / MULTIPLE)."],
+        ["alternativas", "id_alternativa (INTEGER AUTOINCREMENT)", "id_pregunta -> preguntas ON DELETE CASCADE", "Guarda opciones de respuesta y contador local de votos."],
+        ["respuestas", "id_respuesta (INTEGER AUTOINCREMENT)", "id_encuesta, id_pregunta, id_alternativa CASCADE", "Bitácora local de auditoría de sufragios con control yaVotoParticipante."]
     ]
-    add_apa_table(doc, "5", "Diccionario de Datos: Tabla 'alternativas'", [2.5, 2.2, 3.8, 7.0], t_alt_headers, t_alt_data, note_text="Elaboración propia a partir del esquema DDL implementado en DatabaseHelper (2026).")
-
-    # Diccionario Tabla respuestas
-    t_resp_headers = ["Campo / Columna", "Tipo SQLite", "Restricción", "Descripción Funcional"]
-    t_resp_data = [
-        ["id_respuesta", "INTEGER", "PRIMARY KEY AUTOINCREMENT", "Identificador numérico único del registro de respuesta."],
-        ["id_encuesta", "INTEGER", "FOREIGN KEY REFERENCES encuestas", "Llave foránea para filtrado y auditoría por encuesta."],
-        ["id_pregunta", "INTEGER", "FOREIGN KEY REFERENCES preguntas", "Llave foránea vinculada a la pregunta respondida."],
-        ["id_alternativa", "INTEGER", "FOREIGN KEY REFERENCES alternativas", "Llave foránea de la opción seleccionada por el votante."],
-        ["participante", "TEXT", "NOT NULL", "Nombre o código institucional del votante (control de duplicidad)."],
-        ["fecha_voto", "TEXT", "NOT NULL", "Estampa de tiempo de la emisión del voto."]
-    ]
-    add_apa_table(doc, "6", "Diccionario de Datos: Tabla 'respuestas'", [2.5, 2.2, 3.8, 7.0], t_resp_headers, t_resp_data, note_text="Elaboración propia a partir del esquema DDL implementado en DatabaseHelper (2026).")
+    add_apa_table(doc, "6", "Estructura de Respaldo Local SQLite (encuestas_unamad.db)", [2.6, 3.2, 4.3, 5.4], t_sql_headers, t_sql_data, note_text="Elaboración propia basada en el esquema DDL de DatabaseHelper.kt (2026).")
 
     # =========================================================================
     # CAPÍTULO IV. DESARROLLO E IMPLEMENTACIÓN
     # =========================================================================
     add_heading_1(doc, "CAPÍTULO IV. DESARROLLO E IMPLEMENTACIÓN")
     
-    add_heading_2(doc, "4.1. Herramientas y Tecnologías Utilizadas")
-    add_p(doc, "Para la construcción material del sistema se seleccionó un ecosistema de herramientas de desarrollo alineadas con los más recientes estándares oficiales promovidos por Google para la ingeniería de software en Android (Google Developers, 2024; Smyth, 2023), sintetizadas en la Tabla 7:")
+    add_heading_2(doc, "4.1. Herramientas, Tecnologías y Pipeline CI/CD con GitHub Actions")
+    add_p(doc, "Para la construcción, sincronización en la nube y despliegue automatizado del sistema se empleó un stack tecnológico de última generación conforme a las especificaciones de Google Developers (2024) y Smyth (2023), detallado en la Tabla 7:")
 
     tech_headers = ["Herramienta / Tecnología", "Versión", "Rol en el Proyecto", "Justificación Técnica"]
     tech_data = [
-        ["Kotlin", "2.2.10", "Lenguaje principal de desarrollo", "Lenguaje conciso, seguro ante nulos (null-safety) y oficial para Android."],
-        ["Android Studio", "Ladybug (2024.2.1)", "Entorno de desarrollo (IDE)", "Soporte nativo para emuladores, Gradle build tool y refactorización."],
-        ["Android SDK / Framework", "API 36 (Min: API 24)", "Kit de desarrollo de software", "Compatibilidad garantizada desde Android 7.0 hasta Android 16."],
-        ["SQLiteOpenHelper", "Nativo Android", "Gestor de persistencia relacional", "Motor embebido transaccional ACID sin consumo de datos remotos."],
-        ["Material Components", "1.10.0", "Biblioteca de diseño de interfaces", "Componentes modernos: MaterialCardView, MaterialSwitch, MaterialButton, ProgressBar."],
-        ["Gradle & AGP", "Gradle 9.6.0 / AGP 9.5.0", "Sistema de compilación automatizado", "Gestión declarativa de dependencias (libs.versions.toml) y empaquetado de APK."]
+        ["Kotlin", "2.2.10", "Lenguaje oficial de desarrollo", "Tipado estático con null-safety, lambdas, data classes y extensión de vistas."],
+        ["Android Studio & SDK", "Ladybug | API 36 (Min 24)", "IDE y plataforma objetivo", "Soporte nativo desde Android 7.0 hasta Android 16 con Edge-to-Edge."],
+        ["Firebase Authentication", "BoM 34.7.0", "Gestión de identidad en la nube", "Autenticación Email/Password, Google Sign-In OAuth 2.0 y reset de clave."],
+        ["Cloud Firestore", "BoM 34.7.0 (votaapp-unamad-2026)", "Base de datos NoSQL Cloud", "Sincronización multi-dispositivo en tiempo real y reglas firestore.rules."],
+        ["Material Components MD3", "1.10.0 + SwipeRefresh 1.1.0", "Sistema de diseño UI/UX", "Modo Oscuro Obsidian, ChipGroup, MaterialSwitch, TextInputLayout, Cards."],
+        ["Kotlin Canvas & Animator", "Nativo Android Graphics", "Motor gráfico DonutChartView", "Renderizado vectorial antialiasing a 60 fps con DecelerateInterpolator."],
+        ["SQLiteOpenHelper", "Nativo Android (encuestas_unamad.db)", "Persistencia relacional local", "Transacciones ACID locales con PRAGMA foreign_keys = ON y cascadas."],
+        ["Gradle & GitHub Actions", "Gradle 9.6.0 / AGP 9.5.0", "Build y CI/CD Auto-Release", "Compilación en Ubuntu con JDK 17 Temurin y publicación de APK en Releases."]
     ]
-    add_apa_table(doc, "7", "Stack de Herramientas y Tecnologías de Desarrollo", [2.8, 2.2, 3.6, 6.9], tech_headers, tech_data, note_text="Elaboración propia basada en el catálogo libs.versions.toml y gradle-wrapper.properties (2026).")
+    add_apa_table(doc, "7", "Stack de Herramientas, Servicios Cloud y Pipeline CI/CD", [2.8, 2.4, 3.4, 6.9], tech_headers, tech_data, note_text="Elaboración propia basada en libs.versions.toml, google-services.json y .github/workflows/android-release.yml (2026).")
 
-    add_heading_2(doc, "4.2. Estructura del Proyecto en Android Studio")
-    add_p(doc, "El código fuente del proyecto se organizó rigurosamente bajo una jerarquía modular que separa los modelos de entidad, el ayudante de base de datos y los controladores de vista en Activities independientes. En la Figura 7 se representa el árbol de directorios y componentes principales del proyecto:")
+    add_heading_2(doc, "4.2. Estructura Modular del Proyecto en Android Studio")
+    add_p(doc, "El proyecto se estructura en 11 archivos Kotlin dentro del paquete com.example.proyectofinal, acompañados por sus recursos XML de diseño diurno/nocturno (res/layout, res/drawable, res/values y res/values-night), la configuración de Firebase (app/google-services.json), las reglas de seguridad (firestore.rules) y el flujo de integración continua (.github/workflows/android-release.yml). La Figura 7 ilustra la arquitectura de directorios del proyecto:")
 
     fig7_path = os.path.join(diag_dir, "fig7_estructura_proyecto.png")
-    add_apa_figure(doc, "7", "Estructura Oficial de Paquetes y Recursos en Android Studio", fig7_path, note_text="Organización modular del código fuente y recursos XML del proyecto Android (Elaboración propia, 2026).", width_cm=10.5)
+    add_apa_figure(doc, "7", "Estructura Oficial de Paquetes, Módulos Kotlin y Recursos en Android Studio", fig7_path, note_text="Organización de los 11 archivos Kotlin, layouts XML, recursos Night Mode y pipeline CI/CD (Elaboración propia, 2026).", width_cm=10.8)
 
     add_heading_2(doc, "4.3. Implementación de Funcionalidades por Módulos y Código Fuente Real")
-    add_p(doc, "A continuación se documentan los fragmentos de código Kotlin implementados y compilados en el proyecto real, sincronizados exactamente con los archivos fuente en app/src/main/java/com/example/proyectofinal/. Como destacan Jemerov e Isakova (2022), las data classes de Kotlin y su sistema de tipos con nulabilidad explícita aportan una expresividad concisa y reducen drásticamente los errores en tiempo de ejecución:")
+    add_p(doc, "A continuación se exponen los fragmentos clave del código fuente real en Kotlin compilado en app/src/main/java/com/example/proyectofinal/, demostrando la implementación técnica de las nuevas capacidades de VotaApp UNAMAD:")
 
-    # 4.3.1 Models.kt Real
-    add_heading_3(doc, "4.3.1. Clases de Modelo de Datos (Models.kt)")
-    add_p(doc, "Definición exacta de los 7 modelos de datos que estructuran la información entre SQLite y las Activities:")
+    # 4.3.1 Models.kt y CatalogoUnamad
+    add_heading_3(doc, "4.3.1. Modelos Cloud, Catálogo de 12 Carreras e Importador de Códigos (Models.kt)")
+    add_p(doc, "En Models.kt se definen las entidades sincronizadas con Cloud Firestore y el objeto CatalogoUnamad, que lista las 12 Escuelas Profesionales de la UNAMAD, extrae códigos de matrícula mediante expresiones regulares desde archivos Excel (.csv) o texto (.txt) y verifica el acceso electoral del estudiante:")
     code_models = """package com.example.proyectofinal
 
-data class Encuesta(
-    val id: Long = 0, val titulo: String, val descripcion: String, val categoria: String,
-    val activa: Boolean = true, val fechaCreacion: String, var totalPreguntas: Int = 0, var totalVotos: Int = 0
+data class UsuarioPerfil(
+    val uid: String = "", val nombre: String = "", val codigoUniversitario: String = "",
+    val carrera: String = "", val email: String = "", val fechaRegistro: Long = 0L
 )
 
-data class Pregunta(val id: Long = 0, val idEncuesta: Long, val texto: String, val tipo: String)
-data class Alternativa(val id: Long = 0, val idPregunta: Long, val texto: String, var votos: Int = 0)
-data class Respuesta(val id: Long = 0, val idEncuesta: Long, val idPregunta: Long, val idAlternativa: Long, val participante: String, val fechaVoto: String)
-data class ParticipanteRegistro(val nombre: String, val fechaVoto: String)
-data class AlternativaEstadistica(val id: Long, val texto: String, val votos: Int, val porcentaje: Float, val esGanadora: Boolean)
-data class PreguntaEstadistica(val pregunta: Pregunta, val totalVotosPregunta: Int, val alternativas: List<AlternativaEstadistica>)"""
-    add_code_block(doc, code_models)
-
-    # 4.3.2 DatabaseHelper.kt Real
-    add_heading_3(doc, "4.3.2. Gestor SQLite y Transacciones Relacionales (DatabaseHelper.kt)")
-    add_p(doc, "Implementación de DatabaseHelper con 18 métodos CRUD, claves foráneas y cascadas automáticas:")
-    code_db = """package com.example.proyectofinal
-
-import android.content.ContentValues
-import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-    companion object {
-        private const val DATABASE_NAME = "encuestas_unamad.db"
-        private const val DATABASE_VERSION = 1
-        const val TABLA_ENCUESTAS = "encuestas"
-        const val TABLA_PREGUNTAS = "preguntas"
-        const val TABLA_ALTERNATIVAS = "alternativas"
-        const val TABLA_RESPUESTAS = "respuestas"
-    }
-
-    override fun onConfigure(db: SQLiteDatabase) {
-        super.onConfigure(db)
-        db.setForeignKeyConstraintsEnabled(true) // Integridad referencial con borrado en cascada
-    }
-
-    override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(\"\"\"
-            CREATE TABLE $TABLA_ENCUESTAS (
-                id_encuesta INTEGER PRIMARY KEY AUTOINCREMENT, titulo TEXT NOT NULL,
-                descripcion TEXT NOT NULL, categoria TEXT NOT NULL, activa INTEGER DEFAULT 1, fecha_creacion TEXT NOT NULL
-            );
-        \"\"\")
-        db.execSQL(\"\"\"
-            CREATE TABLE $TABLA_PREGUNTAS (
-                id_pregunta INTEGER PRIMARY KEY AUTOINCREMENT, id_encuesta INTEGER NOT NULL,
-                texto_pregunta TEXT NOT NULL, tipo_pregunta TEXT NOT NULL,
-                FOREIGN KEY (id_encuesta) REFERENCES $TABLA_ENCUESTAS(id_encuesta) ON DELETE CASCADE
-            );
-        \"\"\")
-        db.execSQL(\"\"\"
-            CREATE TABLE $TABLA_ALTERNATIVAS (
-                id_alternativa INTEGER PRIMARY KEY AUTOINCREMENT, id_pregunta INTEGER NOT NULL,
-                texto_alternativa TEXT NOT NULL, votos INTEGER DEFAULT 0,
-                FOREIGN KEY (id_pregunta) REFERENCES $TABLA_PREGUNTAS(id_pregunta) ON DELETE CASCADE
-            );
-        \"\"\")
-        db.execSQL(\"\"\"
-            CREATE TABLE $TABLA_RESPUESTAS (
-                id_respuesta INTEGER PRIMARY KEY AUTOINCREMENT, id_encuesta INTEGER NOT NULL,
-                id_pregunta INTEGER NOT NULL, id_alternativa INTEGER NOT NULL,
-                participante TEXT NOT NULL, fecha_voto TEXT NOT NULL,
-                FOREIGN KEY (id_encuesta) REFERENCES $TABLA_ENCUESTAS(id_encuesta) ON DELETE CASCADE,
-                FOREIGN KEY (id_pregunta) REFERENCES $TABLA_PREGUNTAS(id_pregunta) ON DELETE CASCADE,
-                FOREIGN KEY (id_alternativa) REFERENCES $TABLA_ALTERNATIVAS(id_alternativa) ON DELETE CASCADE
-            );
-        \"\"\")
-        insertarDatosIniciales(db)
-    }
-}"""
-    add_code_block(doc, code_db)
-
-    # 4.3.3 Métodos Reales de Votación y Unicidad
-    add_heading_3(doc, "4.3.3. Control de Voto Único y Transacción Atómica en DatabaseHelper.kt")
-    add_p(doc, "Métodos reales yaVotoParticipante y registrarVotos que blindan la legitimidad del escrutinio:")
-    code_voto_real = """fun yaVotoParticipante(idEncuesta: Long, participante: String): Boolean {
-    val db = readableDatabase
-    val cursor = db.rawQuery(
-        \"\"\"
-        SELECT 1 FROM $TABLA_RESPUESTAS 
-        WHERE $COL_RESPUESTA_ENCUESTA_ID = ? 
-          AND LOWER(TRIM($COL_RESPUESTA_PARTICIPANTE)) = LOWER(TRIM(?))
-        LIMIT 1
-        \"\"\".trimIndent(),
-        arrayOf(idEncuesta.toString(), participante)
+object CatalogoUnamad {
+    val CARRERAS_UNAMAD = listOf(
+        "Ingeniería de Sistemas e Informática", "Ingeniería Forestal y Medio Ambiente",
+        "Ingeniería Agroindustrial", "Medicina Veterinaria y Zootecnia", "Enfermería",
+        "Derecho y Ciencias Políticas", "Educación: Matemática y Computación",
+        "Educación: Primaria e Informática", "Educación: Inicial y Especial",
+        "Ecoturismo", "Administración y Negocios Internacionales", "Contabilidad y Finanzas"
     )
-    val existe = cursor.moveToFirst()
-    cursor.close()
-    return existe
+    val OPCIONES_FILTRO_CARRERA = listOf("Todas las carreras (Abierta)") + CARRERAS_UNAMAD
+
+    fun extraerCodigosDesdeTexto(textoBruto: String): List<String> {
+        if (textoBruto.isBlank()) return emptyList()
+        val regexCodigo = Regex("\\\\b\\\\d{4,14}[A-Za-z0-9-]*\\\\b")
+        val encontrados = regexCodigo.findAll(textoBruto)
+            .map { it.value.trim().uppercase() }.distinct().toList()
+        if (encontrados.isNotEmpty()) return encontrados
+        return textoBruto.split(',', ';', '\\n', '\\r', '\\t', ' ')
+            .map { it.trim().uppercase() }.filter { it.length >= 3 }.distinct()
+    }
 }
 
-fun registrarVotos(
-    idEncuesta: Long,
-    participante: String,
-    votosPorPregunta: List<Pair<Long, Long>>
-): Boolean {
-    val db = writableDatabase
-    val formatoFecha = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-    val fechaVoto = formatoFecha.format(Date())
-    val nombreLimpio = participante.trim()
+data class Encuesta(
+    val id: String = "", val titulo: String = "", val descripcion: String = "",
+    val categoria: String = "General", val activa: Boolean = true, val fechaCreacion: String = "",
+    val creadorUid: String = "", val creadorNombre: String = "",
+    val carreraRestringida: String = "TODAS", val codigosPermitidos: String = "",
+    val preguntas: List<Pregunta> = emptyList(), var totalPreguntas: Int = 0, var totalVotos: Int = 0
+) {
+    fun verificarAcceso(perfil: UsuarioPerfil?, uidActual: String?): Pair<Boolean, String> {
+        if (!uidActual.isNullOrBlank() && uidActual == creadorUid) return true to "Creador de la encuesta"
+        val tieneCarrera = carreraRestringida.isNotBlank() && carreraRestringida != "TODAS"
+        val cods = CatalogoUnamad.extraerCodigosDesdeTexto(codigosPermitidos)
+        if (!tieneCarrera && cods.isEmpty()) return true to "Acceso abierto"
+        val miCodigo = perfil?.codigoUniversitario?.trim()?.uppercase() ?: ""
+        val miCarrera = perfil?.carrera?.trim() ?: ""
+        if (tieneCarrera && !miCarrera.equals(carreraRestringida, ignoreCase = true)) {
+            return false to "Esta encuesta es exclusiva para estudiantes de $carreraRestringida."
+        }
+        if (cods.isNotEmpty() && !cods.any { token -> miCodigo == token || (token.length in 4..6 && miCodigo.startsWith(token)) }) {
+            return false to "Tu código ($miCodigo) no figura en el padrón autorizado (${cods.size} habilitados)."
+        }
+        return true to "Autorizado"
+    }
+}"""
+    add_code_block(doc, code_models)
 
-    db.beginTransaction()
-    return try {
-        if (yaVotoParticipante(idEncuesta, nombreLimpio)) return false
-        for (par in votosPorPregunta) {
-            val cv = ContentValues().apply {
-                put(COL_RESPUESTA_ENCUESTA_ID, idEncuesta)
-                put(COL_RESPUESTA_PREGUNTA_ID, par.first)
-                put(COL_RESPUESTA_ALTERNATIVA_ID, par.second)
-                put(COL_RESPUESTA_PARTICIPANTE, nombreLimpio)
-                put(COL_RESPUESTA_FECHA, fechaVoto)
+    # 4.3.2 FirebaseRepository.kt
+    add_heading_3(doc, "4.3.2. Repositorio en la Nube y Voto Único por UID (FirebaseRepository.kt)")
+    add_p(doc, "El objeto singleton FirebaseRepository administra las colecciones users, encuestas y la subcolección votos en Cloud Firestore, verificando que ningún código universitario se duplique entre distintos UIDs y registrando el voto único bajo la llave encuestas/{encuestaId}/votos/{uid}:")
+    code_repo = """object FirebaseRepository {
+    private val db get() = Firebase.firestore
+    private val auth get() = Firebase.auth
+    private const val COL_USERS = "users"
+    private const val COL_ENCUESTAS = "encuestas"
+    private const val SUB_VOTOS = "votos"
+
+    fun yaVotoUsuario(encuestaId: String, uid: String, onResult: (Boolean) -> Unit) {
+        db.collection(COL_ENCUESTAS).document(encuestaId)
+            .collection(SUB_VOTOS).document(uid).get()
+            .addOnSuccessListener { doc -> onResult(doc.exists()) }
+            .addOnFailureListener { onResult(false) }
+    }
+
+    fun registrarVoto(
+        encuestaId: String,
+        participante: String,
+        respuestasPorPregunta: Map<String, List<String>>,
+        onComplete: (Boolean, String?) -> Unit
+    ) {
+        val uid = auth.currentUser?.uid ?: return onComplete(false, "Sesión no iniciada.")
+        val fechaVoto = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date())
+        val votoRef = db.collection(COL_ENCUESTAS).document(encuestaId)
+            .collection(SUB_VOTOS).document(uid)
+
+        val data = hashMapOf(
+            "uid" to uid,
+            "participante" to participante.trim(),
+            "fechaVoto" to fechaVoto,
+            "respuestas" to respuestasPorPregunta
+        )
+        votoRef.set(data)
+            .addOnSuccessListener { onComplete(true, null) }
+            .addOnFailureListener { e -> onComplete(false, e.localizedMessage) }
+    }
+}"""
+    add_code_block(doc, code_repo)
+
+    # 4.3.3 LoginActivity.kt
+    add_heading_3(doc, "4.3.3. Autenticación Firebase, Google Sign-In OAuth 2.0 y Recuperación (LoginActivity.kt)")
+    add_p(doc, "LoginActivity integra inicio de sesión con Correo/Contraseña, federación OAuth 2.0 con GoogleAuthProvider, restablecimiento de contraseña por correo y registro con selección de Escuela Profesional UNAMAD:")
+    code_login = """private fun autenticarConGoogleEnFirebase(idToken: String, nombreCuenta: String, emailCuenta: String) {
+    val credential = GoogleAuthProvider.getCredential(idToken, null)
+    auth.signInWithCredential(credential)
+        .addOnSuccessListener { res ->
+            val uid = res.user?.uid ?: ""
+            FirebaseRepository.obtenerPerfilUsuario(uid) { perfilExistente ->
+                if (perfilExistente == null) {
+                    FirebaseRepository.guardarPerfilUsuario(uid, nombreCuenta, "", emailCuenta, "") { _, _ -> irAMain() }
+                } else {
+                    irAMain()
+                }
             }
-            db.insert(TABLA_RESPUESTAS, null, cv)
-            db.execSQL(
-                "UPDATE $TABLA_ALTERNATIVAS SET $COL_ALTERNATIVA_VOTOS = $COL_ALTERNATIVA_VOTOS + 1 WHERE $COL_ALTERNATIVA_ID = ?",
-                arrayOf(par.second.toString())
+        }
+        .addOnFailureListener { e ->
+            mostrarCargando(false)
+            Toast.makeText(this, "Error con Google Auth: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+        }
+}
+
+private fun mostrarDialogoRecuperarPassword() {
+    val inputEmail = EditText(this).apply {
+        hint = "ejemplo@unamad.edu.pe"
+        setText(etAuthEmail.text.toString().trim())
+    }
+    MaterialAlertDialogBuilder(this)
+        .setTitle("Recuperar Contraseña")
+        .setMessage("Ingresa tu correo registrado y te enviaremos un enlace para restablecer tu contraseña.")
+        .setView(inputEmail)
+        .setPositiveButton("Enviar Enlace") { _, _ ->
+            val correo = inputEmail.text.toString().trim()
+            if (correo.isNotEmpty()) auth.sendPasswordResetEmail(correo)
+        }
+        .setNegativeButton("Cancelar", null)
+        .show()
+}"""
+    add_code_block(doc, code_login)
+
+    # 4.3.4 CrearEncuestaActivity.kt
+    add_heading_3(doc, "4.3.4. Filtro de 12 Escuelas e Importación de Padrón Excel/TXT (CrearEncuestaActivity.kt)")
+    add_p(doc, "CrearEncuestaActivity permite importar archivos .txt o .csv directamente desde el almacenamiento del dispositivo o pegar bloques copiados desde hojas de cálculo de Microsoft Excel:")
+    code_crear = """private val selectorArchivoCodigos = registerForActivityResult(
+    ActivityResultContracts.GetContent()
+) { uri: Uri? ->
+    if (uri != null) importarCodigosDesdeUri(uri)
+}
+
+private fun importarCodigosDesdeUri(uri: Uri) {
+    val contenido = contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() } ?: ""
+    val extraidos = CatalogoUnamad.extraerCodigosDesdeTexto(contenido)
+    if (extraidos.isNotEmpty()) {
+        val existentes = CatalogoUnamad.extraerCodigosDesdeTexto(etCodigosPermitidos.text.toString())
+        val combinados = (existentes + extraidos).distinct()
+        etCodigosPermitidos.setText(combinados.joinToString(", "))
+        Toast.makeText(this, "Se importaron ${extraidos.size} códigos (${combinados.size} en total).", Toast.LENGTH_SHORT).show()
+    }
+}"""
+    add_code_block(doc, code_crear)
+
+    # 4.3.5 DonutChartView.kt y ResultadosActivity.kt
+    add_heading_3(doc, "4.3.5. Gráfico Circular Animado en Canvas y Acta Oficial (DonutChartView.kt y ResultadosActivity.kt)")
+    add_p(doc, "DonutChartView extiende de View y dibuja mediante Canvas arcos proporcionales animados con ValueAnimator (650 ms) y leyenda lateral, mientras que ResultadosActivity permite exportar el Acta Oficial de Resultados:")
+    code_donut = """class DonutChartView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
+    data class Slice(val label: String, val value: Float, val color: Int)
+    private var slices: List<Slice> = emptyList()
+    private var totalVotos: Int = 0
+    private var animProgress: Float = 1f
+
+    fun setData(alternatives: List<AlternativaEstadistica>, total: Int) {
+        totalVotos = total
+        slices = alternatives.mapIndexed { idx, alt ->
+            Slice(
+                label = "${alt.texto.take(22)} (${String.format("%.0f", alt.porcentaje)}%)",
+                value = alt.votos.toFloat(),
+                color = if (alt.esGanadora) Color.parseColor("#D97706") else PALETTE[idx % PALETTE.size]
             )
         }
-        db.setTransactionSuccessful()
-        true
-    } finally {
-        db.endTransaction()
-    }
-}"""
-    add_code_block(doc, code_voto_real)
-
-    # 4.3.4 MainActivity.kt Real
-    add_heading_3(doc, "4.3.4. Panel Principal y Filtrado Dinámico (MainActivity.kt)")
-    add_p(doc, "Fragmento de MainActivity conectando llContenedorEncuestas, btnCrearEncuesta y el filtrado en rgFiltro:")
-    code_main = """class MainActivity : AppCompatActivity() {
-    private lateinit var dbHelper: DatabaseHelper
-    private lateinit var tvTotalEncuestas: TextView
-    private lateinit var tvActivasEncuestas: TextView
-    private lateinit var tvTotalVotos: TextView
-    private lateinit var btnCrearEncuesta: Button
-    private lateinit var rgFiltro: RadioGroup
-    private lateinit var rbFiltroActivas: RadioButton
-    private lateinit var rbFiltroCerradas: RadioButton
-    private lateinit var llContenedorEncuestas: LinearLayout
-
-    override fun onResume() {
-        super.onResume()
-        cargarEncuestas() // Recarga reactiva en cada retorno
-    }
-
-    private fun cargarEncuestas() {
-        val (total, activas, votos) = dbHelper.obtenerConteoGeneral()
-        tvTotalEncuestas.text = total.toString()
-        tvActivasEncuestas.text = activas.toString()
-        tvTotalVotos.text = votos.toString()
-
-        val filtro = when {
-            rbFiltroActivas.isChecked -> "ACTIVAS"
-            rbFiltroCerradas.isChecked -> "CERRADAS"
-            else -> "TODAS"
-        }
-        val lista = dbHelper.listarEncuestas(filtro)
-        llContenedorEncuestas.removeAllViews()
-
-        val inflater = LayoutInflater.from(this)
-        for (encuesta in lista) {
-            val itemView = inflater.inflate(R.layout.item_encuesta, llContenedorEncuestas, false)
-            // Configuración de datos de tarjeta y listeners de Votar, Resultados, Editar y Eliminar
-            llContenedorEncuestas.addView(itemView)
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 650
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animProgress = it.animatedValue as Float; invalidate() }
+            start()
         }
     }
 }"""
-    add_code_block(doc, code_main)
+    add_code_block(doc, code_donut)
 
-    # 4.3.5 ResultadosActivity.kt Real
-    add_heading_3(doc, "4.3.5. Cálculo de Estadísticas y Gráficas de Progreso (ResultadosActivity.kt)")
-    add_p(doc, "En ResultadosActivity, el procesamiento de porcentajes y graficación dinámica se ejecuta mediante:")
-    code_res = """private fun cargarGraficasPreguntas() {
-    llResultadosPreguntas.removeAllViews()
-    val estadisticas = dbHelper.obtenerEstadisticasPreguntas(idEncuesta)
-    val densidad = resources.displayMetrics.density
+    add_heading_2(doc, "4.4. Seguridad en la Nube (firestore.rules) y Pipeline CI/CD (GitHub Actions)")
+    add_p(doc, "Para blindar la integridad electoral en el servidor de Google Cloud, se codificaron reglas declarativas en firestore.rules siguiendo el principio de mínimo privilegio (OWASP Foundation, 2024). La colección users/{uid} restringe la lectura y escritura exclusivamente al propietario del UID para proteger datos personales (PII). En encuestas/{encuestaId}/votos/{voterUid}, la regla allow create exige que isOwner(voterUid) sea verdadero, que la encuesta esté activa (isEncuestaActiva(encuestaId)) y prohíbe cualquier modificación posterior (allow update: if false):")
+    code_rules = """match /encuestas/{encuestaId} {
+  allow read: if isAuthenticated();
+  allow create: if isAuthenticated() && isValidEncuesta(request.resource.data)
+                && request.resource.data.creadorUid == request.auth.uid;
+  allow update, delete: if isAuthenticated() && resource.data.creadorUid == request.auth.uid;
 
-    for ((index, pe) in estadisticas.withIndex()) {
-        val cardPregunta = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundResource(R.drawable.bg_card)
-        }
-        val tvTituloP = TextView(this).apply { text = "${index + 1}. ${pe.pregunta.texto}" }
-        cardPregunta.addView(tvTituloP)
-
-        for (alt in pe.alternativas) {
-            val contenedorAlternativa = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-            if (alt.esGanadora) contenedorAlternativa.setBackgroundResource(R.drawable.bg_winner)
-
-            val filaTexto = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            val tvNombreAlt = TextView(this).apply {
-                text = if (alt.esGanadora) "Ganadora • ${alt.texto}" else alt.texto
-            }
-            val tvVotosAlt = TextView(this).apply {
-                text = "${alt.votos} voto(s) (${String.format(Locale.US, "%.1f", alt.porcentaje)}%)"
-            }
-            filaTexto.addView(tvNombreAlt)
-            filaTexto.addView(tvVotosAlt)
-            contenedorAlternativa.addView(filaTexto)
-
-            val pb = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply {
-                max = 1000
-                progress = (alt.porcentaje * 10f).roundToInt()
-                progressDrawable = ContextCompat.getDrawable(
-                    this@ResultadosActivity,
-                    if (alt.esGanadora) R.drawable.bg_progress_bar_winner else R.drawable.bg_progress_bar
-                )
-            }
-            contenedorAlternativa.addView(pb)
-            cardPregunta.addView(contenedorAlternativa)
-        }
-        llResultadosPreguntas.addView(cardPregunta)
-    }
+  match /votos/{voterUid} {
+    allow read: if isAuthenticated();
+    allow create: if isOwner(voterUid) && isValidVoto(request.resource.data, voterUid)
+                  && isEncuestaActiva(encuestaId);
+    allow update: if false;
+    allow delete: if isAuthenticated() && isEncuestaCreator(encuestaId);
+  }
 }"""
-    add_code_block(doc, code_res)
+    add_code_block(doc, code_rules)
 
-    add_heading_2(doc, "4.4. Gestión y Almacenamiento de Datos en SQLite")
-    add_p(doc, "El almacenamiento se gestiona mediante sentencias parametrizadas (Prepared Statements) para prevenir inyecciones SQL, siguiendo las recomendaciones de seguridad de la OWASP Foundation (2024). Cada operación de eliminación (delete) sobre la tabla encuestas propaga automáticamente la supresión hacia preguntas, alternativas y respuestas gracias a la cláusula ON DELETE CASCADE descrita por Hipp (2024), manteniendo la consistencia de la base de datos sin requerir limpiezas manuales auxiliares.")
+    add_p(doc, "Asimismo, se implementó el flujo de Integración y Entrega Continua (CI/CD) en .github/workflows/android-release.yml dentro del repositorio oficial https://github.com/Maickel69/VotaApp-UNAMAD. Ante cada confirmación de código en la rama main, GitHub Actions aprovisiona un contenedor Ubuntu con JDK 17 (Eclipse Temurin) y Gradle 9.6.0, ejecuta las pruebas unitarias (./gradlew testDebugUnitTest), compila el paquete instalador (./gradlew assembleDebug) y actualiza automáticamente el release público etiquetado como latest-apk con el binario VotaApp-UNAMAD.apk.")
 
-    add_heading_2(doc, "4.5. Componentes Adicionales de Validación y UX")
-    add_p(doc, "• Carga automática de datos semilla (Seed Data): Al iniciarse por primera vez la aplicación, DatabaseHelper inserta dos encuestas institucionales preconfiguradas ('Encuesta de Satisfacción de Servicios Académicos UNAMAD' y 'Elección de Delegado Estudiantil EPISI 2026-II'), con preguntas, alternativas y votos iniciales para demostraciones.")
-    add_p(doc, "• Cuadros de diálogo de confirmación (AlertDialog): Toda acción destructiva (eliminación de encuesta o reinicio de votos) exige una confirmación afirmativa del usuario mediante un diálogo modal.")
-    add_p(doc, "• Retroalimentación contextual (Toasts y ScrollViews): Los formularios dinámicos se encuentran encapsulados en componentes ScrollView para asegurar que el teclado virtual no oculte los campos de entrada en teléfonos con pantallas compactas.")
+    add_heading_2(doc, "4.5. Experiencia de Usuario, Modo Oscuro Obsidian MD3 y Edge-to-Edge")
+    add_p(doc, "• Modo Oscuro Obsidian MD3 (values-night/colors.xml): Define una jerarquía cromática de alto contraste con fondo principal Obsidian Midnight (#090E1A), tarjetas elevadas (#121B2E), contenedores tonales (#0D1526 y #1A2640), acento primario azul eléctrico (#3B82F6), insignias esmeralda para encuestas activas (#34D399) y resaltado ámbar para alternativas ganadoras (#FBBF24).")
+    add_p(doc, "• Gestión Edge-to-Edge e Insets (UiInsetsHelper.kt): La función de extensión configurarEdgeToEdgeConHeader() aplica el modo oscuro por defecto mediante AppCompatDelegate.setDefaultNightMode(), configura íconos claros en la barra de estado y consume dinámicamente los insets de WindowInsetsCompat.Type.systemBars(), displayCutout() e ime() (teclado virtual) para evitar cualquier solapamiento en Android 16 (API 36).")
 
     # =========================================================================
     # CAPÍTULO V. PRUEBAS Y RESULTADOS
@@ -781,59 +779,62 @@ fun registrarVotos(
     add_heading_1(doc, "CAPÍTULO V. PRUEBAS Y RESULTADOS")
     
     add_heading_2(doc, "5.1. Matriz Exhaustiva de Pruebas Funcionales")
-    add_p(doc, "Se diseñó y ejecutó una batería de diez casos de prueba funcionales (CP01 a CP10) abarcando todos los requerimientos del sistema. De acuerdo con Pressman y Maxim (2021) y Sommerville (2019), las pruebas de caja negra a nivel funcional permiten verificar que cada entrada produzca la salida esperada sin fisuras lógicas. Todas las pruebas fueron ejecutadas en emulador Android Studio y dispositivo físico, obteniendo una tasa de aprobación del 100%, como se sintetiza en la Tabla 8:")
+    add_p(doc, "Se diseñó y ejecutó una matriz de 12 casos de prueba funcionales de caja negra (CP01 a CP12) cubriendo la totalidad de los requerimientos funcionales (RF01 a RF12). Conforme a Pressman y Maxim (2021), cada caso validó las precondiciones, pasos de ejecución y postcondiciones tanto en el cliente Android como en la consola de Firebase Cloud Firestore, alcanzando un 100% de aprobación en la Tabla 8:")
 
     cp_headers = ["ID", "RF", "Caso de Prueba", "Pasos de Ejecución", "Resultado Esperado", "Resultado Obtenido", "Estado"]
     cp_data = [
-        ["CP01", "RF01", "Creación de encuesta con campos válidos", "Ingresar título, descripción, categoría y pulsar Guardar.", "Encuesta almacenada en SQLite y listada en el Dashboard.", "Registro exitoso e inmediato en tabla encuestas.", "APROBADO"],
-        ["CP02", "RF01", "Validación de campos vacíos en creación", "Dejar título vacío y presionar botón Guardar.", "Toast de advertencia: 'Por favor ingrese el título de la encuesta.'", "Validación intercepta el envío y muestra Toast.", "APROBADO"],
-        ["CP03", "RF02", "Filtrado dinámico por estado", "Pulsar botones segmentados 'Todas', 'Activas' y 'Cerradas'.", "La lista filtra exactamente según el campo activa (0 o 1).", "Filtrado reactivo instantáneo en llContenedorEncuestas.", "APROBADO"],
-        ["CP04", "RF03", "Edición de estado de encuesta", "Modificar estado de Activa a Cerrada mediante MaterialSwitch.", "La encuesta se actualiza en SQLite y se bloquea el voto.", "Estado actualizado a 0; botón votar se deshabilita.", "APROBADO"],
-        ["CP05", "RF04", "Eliminación en cascada de encuesta", "Pulsar eliminar en una encuesta con votos registrados.", "Se borra la encuesta y todas sus tablas hijas en cascada.", "Verificación en SQLite: 0 registros huérfanos.", "APROBADO"],
-        ["CP06", "RF05", "Configuración de pregunta con alternativas", "Agregar pregunta única y 3 alternativas de respuesta.", "Pregunta y opciones vinculadas correctamente en SQLite.", "Persistencia relacional 1:N exitosa.", "APROBADO"],
-        ["CP07", "RF06", "Validación de mínimo de alternativas", "Intentar guardar pregunta con solo 1 alternativa.", "Advertencia: 'Debe ingresar al menos 2 alternativas de respuesta.'", "Bloqueo de guardado hasta cumplir mínimo.", "APROBADO"],
-        ["CP08", "RF07", "Control de voto único por participante", "Votar con un participante y luego intentar votar de nuevo.", "El sistema detecta duplicidad y rechaza el segundo sufragio.", "AlertDialog: 'Voto Ya Registrado' bloquea el reenvío.", "APROBADO"],
-        ["CP09", "RF08", "Cálculo exacto de porcentajes y ganador", "Registrar votos y consultar resultados estadísticos.", "Cálculo porcentual preciso y destacado visual en opción ganadora.", "Cálculo exacto y barras ProgressBar proporcionales.", "APROBADO"],
-        ["CP10", "RF08", "Reinicio controlado de votos", "Pulsar 'Reiniciar Conteo de Votos' y confirmar en diálogo.", "Contadores reseteados a 0 y tabla respuestas vaciada.", "Votación vuelve a 0 votos sin borrar la encuesta.", "APROBADO"]
+        ["CP01", "RF01", "Login Email/Password y Google OAuth 2.0", "Iniciar sesión con credenciales válidas o cuenta de Google.", "Autenticación exitosa en Firebase Auth y paso a MainActivity.", "Sesión iniciada con token OAuth 2.0 y UID activo.", "APROBADO"],
+        ["CP02", "RF01", "Recuperación de contraseña por correo", "Pulsar '¿Olvidaste tu contraseña?' e ingresar correo institucional.", "Firebase envía correo de restablecimiento de clave.", "Alerta de confirmación y recepción de enlace oficial.", "APROBADO"],
+        ["CP03", "RF02", "Validación de código universitario único", "Intentar registrar en 'Cuenta' un código asignado a otro UID.", "Firestore detecta colisión y rechaza el código duplicado.", "Mensaje: 'El código ya está registrado por otro estudiante'.", "APROBADO"],
+        ["CP04", "RF03", "Búsqueda y filtrado por ChipGroup y estado", "Escribir texto en buscador y alternar chips de categoría y estado.", "La lista filtra en tiempo real sin recargar la pantalla.", "Filtrado multicriterio instantáneo y KPIs con tnum.", "APROBADO"],
+        ["CP05", "RF04", "Creación de encuesta en Cloud Firestore", "Completar título, descripción, categoría y pulsar Guardar.", "Documento creado en colección encuestas/{encuestaId}.", "Persistencia inmediata en la nube y listado en panel.", "APROBADO"],
+        ["CP06", "RF05", "Filtro por las 12 Escuelas Profesionales", "Restringir encuesta a 'Ingeniería de Sistemas e Informática'.", "Estudiantes de otras carreras ven bloqueado el acceso al voto.", "verificarAcceso() bloquea carreras distintas con aviso claro.", "APROBADO"],
+        ["CP07", "RF05", "Importación masiva de códigos (.csv / Excel)", "Pulsar 'Importar .txt/.csv' o 'Pegar de Excel' con 45 códigos.", "Extractor regex detecta los 45 códigos y actualiza contador.", "Se importan y normalizan los códigos sin duplicados.", "APROBADO"],
+        ["CP08", "RF07", "Gestión de preguntas UNICA y MULTIPLE", "Agregar preguntas con 3 alternativas en GestionarPreguntasActivity.", "Arreglo preguntas actualizado en el documento de Firestore.", "Sincronización exitosa y validación de mínimo 2 opciones.", "APROBADO"],
+        ["CP09", "RF09", "Control de voto único por UID en Firestore", "Emitir voto en RegistrarVotoActivity e intentar votar de nuevo.", "El sistema detecta el documento votos/{uid} y bloquea el reenvío.", "Modo solo lectura activado y regla isOwner en servidor.", "APROBADO"],
+        ["CP10", "RF10", "Renderizado de DonutChartView y ganador", "Abrir ResultadosActivity tras registrar sufragios en la nube.", "Gráfico de dona animado (650 ms), barras y medalla ganadora.", "Cálculo porcentual exacto y animación fluida a 60 fps.", "APROBADO"],
+        ["CP11", "RF11", "Auditoría de votantes y reinicio de conteo", "Verificar lista de votantes y pulsar 'Reiniciar Conteo de Votos'.", "Solo el creador puede vaciar la subcolección votos con WriteBatch.", "Padrón auditable visible y reinicio a 0 votos confirmado.", "APROBADO"],
+        ["CP12", "RF12", "Exportación de Acta Oficial de Resultados", "Pulsar 'Compartir Acta Oficial de Resultados' en ResultadosActivity.", "Se despliega el selector nativo de Android con el acta formateada.", "Acta enviada correctamente por WhatsApp y correo.", "APROBADO"]
     ]
-    add_apa_table(doc, "8", "Matriz de Casos de Prueba Funcionales (CP01 - CP10)", [1.0, 1.0, 2.5, 3.1, 2.8, 2.8, 2.3], cp_headers, cp_data, note_text="Elaboración propia basada en los resultados de la ejecución de pruebas en emulador Android 16 (2026).")
+    add_apa_table(doc, "8", "Matriz de Casos de Prueba Funcionales (CP01 - CP12)", [1.0, 1.0, 2.5, 3.1, 2.8, 2.8, 2.3], cp_headers, cp_data, note_text="Elaboración propia basada en las pruebas ejecutadas en emulador Android 16 (API 36) conectado a Firebase Cloud (2026).")
 
-    add_heading_2(doc, "5.2. Evidencias de Ejecución y Validación en Emulador")
-    add_p(doc, "Las pruebas funcionales y visuales fueron verificadas en ejecución real sobre el emulador Android Medium_Phone_2 (Android 16 / API 36), validando cada flujo operativo de extremo a extremo:")
-    add_p(doc, "• Vista MainActivity: La aplicación inicia desplegando el Hero Header institucional, la tarjeta KPI flotante en tiempo real (encuestas registradas, activas y votantes), el filtro segmentado (Todas, Activas, Cerradas) y las tarjetas MaterialCardView con acciones en dos filas.")
-    add_p(doc, "• Vistas CrearEncuestaActivity y GestionarPreguntasActivity: Validan la obligatoriedad de campos mediante .trim().isEmpty() y longitud mínima (titulo.length >= 5), gestionan categorías, MaterialSwitch de estado y el CRUD completo de preguntas y alternativas.")
+    add_heading_2(doc, "5.2. Evidencias de Ejecución y Validación en Emulador Android 16")
+    add_p(doc, "Las pruebas integrales se ejecutaron sobre el emulador Android Medium_Phone_2 (Android 16 / API 36) verificando las seis Activities en Modo Oscuro Obsidian MD3 y Modo Claro:")
+    add_p(doc, "• Flujo de Autenticación, Dashboard Cloud y Configuración (Figura 8): Evidencia la pantalla LoginActivity con inicio de sesión Email/Google OAuth 2.0 y enlace 'Crear cuenta' junto a '¿Olvidaste tu contraseña?', el panel principal MainActivity con tarjetas KPI tabulares, ChipGroup de categorías y búsqueda en tiempo real, así como CrearEncuestaActivity (con selector de las 12 carreras UNAMAD e importación de padrón) y GestionarPreguntasActivity.")
 
     ev1_path = os.path.join(cap_dir, "evidencia_1_gestion.png")
-    add_apa_figure(doc, "8", "Capturas Reales en Emulador: Panel Principal, Edición y Preguntas", ev1_path, note_text="Ejecución real de MainActivity, CrearEncuestaActivity y GestionarPreguntasActivity en emulador Android 16 (Elaboración propia, 2026).", width_cm=13.5)
+    add_apa_figure(doc, "8", "Capturas Reales en Emulador: Login OAuth, Panel Principal, Creación y Preguntas", ev1_path, note_text="Ejecución real de los módulos de acceso, panel Cloud, creación con filtro de carrera/padrón y gestión de preguntas (Elaboración propia, 2026).", width_cm=13.5)
 
-    add_p(doc, "• Vistas RegistrarVotoActivity y ResultadosActivity: Generan dinámicamente RadioGroups y CheckBoxes con preservación de estado ante rotación, validan el voto único por participante y renderizan barras ProgressBar proporcionales con destacado ámbar en la opción ganadora.")
+    add_p(doc, "• Flujo de Votación Tonal y Escrutinio con DonutChartView (Figura 9): Evidencia la cédula interactiva en RegistrarVotoActivity con verificación automática del estudiante autenticado y la pantalla ResultadosActivity renderizando el gráfico circular animado DonutChartView, las barras horizontales de progreso, la distinción de la alternativa ganadora, el registro auditable de participantes y la acción para compartir el Acta Oficial de Resultados.")
 
     ev2_path = os.path.join(cap_dir, "evidencia_2_resultados.png")
-    add_apa_figure(doc, "9", "Capturas Reales en Emulador: Votación Dinámica y Conteo de Resultados", ev2_path, note_text="Ejecución real de RegistrarVotoActivity y ResultadosActivity en emulador Android 16 (Elaboración propia, 2026).", width_cm=10.5)
+    add_apa_figure(doc, "9", "Capturas Reales en Emulador: Votación Tonal y Resultados con DonutChartView", ev2_path, note_text="Ejecución real de RegistrarVotoActivity y ResultadosActivity con gráfico de dona en Canvas y barras de progreso (Elaboración propia, 2026).", width_cm=10.5)
 
     add_heading_2(doc, "5.3. Dificultades Técnicas Identificadas y Soluciones de Ingeniería")
-    add_p(doc, "Durante las fases de codificación y prueba se suscitaron desafíos técnicos específicos que fueron superados mediante soluciones de ingeniería de software documentadas en la Tabla 9:")
+    add_p(doc, "Durante el desarrollo e integración en la nube se resolvieron seis desafíos técnicos de ingeniería detallados en la Tabla 9:")
 
-    dif_headers = ["N°", "Desafío Técnico Identificado", "Impacto Inicial en la App", "Solución de Ingeniería Aplicada en Kotlin"]
+    dif_headers = ["N°", "Desafío Técnico Identificado", "Impacto Inicial en la App", "Solución de Ingeniería Aplicada en Kotlin / Cloud"]
     dif_data = [
-        ["1", "Integridad referencial desactivada por defecto en SQLite", "Al eliminar encuestas quedaban registros huérfanos en preguntas y alternativas.", "Se sobreescribió el método onConfigure en DatabaseHelper ejecutando db.setForeignKeyConstraintsEnabled(true)."],
-        ["2", "Superposición de teclado virtual y barra de estado en Edge-to-Edge", "En API 36 el teclado ocultaba campos y el padding superior dejaba una franja sobre el header.", "Se implementó configurarEdgeToEdgeConHeader() en UiInsetsHelper.kt consumiendo systemBars + WindowInsetsCompat.Type.ime()."],
-        ["3", "Excepción de división por cero en cálculo de porcentajes", "Al abrir Resultados de una encuesta con 0 votos ocurría un fallo de cálculo NaN.", "Se implementó una guarda lógica: if (totalVotosPregunta > 0) (alt.votos.toFloat() / totalVotosPregunta) * 100f else 0f."],
-        ["4", "Falta de refresco de datos en MainActivity tras crear encuesta", "Al regresar de CrearEncuestaActivity el listado no reflejaba la nueva encuesta.", "Se reubicó la llamada de carga de datos en el método onResume() del ciclo de vida de la Activity."]
+        ["1", "Control de voto único en entornos multi-dispositivo en la nube", "Un usuario podía intentar votar desde dos teléfonos simultáneamente.", "Se diseñó la subcolección encuestas/{id}/votos/{voterUid} donde el ID del documento es el UID de Firebase Auth, validado en firestore.rules con isOwner(voterUid)."],
+        ["2", "Extracción de códigos desde hojas de Excel con columnas mixtas", "Al copiar celdas de Excel venían nombres, tabulaciones y encabezados junto a los códigos.", "Se programó CatalogoUnamad.extraerCodigosDesdeTexto() con la expresión regular \\b\\d{4,14}[A-Za-z0-9-]*\\b que filtra y deduplica solo las matrículas."],
+        ["3", "Colisión de códigos universitarios entre cuentas distintas", "Dos cuentas de correo diferentes podían escribir el mismo código estudiantil.", "En FirebaseRepository.guardarPerfilUsuario() se agregó una consulta previa whereEqualTo('codigoUniversitario', cod) que impide asignar un código ya ocupado por otro UID."],
+        ["4", "Superposición de barra de estado y teclado en Android 16 (API 36)", "El modo Edge-to-Edge recortaba cabeceras o cubría inputs inferiores al abrir el teclado.", "Se implementó configurarEdgeToEdgeConHeader() en UiInsetsHelper.kt combinando WindowInsetsCompat.Type.systemBars(), displayCutout() e ime()."],
+        ["5", "Pérdida de opciones marcadas al girar la pantalla durante el voto", "La recreación de la Activity limpiaba los RadioButtons y CheckBoxes dinámicos.", "Se implementó onSaveInstanceState() en RegistrarVotoActivity guardando los tags de las alternativas seleccionadas en KEY_SELECCIONES."],
+        ["6", "Compilación manual repetitiva del instalador APK para distribución", "Generar y subir el APK manualmente tras cada mejora retrasaba las pruebas.", "Se configuró el pipeline CI/CD en .github/workflows/android-release.yml con GitHub Actions que compila con Gradle 9.6 y publica el release latest-apk automáticamente."]
     ]
-    add_apa_table(doc, "9", "Matriz de Dificultades Técnicas y Soluciones de Ingeniería", [0.8, 3.8, 4.2, 6.7], dif_headers, dif_data, note_text="Elaboración propia con base en el registro de incidencias y soluciones implementadas (2026).")
+    add_apa_table(doc, "9", "Matriz de Dificultades Técnicas y Soluciones de Ingeniería", [0.8, 3.6, 4.1, 7.0], dif_headers, dif_data, note_text="Elaboración propia con base en las soluciones arquitectónicas implementadas en VotaApp UNAMAD (2026).")
 
     add_heading_2(doc, "5.4. Evaluación de Cumplimiento y Resultados")
-    add_p(doc, "Se evaluó el grado de cumplimiento de los objetivos planteados frente a los resultados obtenidos en el producto de software, contrastando los requerimientos especificados con las métricas del modelo de calidad ISO/IEC 25010 (ISO/IEC, 2011), tal como se resume en la Tabla 10:")
+    add_p(doc, "La Tabla 10 sintetiza la matriz de trazabilidad que contrasta los objetivos específicos planteados al inicio del proyecto frente a los módulos entregados y validados según el estándar ISO/IEC 25010 (ISO/IEC, 2011):")
 
     eval_headers = ["Objetivo Específico", "Requerimientos Vinculados", "Resultado de Ingeniería Logrado", "Cumplimiento"]
     eval_data = [
-        ["OE1: Persistencia Relacional SQLite", "RF01, RF04, RF07, RNF04", "Base de datos normalizada con 4 tablas, claves foráneas y cascadas.", "100% CUMPLIDO"],
-        ["OE2: Interfaces Material Design", "RF02, RNF01, RNF03", "5 pantallas funcionales intuitivas, responsivas y ergonómicas.", "100% CUMPLIDO"],
-        ["OE3: Lógica de Voto Único y Validación", "RF03, RF05, RF06, RF07", "Control estricto de no duplicidad de votantes y validación de campos.", "100% CUMPLIDO"],
-        ["OE4: Cálculo Estadístico y Barras", "RF08, RNF02, RNF05", "Procesamiento en tiempo real con barras ProgressBar y detección ganadora.", "100% CUMPLIDO"]
+        ["OE1: Autenticación Firebase, OAuth 2.0 y Perfil UNAMAD", "RF01, RF02, RNF03", "LoginActivity con Email/Password, Google Sign-In, reset de clave y perfil con las 12 carreras.", "100% CUMPLIDO"],
+        ["OE2: 6 Activities en Modo Oscuro Obsidian MD3", "RF03, RNF01, RNF04", "6 pantallas responsivas con Modo Oscuro Obsidian, búsqueda, ChipGroup y Edge-to-Edge.", "100% CUMPLIDO"],
+        ["OE3: Backend Cloud Firestore, Padrón y Reglas", "RF04 - RF09, RNF03, RNF05", "FirebaseRepository, firestore.rules, filtro por carrera, importador Excel/CSV y 1 voto/UID.", "100% CUMPLIDO"],
+        ["OE4: Escrutinio con DonutChartView, Acta y CI/CD", "RF10 - RF12, RNF02, RNF07", "Gráfico DonutChartView en Canvas, barras animadas, Acta Oficial y GitHub Actions auto-release.", "100% CUMPLIDO"]
     ]
-    add_apa_table(doc, "10", "Matriz de Trazabilidad y Evaluación de Cumplimiento", [3.6, 3.0, 6.2, 2.7], eval_headers, eval_data, note_text="Elaboración propia basada en la correlación entre objetivos específicos y requerimientos (2026).")
+    add_apa_table(doc, "10", "Matriz de Trazabilidad y Evaluación de Cumplimiento", [3.6, 3.0, 6.2, 2.7], eval_headers, eval_data, note_text="Elaboración propia basada en la verificación final del sistema VotaApp UNAMAD (2026).")
 
     # =========================================================================
     # CONCLUSIONES Y RECOMENDACIONES
@@ -841,16 +842,16 @@ fun registrarVotos(
     add_heading_1(doc, "CONCLUSIONES Y RECOMENDACIONES")
     
     add_heading_2(doc, "Conclusiones")
-    add_p(doc, "1. Se desarrolló e implementó con éxito la aplicación móvil nativa 'VotaApp UNAMAD' en lenguaje Kotlin para el sistema operativo Android, satisfaciendo a cabalidad el objetivo general del proyecto y proveyendo a la comunidad universitaria una solución portable, ágil y autónoma para la gestión integral de encuestas y consultas democráticas.")
-    add_p(doc, "2. La arquitectura de persistencia local relacional implementada mediante SQLiteOpenHelper demostró ser sumamente robusta y eficiente, logrando tiempos de respuesta inferiores a 100 milisegundos en todas las operaciones transaccionales y garantizando la integridad referencial absoluta mediante la activación de llaves foráneas y eliminación en cascada de entidades subordinadas.")
-    add_p(doc, "3. El mecanismo de control de voto único por participante implementado en yaVotoParticipante resolvió de manera contundente la vulnerabilidad de votos duplicados que aquejaba a los procesos manuales y formularios web convencionales, asegurando la confiabilidad estadística y legitimidad de los resultados en elecciones de delegados y diagnósticos institucionales.")
-    add_p(doc, "4. La experiencia de usuario construida sobre los lineamientos de Material Design y la inclusión de representaciones visuales mediante barras de progreso horizontales y determinación automática de la opción ganadora mejoraron sustancialmente la comprensión e inmediatez de los resultados, cumpliendo con los estándares de calidad del software exigidos en la asignatura Desarrollo de Aplicaciones Móviles II.")
+    add_p(doc, "1. Se desarrolló, implementó y desplegó satisfactoriamente la aplicación móvil nativa 'VotaApp UNAMAD' en lenguaje Kotlin integrada con Google Firebase (Authentication y Cloud Firestore), dotando a las 12 Escuelas Profesionales de la Universidad Nacional Amazónica de Madre de Dios de una plataforma en tiempo real para la gestión transparente de encuestas académicas y elecciones estudiantiles.")
+    add_p(doc, "2. La arquitectura de seguridad e identidad basada en LoginActivity (Correo/Contraseña y Google Sign-In OAuth 2.0), combinada con la validación de código universitario único en users/{uid} y la subcolección encuestas/{encuestaId}/votos/{voterUid} resguardada por firestore.rules, erradicó por completo el riesgo de votos duplicados y garantizó el principio democrático de un voto único por estudiante autenticado.")
+    add_p(doc, "3. La incorporación del motor de segmentación electoral en CrearEncuestaActivity y CatalogoUnamad permitió restringir votaciones de manera automática a cualquiera de las 12 carreras profesionales de la UNAMAD o importar en segundos padrones de matrícula desde archivos Excel (.csv), texto (.txt) o portapapeles, adaptándose con precisión a la realidad operativa de las aulas universitarias.")
+    add_p(doc, "4. El diseño visual bajo Material Design 3 con Modo Oscuro Obsidian predeterminado, junto con el gráfico circular animado DonutChartView en Canvas, las barras de progreso horizontales animadas, la exportación del Acta Oficial de Resultados y la automatización de entregas APK mediante GitHub Actions CI/CD, consolidaron un producto de software de calidad industrial alineado con la norma ISO/IEC 25010.")
 
     add_heading_2(doc, "Recomendaciones")
-    add_p(doc, "1. Sincronización en la Nube (Cloud Sync): Para futuras versiones, se recomienda integrar un mecanismo de sincronización híbrida mediante Firebase Firestore o una API REST desarrollada en Node.js/Spring Boot, permitiendo respaldar los resultados locales en un servidor central cuando el dispositivo disponga de conexión a internet.")
-    add_p(doc, "2. Exportación de Reportes en Formato PDF y Excel: Se sugiere incorporar una funcionalidad de exportación que genere actas oficiales de escrutinio en formato PDF con firma digital del docente o delegado y hojas de cálculo (.xlsx o .csv) para análisis estadísticos avanzados.")
-    add_p(doc, "3. Autenticación Institucional y Biometría: Se aconseja incorporar autenticación mediante correo institucional (@unamad.edu.pe) a través de OAuth 2.0 / Google Sign-In o validación biométrica por huella dactilar (BiometricPrompt) en dispositivos compatibles para una mayor seguridad.")
-    add_p(doc, "4. Incorporación de Gráficos Circulares Dinámicos: Se propone enriquecer la interfaz de resultados incorporando bibliotecas gráficas avanzadas como MPAndroidChart para desplegar gráficos de sectores (pie charts) interactivos y diagramas de barras comparativos por pregunta.")
+    add_p(doc, "1. Notificaciones Push con Firebase Cloud Messaging (FCM): Se recomienda integrar el servicio FCM para enviar alertas automáticas a los teléfonos de los estudiantes de una Escuela Profesional cuando se publique una nueva elección o falten pocos minutos para el cierre del padrón.")
+    add_p(doc, "2. Verificación Biométrica Local (BiometricPrompt): Para elecciones de alta sensibilidad institucional, se sugiere añadir un paso adicional de confirmación mediante huella dactilar o reconocimiento facial nativo de Android antes de ejecutar FirebaseRepository.registrarVoto().")
+    add_p(doc, "3. Firma Digital Criptográfica de Actas en PDF: Se aconseja extender la funcionalidad de exportación del Acta Oficial de Resultados para generar documentos PDF con código QR de verificación vinculable directamente a la URL de auditoría del documento en Cloud Firestore.")
+    add_p(doc, "4. Panel Web Administrativo Complementario: Aprovechando que el backend ya opera en tiempo real sobre el proyecto Cloud Firestore votaapp-unamad-2026, se recomienda proyectar un dashboard web en Firebase Hosting para proyectar el escrutinio en vivo en los auditorios universitarios.")
 
     # =========================================================================
     # REFERENCIAS BIBLIOGRÁFICAS (Normas APA 7ma Edición, Arial, 100% Negro)
@@ -860,12 +861,12 @@ fun registrarVotos(
     referencias_apa7 = [
         ("Deitel, P., & Deitel, H. (2020). ", "Android how to program with an introduction to Java and Kotlin", " (4th ed.). Pearson Education."),
         ("Elmasri, R., & Navathe, S. B. (2017). ", "Fundamentos de sistemas de bases de datos", " (7ª ed.). Pearson Educación."),
-        ("Google Developers. (2024). ", "Guía de arquitectura de aplicaciones Android", ". Android Developers Documentation. https://developer.android.com/topic/architecture"),
+        ("Google Developers. (2024). ", "Guía de arquitectura de aplicaciones Android y documentación oficial de Firebase Cloud Firestore", ". Android Developers Documentation. https://developer.android.com/topic/architecture"),
         ("Hipp, D. R. (2024). ", "SQLite documentation and architecture specifications", ". SQLite Consortium. https://www.sqlite.org/docs.html"),
         ("ISO/IEC. (2011). ", "Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — System and software quality models", " (ISO/IEC Standard No. 25010:2011). International Organization for Standardization. https://www.iso.org/standard/35733.html"),
         ("Jemerov, D., & Isakova, S. (2022). ", "Kotlin in action", " (2nd ed.). Manning Publications."),
         ("JetBrains. (2024). ", "Kotlin programming language reference", ". JetBrains Documentation. https://kotlinlang.org/docs/home.html"),
-        ("OWASP Foundation. (2024). ", "OWASP Mobile Application Security Verification Standard (MASVS) and SQL injection prevention cheat sheet", ". OWASP. https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"),
+        ("OWASP Foundation. (2024). ", "OWASP Mobile Application Security Verification Standard (MASVS) and serverless security rules guide", ". OWASP. https://mas.owasp.org/"),
         ("Phillips, B., Stewart, C., & Marsicano, K. (2021). ", "Android programming: The Big Nerd Ranch guide", " (5th ed.). Big Nerd Ranch."),
         ("Pressman, R. S., & Maxim, B. R. (2021). ", "Ingeniería del software: Un enfoque práctico", " (9ª ed.). McGraw-Hill Interamericana."),
         ("Smyth, N. (2023). ", "Android Studio Ladybug essentials - Kotlin edition: Developing Android apps", ". Payload Media."),
@@ -900,6 +901,11 @@ fun registrarVotos(
 
     doc.save(docx_path)
     print(f"Documento DOCX generado exitosamente en: {docx_path}")
+
+    # Copia sincronizada en Informe_WordCraft_VotaApp_UNAMAD.docx
+    wordcraft_copy = os.path.join(os.path.dirname(docx_path), "Informe_WordCraft_VotaApp_UNAMAD.docx")
+    shutil.copy2(docx_path, wordcraft_copy)
+    print(f"Copia WordCraft generada exitosamente en: {wordcraft_copy}")
 
 if __name__ == "__main__":
     out_docx = r"C:\Users\HP\AndroidStudioProjects\ProyectoFinal\Documentacion\Informe_Tecnico_Encuestas_Votaciones_UNAMAD.docx"

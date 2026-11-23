@@ -228,36 +228,45 @@
                 android:backgroundTint="@color/accent"
                 android:layout_marginBottom="10dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReiniciarConteo"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:text="Reiniciar Conteo de Votos"
-                android:textSize="13.5sp"
-                android:textColor="@color/danger"
-                app:icon="@drawable/ic_delete"
-                app:iconSize="17dp"
-                app:iconGravity="textStart"
-                app:iconPadding="6dp"
-                app:iconTint="@color/danger"
-                app:strokeColor="@color/danger_border"
-                app:cornerRadius="12dp"
-                android:layout_marginBottom="10dp" />
+                android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnVolver"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:text="Volver al Inicio"
-                android:textSize="14sp"
-                app:icon="@drawable/ic_back"
-                app:iconGravity="textStart"
-                app:iconPadding="6dp"
-                app:iconTint="@color/primary"
-                app:cornerRadius="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReiniciarConteo"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Reiniciar"
+                    android:textSize="13sp"
+                    android:textColor="@color/danger"
+                    app:icon="@drawable/ic_delete"
+                    app:iconSize="16dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="6dp"
+                    app:iconTint="@color/danger"
+                    app:strokeColor="@color/danger_border"
+                    app:cornerRadius="12dp"
+                    android:layout_marginEnd="6dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVolver"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="Volver al Inicio"
+                    android:textSize="13sp"
+                    app:icon="@drawable/ic_back"
+                    app:iconSize="16dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="6dp"
+                    app:iconTint="@color/primary"
+                    app:cornerRadius="12dp"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

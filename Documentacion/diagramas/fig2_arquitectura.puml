@@ -1,4 +1,6 @@
 @startuml fig2_arquitectura
+set separator none
+top to bottom direction
 skinparam dpi 160
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontName Arial
@@ -9,132 +11,108 @@ skinparam packageStyle rectangle
 skinparam ArrowColor #1B4F72
 skinparam ArrowThickness 1.2
 
-package "CAPA DE PRESENTACIÓN (UI / Activities & Layouts XML)" #EBF5FB {
+package "CAPA 1: PRESENTACIÓN (UI / Activities, Custom Views & Edge-to-Edge)" as LayerUI #EBF5FB {
+    class LoginActivity {
+        + iniciarSesionConCorreo()
+        + registrarConCorreo()
+        + iniciarGoogleSignIn()
+        + autenticarConGoogleEnFirebase()
+    }
     class MainActivity {
-        - llContenedorEncuestas : LinearLayout
-        - btnCrearEncuesta : Button
-        - rgFiltro : RadioGroup (Todas/Activas/Cerradas)
-        - tvTotalEncuestas, tvActivasEncuestas, tvTotalVotos : TextView
-        + cargarEncuestas() : void
-        + mostrarDialogoEliminar(encuesta: Encuesta) : void
-        .. Vistas XML ..
-        activity_main.xml | item_encuesta.xml
+        + cargarEncuestasDesdeNube()
+        + aplicarFiltrosLocales()
+        + mostrarDialogoPerfilYCuenta()
+        + mostrarDialogoEliminar()
     }
-    
     class CrearEncuestaActivity {
-        - etTituloEncuesta, etDescripcionEncuesta : EditText
-        - rgCategoria : RadioGroup
-        - swActiva : MaterialSwitch
-        - btnGuardarYPreguntas, btnGuardarYVolver : Button
-        + cargarDatosParaEdicion() : void
-        + guardarEncuesta() : Long
-        .. Vista XML ..
-        activity_crear_encuesta.xml
+        + importarCodigosDesdeUri()
+        + pegarCodigosDesdePortapapeles()
+        + guardarEncuesta()
     }
-    
     class GestionarPreguntasActivity {
-        - etTextoPregunta : EditText
-        - rgTipoPregunta : RadioGroup
-        - etAlternativa1 .. etAlternativa4 : EditText
-        - llListaPreguntas : LinearLayout
-        + cargarListaPreguntas() : void
-        + guardarPregunta() : void
-        + eliminarPregunta(id: Long) : void
-        .. Vistas XML ..
-        activity_gestionar_preguntas.xml | item_pregunta_gestion.xml
+        + cargarEncuestaYPreguntas()
+        + guardarPregunta()
+        + renderizarListaPreguntas()
     }
-    
     class RegistrarVotoActivity {
-        - etParticipante : EditText
-        - llContenedorPreguntasVoto : LinearLayout
-        - mapaRadioGroups : HashMap<Long, RadioGroup>
-        - mapaCheckBoxes : HashMap<Long, List<CheckBox>>
-        + construirCuestionarioDinamico() : void
-        + procesarVoto() : void
-        .. Vista XML ..
-        activity_registrar_voto.xml
+        + cargarEncuestaDesdeNube()
+        + construirCuestionarioDinamico()
+        + procesarVoto()
     }
-    
     class ResultadosActivity {
-        - llResultadosPreguntas : LinearLayout
-        - llListaParticipantes : LinearLayout
-        - tvTotalParticipantes : TextView
-        - btnReiniciarConteo, btnIrAVotar : Button
-        + cargarResultados() : void
-        + cargarGraficasPreguntas() : void
-        + cargarListaVotantes() : void
-        + mostrarDialogoReiniciarConteo() : void
-        .. Vista XML ..
-        activity_resultados.xml
+        + cargarResultados()
+        + renderizarGraficasPreguntas()
+        + compartirActaResultados()
     }
-    
+    class DonutChartView {
+        + setData(alternativas, total)
+        # onDraw(canvas: Canvas)
+    }
+    class UiInsetsHelper {
+        + configurarEdgeToEdgeConHeader()
+        + esModoOscuroActivo()
+        + alternarModoOscuro()
+    }
+
+    LoginActivity -[hidden]right-> MainActivity
     MainActivity -[hidden]right-> CrearEncuestaActivity
     CrearEncuestaActivity -[hidden]right-> GestionarPreguntasActivity
-    MainActivity -[hidden]down-> RegistrarVotoActivity
+
+    LoginActivity -[hidden]down-> RegistrarVotoActivity
     RegistrarVotoActivity -[hidden]right-> ResultadosActivity
+    ResultadosActivity -[hidden]right-> DonutChartView
+    DonutChartView -[hidden]right-> UiInsetsHelper
 }
 
-package "CAPA DE LÓGICA DE NEGOCIO Y MODELOS (Models.kt)" #E8F8F5 {
-    class "Modelos de Dominio (Models.kt)" as Models {
-        + Encuesta (id, titulo, desc, cat, activa, fecha, totalPreguntas, totalVotos)
-        + Pregunta (id, idEncuesta, texto, tipo)
-        + Alternativa (id, idPregunta, texto, votos)
-        + Respuesta (id, idEncuesta, idPregunta, idAlternativa, participante, fechaVoto)
-        + ParticipanteRegistro (nombre, fechaVoto)
-        + AlternativaEstadistica (id, texto, votos, porcentaje, esGanadora)
-        + PreguntaEstadistica (pregunta, totalVotosPregunta, alternativas)
+package "CAPA 2: DOMINIO Y MODELOS (Models.kt & CatalogoUnamad)" as LayerDomain #E8F8F5 {
+    class "Modelos de Dominio (Models.kt)" as DomainModels {
+        + UsuarioPerfil (uid, nombre, codigoUniversitario, carrera, email)
+        + Encuesta (id, titulo, categoria, activa, carreraRestringida, codigosPermitidos, preguntas)
+        + Encuesta.verificarAcceso(perfil, uidActual): Pair<Boolean, String>
+        + Pregunta (id, texto, tipo: UNICA | MULTIPLE, alternativas)
+        + Alternativa (id, texto, votos)
+        + PreguntaEstadistica & AlternativaEstadistica (porcentaje, esGanadora)
     }
+    class "CatalogoUnamad (12 Escuelas Profesionales)" as Catalogo {
+        + CARRERAS_UNAMAD : List<String> (12 carreras oficiales UNAMAD)
+        + OPCIONES_FILTRO_CARRERA : List<String>
+        + extraerCodigosDesdeTexto(textoBruto: String) : List<String>
+    }
+    DomainModels -[hidden]right-> Catalogo
 }
 
-package "CAPA DE PERSISTENCIA Y DATOS (DatabaseHelper.kt)" #FEF9E7 {
-    class DatabaseHelper {
-        - DATABASE_NAME = "encuestas_unamad.db"
-        - DATABASE_VERSION = 1
-        .. Configuración ..
-        + onConfigure(db): foreignKeyConstraintsEnabled = true
-        + onCreate(db): DDL 4 tablas + insertarDatosIniciales()
-        .. Operaciones CRUD Encuestas ..
-        + crearEncuesta(titulo, desc, cat, activa): Long
-        + actualizarEncuesta(id, titulo, desc, cat, activa): Boolean
-        + eliminarEncuesta(id): Boolean [ON DELETE CASCADE]
-        + obtenerEncuestaPorId(id): Encuesta?
-        + listarEncuestas(filtro): List<Encuesta>
-        + obtenerConteoGeneral(): Triple<Int, Int, Int>
-        .. Operaciones CRUD Preguntas y Alternativas ..
-        + insertarPreguntaConAlternativas(idE, texto, tipo, alts): Long
-        + actualizarPreguntaConAlternativas(idP, texto, tipo, alts): Boolean
-        + eliminarPregunta(idP): Boolean [CASCADE]
-        + listarPreguntasDeEncuesta(idE): List<Pregunta>
-        + listarAlternativasDePregunta(idP): List<Alternativa>
-        + contarPreguntasDeEncuesta(idE): Int
-        .. Operaciones Transaccionales Voto y Resultados ..
-        + yaVotoParticipante(idE, participante): Boolean
-        + registrarVotos(idE, participante, alternativas): Boolean
-        + reiniciarVotosEncuesta(idE): Boolean
-        + contarParticipantesUnicos(idE): Int
-        + obtenerParticipantesDeEncuesta(idE): List<ParticipanteRegistro>
-        + obtenerEstadisticasPreguntas(idE): List<PreguntaEstadistica>
+package "CAPA 3: DATOS, NUBE Y DEVOPS (Firebase Cloud + Respaldo SQLite + CI/CD)" as LayerData #FEF9E7 {
+    class "FirebaseRepository.kt (Repositorio Cloud)" as Repo {
+        + guardarPerfilUsuario() / obtenerPerfilUsuario()
+        + listarEncuestas() / obtenerEncuestaPorId()
+        + crearEncuesta() / actualizarEncuesta() / eliminarEncuesta()
+        + guardarPreguntasEncuesta() / sembrarEncuestasDemo()
+        + yaVotoUsuario() / registrarVoto() / obtenerResultados()
     }
-    
-    class "SQLite Engine (encuestas_unamad.db)" as SQLiteEngine {
-        + encuestas (id_encuesta PK, titulo, desc, cat, activa, fecha_creacion)
-        + preguntas (id_pregunta PK, id_encuesta FK, texto_pregunta, tipo_pregunta)
-        + alternativas (id_alternativa PK, id_pregunta FK, texto_alternativa, votos)
-        + respuestas (id_respuesta PK, 3 FKs, participante, fecha_voto)
+    class "Firebase Cloud (votaapp-unamad-2026)" as FirebaseCloud {
+        + Firebase Authentication (Email/Password & Google OAuth 2.0)
+        + Cloud Firestore: users/{uid}
+        + Cloud Firestore: encuestas/{encuestaId}
+        + Subcolección: encuestas/{encuestaId}/votos/{uid}
     }
+    class "DatabaseHelper.kt (SQLite Local Fallback)" as LocalDB {
+        + encuestas_unamad.db (SQLiteOpenHelper)
+        + Tablas: encuestas, preguntas, alternativas, respuestas
+        + PRAGMA foreign_keys = ON (Integridad Referencial)
+    }
+    class "GitHub Actions CI/CD" as CICD {
+        + Workflow: android-ci.yml
+        + Gradle 9.4.1 / AGP 9.1.0 / Kotlin 2.2.10
+        + Compilación y Verificación Automática APK
+    }
+    Repo --> FirebaseCloud : "SDK Firebase BoM 33.10.0\nSincronización en Tiempo Real"
+    Repo ..> LocalDB : "Persistencia Local\nde Respaldo"
+    Repo -[hidden]right-> CICD
 }
 
-MainActivity --> Models
-CrearEncuestaActivity --> Models
-GestionarPreguntasActivity --> Models
-RegistrarVotoActivity --> Models
-ResultadosActivity --> Models
-
-MainActivity --> DatabaseHelper
-CrearEncuestaActivity --> DatabaseHelper
-GestionarPreguntasActivity --> DatabaseHelper
-RegistrarVotoActivity --> DatabaseHelper
-ResultadosActivity --> DatabaseHelper
-
-DatabaseHelper --> SQLiteEngine : PRAGMA foreign_keys = ON\nTransacciones Atómicas (beginTransaction)
+ResultadosActivity --> DonutChartView : "renderiza"
+RegistrarVotoActivity --> DomainModels : "valida y modela"
+CrearEncuestaActivity --> Catalogo : "filtra carrera y padrón"
+DomainModels --> Repo : "sincroniza entidades"
+Catalogo --> Repo : "valida códigos"
 @enduml

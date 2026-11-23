@@ -1,4 +1,5 @@
 @startuml fig5_navegacion
+set separator none
 skinparam dpi 160
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontName Arial
@@ -16,32 +17,44 @@ skinparam state {
     FontName Arial
 }
 
-[*] --> MainActivity : "Iniciar VotaApp UNAMAD"
+[*] --> LoginActivity : Inicio de App (LAUNCHER)
+
+state LoginActivity {
+    [*] --> Autenticacion
+    Autenticacion : • Correo y Contraseña (Firebase Auth)
+    Autenticacion : • Google Sign-In (OAuth 2.0)
+    Autenticacion : • Registro con Código y Carrera UNAMAD
+}
+
+LoginActivity --> MainActivity : Sesión autenticada (currentUser != null)\n[startActivity + finish()]
+MainActivity --> LoginActivity : Cerrar Sesión en «Mi Cuenta UNAMAD»\n[Firebase.auth.signOut()]
 
 state MainActivity {
-    [*] --> PanelControl
-    PanelControl --> FiltrarRadioGroup : "rgFiltro (Todas/Activas/Cerradas)"
-    FiltrarRadioGroup --> PanelControl : "cargarEncuestas() [llContenedorEncuestas]"
+    [*] --> DashboardCloud
+    DashboardCloud : • KPIs en vivo (Encuestas, Activas, Votos)
+    DashboardCloud : • Búsqueda por texto + Chips de Categoría
+    DashboardCloud : • Diálogo «Mi Cuenta UNAMAD» y Modo Oscuro
 }
 
-MainActivity --> CrearEncuestaActivity : "btnCrearEncuesta.setOnClickListener\no Clic Editar [EXTRA_ID_ENCUESTA]"
-CrearEncuestaActivity --> MainActivity : "btnGuardarYVolver / btnCancelar\n[finish() -> onResume() recarga]"
+MainActivity --> CrearEncuestaActivity : Clic «+ Crear Nueva Encuesta» o «Editar»\n[Intent opcional con EXTRA_ID_ENCUESTA]
+CrearEncuestaActivity --> MainActivity : «Guardar y Volver» / «Cancelar»\n[finish() -> onResume() recarga Firestore]
+CrearEncuestaActivity --> GestionarPreguntasActivity : «Guardar y Configurar Preguntas»\n[EXTRA_ID_ENCUESTA + finish()]
 
-CrearEncuestaActivity --> GestionarPreguntasActivity : "btnGuardarYPreguntas\n[Intent con EXTRA_ID_ENCUESTA y finish()]"
-MainActivity --> GestionarPreguntasActivity : "Clic Preguntas en item_encuesta\n[EXTRA_ID_ENCUESTA]"
-GestionarPreguntasActivity --> MainActivity : "btnFinalizar\n[Valida >= 1 pregunta -> finish()]"
+GestionarPreguntasActivity --> MainActivity : «Finalizar Configuración»\n[Valida >= 1 pregunta -> finish()]
 
-MainActivity --> RegistrarVotoActivity : "Clic 'Votar' en item_encuesta\n[EXTRA_ID_ENCUESTA, condición: activa == true]"
-RegistrarVotoActivity --> MainActivity : "btnCancelarVoto\n[finish()]"
-RegistrarVotoActivity --> ResultadosActivity : "procesarVoto() exitoso\n[AlertDialog -> Intent ResultadosActivity + finish()]"
+MainActivity --> RegistrarVotoActivity : Clic «Votar» en tarjeta activa\n[Pre-valida encuesta.verificarAcceso(perfil, uid)]
+RegistrarVotoActivity --> MainActivity : «Cancelar» o acceso restringido\n[finish()]
+RegistrarVotoActivity --> ResultadosActivity : procesarVoto() exitoso en Firestore\n[Diálogo -> «Ver Resultados» + finish()]
 
-MainActivity --> ResultadosActivity : "Clic 'Resultados' en item_encuesta\n[EXTRA_ID_ENCUESTA]"
-ResultadosActivity --> MainActivity : "btnVolver / Botón Atrás\n[finish()]"
+MainActivity --> ResultadosActivity : Clic «Resultados» en tarjeta\n[EXTRA_ID_ENCUESTA]
+ResultadosActivity --> RegistrarVotoActivity : Clic «Ir a Votar» (si encuesta activa)
+ResultadosActivity --> MainActivity : «Volver al Panel Principal»\n[finish()]
 
 state ResultadosActivity {
-    [*] --> MostrarGraficos
-    MostrarGraficos --> ReiniciarVotos : "btnReiniciarConteo (Confirmación)"
-    ReiniciarVotos --> MostrarGraficos : "dbHelper.reiniciarVotosEncuesta()\nrecarga a 0 votos"
+    [*] --> EscrutinioEnVivo
+    EscrutinioEnVivo : • Gráfico Circular Animado (DonutChartView)
+    EscrutinioEnVivo : • Barras Porcentuales + Insignia Ganadora
+    EscrutinioEnVivo : • Exportar Acta Oficial (ACTION_SEND)
+    EscrutinioEnVivo : • Reiniciar Conteo a 0 (Solo Creador)
 }
-
 @enduml

@@ -1,0 +1,83 @@
+@startuml fig6_secuencia
+set separator none
+skinparam dpi 160
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #1B4F72
+skinparam ArrowThickness 1.2
+
+skinparam participant {
+    BackgroundColor #EBF5FB
+    BorderColor #1A5276
+    FontSize 11
+}
+skinparam actor {
+    BackgroundColor #D4E6F1
+    BorderColor #1A5276
+}
+skinparam database {
+    BackgroundColor #FEF9E7
+    BorderColor #B7950B
+}
+
+actor "Estudiante\nUNAMAD" as User
+participant "RegistrarVotoActivity" as VotoUI
+participant "Encuesta\n(Models.kt)" as Model
+participant "FirebaseRepository" as Repo
+database "Cloud Firestore\n(votaapp-unamad-2026)" as Firestore
+participant "ResultadosActivity\n+ DonutChartView" as ResUI
+
+User -> VotoUI : Selecciona «Votar» (EXTRA_ID_ENCUESTA)
+activate VotoUI
+
+VotoUI -> Repo : obtenerEncuestaPorId(idEncuesta)
+activate Repo
+Repo -> Firestore : GET encuestas/{idEncuesta}
+Firestore --> Repo : Documento Encuesta + Preguntas
+Repo --> VotoUI : Encuesta
+deactivate Repo
+
+VotoUI -> Repo : obtenerPerfilUsuario(uid)
+activate Repo
+Repo -> Firestore : GET users/{uid}
+Firestore --> Repo : UsuarioPerfil (código, carrera)
+Repo --> VotoUI : UsuarioPerfil
+deactivate Repo
+
+VotoUI -> Model : encuesta.verificarAcceso(perfil, uid)
+activate Model
+Model --> VotoUI : Pair(true, "Autorizado")
+deactivate Model
+
+VotoUI -> Repo : yaVotoUsuario(idEncuesta, uid)
+activate Repo
+Repo -> Firestore : GET encuestas/{id}/votos/{uid}
+Firestore --> Repo : doc.exists() == false
+Repo --> VotoUI : votoPrevio = false
+deactivate Repo
+
+VotoUI -> VotoUI : construirCuestionarioDinamico()
+User -> VotoUI : Marca opciones y pulsa «Enviar Voto»
+
+VotoUI -> Repo : registrarVoto(idEncuesta, participante, respuestasMap)
+activate Repo
+Repo -> Firestore : SET encuestas/{id}/votos/{uid}\n{uid, participante, fechaVoto, respuestas}
+Firestore --> Repo : WriteResult (Éxito)
+Repo --> VotoUI : onComplete(true, null)
+deactivate Repo
+
+VotoUI -> User : Muestra MaterialAlertDialog «¡Voto Registrado!»
+User -> VotoUI : Pulsa «Ver Resultados»
+VotoUI -> ResUI : startActivity(Intent + EXTRA_ID_ENCUESTA)
+deactivate VotoUI
+activate ResUI
+ResUI -> Repo : obtenerResultados(idEncuesta)
+Repo -> Firestore : GET encuestas/{id} + subcolección votos
+Firestore --> Repo : Documentos de votación en tiempo real
+Repo --> ResUI : Estadísticas + Ganadora + Participantes
+ResUI -> ResUI : Renderiza DonutChartView y ProgressBars
+deactivate ResUI
+@enduml

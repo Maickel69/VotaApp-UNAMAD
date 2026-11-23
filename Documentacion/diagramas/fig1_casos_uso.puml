@@ -1,6 +1,7 @@
 @startuml fig1_casos_uso
+set separator none
 left to right direction
-skinparam dpi 300
+skinparam dpi 160
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontName Arial
 skinparam defaultFontSize 11
@@ -22,42 +23,42 @@ skinparam usecase {
     FontSize 11
 }
 
-actor "Administrador / Creador\n(Docente / Directivo)" as Admin
-actor "Participante / Votante\n(Estudiante / Miembro)" as Votante
+actor "Administrador / Creador\n(Docente / Delegado UNAMAD)" as Admin
+actor "Participante / Votante\n(Estudiante UNAMAD)" as Votante
+actor "Firebase Cloud\n(Auth & Firestore)" as Cloud
 
-rectangle "Sistema Móvil de Encuestas y Votaciones (VotaApp UNAMAD)" {
-    usecase "RF01: Crear Encuesta" as UC1
-    usecase "RF02: Consultar y Filtrar Encuestas" as UC2
-    usecase "RF03: Editar Encuesta y Estado" as UC3
-    usecase "RF04: Eliminar Encuesta" as UC4
-    usecase "RF05: Configurar Preguntas" as UC5
-    usecase "RF06: Configurar Alternativas" as UC6
-    usecase "RF07: Registrar Voto / Respuestas" as UC7
-    usecase "RF08: Visualizar Conteo y Resultados" as UC8
+rectangle "Sistema Móvil de Encuestas y Votaciones Cloud (VotaApp UNAMAD v2.0)" {
+    usecase "RF01: Iniciar Sesión / Google OAuth\ny Registro de Perfil Universitario" as UC_Auth
+    usecase "RF02: Crear Encuesta con Filtro de\nCarrera UNAMAD y Padrón .TXT/.CSV" as UC_Crear
+    usecase "RF03: Gestionar Preguntas\n(Selección Única y Múltiple)" as UC_Preg
+    usecase "RF04: Consultar, Buscar y Filtrar\nEncuestas por Categoría y Estado" as UC_Listar
+    usecase "RF05: Editar / Eliminar Encuesta\ny Reiniciar Conteo en la Nube" as UC_Editar
+    usecase "RF06: Emitir Voto Único Verificado\nen Tiempo Real" as UC_Votar
+    usecase "RF07: Visualizar Resultados Donut\nen Tiempo Real y Exportar Acta" as UC_Res
 
-    usecase "Validar Campos Obligatorios" as UC_Val
-    usecase "Verificar Voto Único" as UC_Unico
-    usecase "Calcular Métricas y Ganador" as UC_Metricas
-    usecase "Eliminación en Cascada (SQLite)" as UC_Cascada
+    usecase "Validar Acceso por Escuela Profesional\n(12 Carreras) y Padrón de Códigos" as UC_Filtro
+    usecase "Verificar Voto Único por UID\n(encuestas/{id}/votos/{uid})" as UC_Unico
+    usecase "Extraer Códigos desde Archivo\n.TXT / .CSV o Portapapeles" as UC_Padron
 
-    UC1 ..> UC_Val : <<include>>
-    UC3 ..> UC_Val : <<include>>
-    UC4 ..> UC_Cascada : <<include>>
-    UC5 ..> UC6 : <<include>>
-    UC7 ..> UC_Val : <<include>>
-    UC7 ..> UC_Unico : <<include>>
-    UC8 ..> UC_Metricas : <<include>>
+    UC_Crear ..> UC_Padron : <<include>>
+    UC_Votar ..> UC_Filtro : <<include>>
+    UC_Votar ..> UC_Unico : <<include>>
 }
 
-Admin --> UC1
-Admin --> UC2
-Admin --> UC3
-Admin --> UC4
-Admin --> UC5
-Admin --> UC8
+Admin --> UC_Auth
+Admin --> UC_Crear
+Admin --> UC_Preg
+Admin --> UC_Listar
+Admin --> UC_Editar
+Admin --> UC_Res
 
-UC2 <-- Votante
-UC7 <-- Votante
-UC8 <-- Votante
+Votante --> UC_Auth
+Votante --> UC_Listar
+Votante --> UC_Votar
+Votante --> UC_Res
 
+UC_Auth --> Cloud
+UC_Crear --> Cloud
+UC_Votar --> Cloud
+UC_Res --> Cloud
 @enduml

@@ -74,16 +74,16 @@
             </LinearLayout>
 
             <FrameLayout
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="78dp"
+                android:layout_height="78dp"
                 android:background="@drawable/bg_logo_circle"
-                android:padding="13dp"
+                android:padding="9dp"
                 android:layout_marginBottom="12dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/encuesta"
+                    android:src="@drawable/ic_votaapp_logo"
                     android:contentDescription="Logo VotaApp UNAMAD" />
             </FrameLayout>
 

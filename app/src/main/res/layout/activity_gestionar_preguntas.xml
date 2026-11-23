@@ -119,24 +119,39 @@
                         android:id="@+id/rgTipoPregunta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_filter_container"
+                        android:padding="4dp"
                         android:layout_marginBottom="14dp">
 
                         <RadioButton
                             android:id="@+id/rbTipoUnica"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Selección Única (1 respuesta)"
+                            android:minHeight="42dp"
+                            android:layout_weight="1"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="Selección Única"
                             android:checked="true"
-                            android:textSize="13.5sp"
-                            android:textColor="@color/text_primary" />
+                            android:textSize="12.5sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/filter_chip_text"
+                            android:background="@drawable/bg_filter_chip" />
 
                         <RadioButton
                             android:id="@+id/rbTipoMultiple"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Opción Múltiple (varias respuestas)"
-                            android:textSize="13.5sp"
-                            android:textColor="@color/text_primary" />
+                            android:minHeight="42dp"
+                            android:layout_weight="1"
+                            android:button="@null"
+                            android:gravity="center"
+                            android:text="Opción Múltiple"
+                            android:textSize="12.5sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/filter_chip_text"
+                            android:background="@drawable/bg_filter_chip" />
                     </RadioGroup>
 
                     <!-- Alternativas de Respuesta -->

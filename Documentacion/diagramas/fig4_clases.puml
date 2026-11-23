@@ -1,0 +1,156 @@
+@startuml fig4_clases
+set separator none
+top to bottom direction
+skinparam dpi 160
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam ArrowColor #1B4F72
+skinparam ArrowThickness 1.2
+
+skinparam class {
+    BackgroundColor #FDFEFE
+    BorderColor #2874A6
+    HeaderBackgroundColor #D4E6F1
+}
+
+class UsuarioPerfil <<data class>> {
+    + uid : String
+    + nombre : String
+    + codigoUniversitario : String
+    + carrera : String
+    + email : String
+    + fechaRegistro : Long
+}
+
+class CatalogoUnamad <<object>> {
+    + CARRERAS_UNAMAD : List<String>
+    + OPCIONES_FILTRO_CARRERA : List<String>
+    + extraerCodigosDesdeTexto(textoBruto: String) : List<String>
+}
+
+class Encuesta <<data class>> {
+    + id : String
+    + titulo : String
+    + descripcion : String
+    + categoria : String
+    + activa : Boolean
+    + creadorUid : String
+    + creadorNombre : String
+    + carreraRestringida : String
+    + codigosPermitidos : String
+    + preguntas : List<Pregunta>
+    + totalPreguntas : Int
+    + totalVotos : Int
+    + listaCodigosAutorizados() : List<String>
+    + tieneRestriccionAcceso() : Boolean
+    + etiquetaRestriccion() : String
+    + verificarAcceso(perfil: UsuarioPerfil?, uid: String?) : Pair<Boolean, String>
+}
+
+class Pregunta <<data class>> {
+    + id : String
+    + texto : String
+    + tipo : String
+    + alternativas : List<Alternativa>
+}
+
+class Alternativa <<data class>> {
+    + id : String
+    + texto : String
+    + votos : Int
+}
+
+class FirebaseRepository <<object>> {
+    - db : FirebaseFirestore
+    - auth : FirebaseAuth
+    + currentUid() : String?
+    + currentDisplayName() : String
+    + guardarPerfilUsuario(...)
+    + obtenerPerfilUsuario(uid: String, ...)
+    + listarEncuestas(filtro: String, ...)
+    + obtenerEncuestaPorId(id: String, ...)
+    + crearEncuesta(...)
+    + actualizarEncuesta(...)
+    + guardarPreguntasEncuesta(...)
+    + eliminarEncuesta(id: String, ...)
+    + yaVotoUsuario(encuestaId: String, uid: String, ...)
+    + registrarVoto(encuestaId: String, participante: String, respuestas: Map, ...)
+    + obtenerResultados(encuestaId: String, ...)
+}
+
+class DonutChartView <<Custom View>> {
+    - slices : List<Slice>
+    - totalVotos : Int
+    - animProgress : Float
+    + setData(alternatives: List<AlternativaEstadistica>, total: Int)
+    # onDraw(canvas: Canvas)
+}
+
+class LoginActivity <<AppCompatActivity>> {
+    - auth : FirebaseAuth
+    - modoRegistro : Boolean
+    + iniciarSesionConCorreo()
+    + registrarConCorreo()
+    + iniciarGoogleSignIn()
+}
+
+class MainActivity <<AppCompatActivity>> {
+    - cacheEncuestas : List<Encuesta>
+    - perfilActual : UsuarioPerfil?
+    + cargarEncuestasDesdeNube()
+    + aplicarFiltrosLocales()
+    + mostrarDialogoPerfilYCuenta()
+}
+
+class CrearEncuestaActivity <<AppCompatActivity>> {
+    - idEncuestaEdicion : String?
+    + importarCodigosDesdeUri(uri: Uri)
+    + pegarCodigosDesdePortapapeles()
+    + guardarEncuesta()
+}
+
+class GestionarPreguntasActivity <<AppCompatActivity>> {
+    - idEncuesta : String
+    - preguntasActuales : ArrayList<Pregunta>
+    + cargarEncuestaYPreguntas()
+    + guardarPregunta()
+}
+
+class RegistrarVotoActivity <<AppCompatActivity>> {
+    - idEncuesta : String
+    - mapaRadioGroups : HashMap<String, RadioGroup>
+    - mapaCheckBoxes : HashMap<String, List<CheckBox>>
+    + cargarEncuestaDesdeNube()
+    + construirCuestionarioDinamico()
+    + procesarVoto()
+}
+
+class ResultadosActivity <<AppCompatActivity>> {
+    - idEncuesta : String
+    - estadisticasActuales : List<PreguntaEstadistica>
+    + cargarResultados()
+    + renderizarGraficasPreguntas()
+    + compartirActaResultados()
+}
+
+Encuesta "1" *-- "1..*" Pregunta : contiene >
+Pregunta "1" *-- "2..4" Alternativa : contiene >
+Encuesta ..> CatalogoUnamad : valida padrón >
+Encuesta ..> UsuarioPerfil : verifica acceso >
+
+FirebaseRepository --> Encuesta : gestiona >
+FirebaseRepository --> UsuarioPerfil : persiste >
+
+LoginActivity --> FirebaseRepository
+LoginActivity --> CatalogoUnamad
+MainActivity --> FirebaseRepository
+CrearEncuestaActivity --> FirebaseRepository
+CrearEncuestaActivity --> CatalogoUnamad
+GestionarPreguntasActivity --> FirebaseRepository
+RegistrarVotoActivity --> FirebaseRepository
+ResultadosActivity --> FirebaseRepository
+ResultadosActivity *-- DonutChartView : renderiza >
+@enduml

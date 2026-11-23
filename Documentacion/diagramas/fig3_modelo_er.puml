@@ -1,0 +1,101 @@
+@startuml fig3_modelo_er
+set separator none
+hide circle
+skinparam dpi 160
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+skinparam class {
+    BackgroundColor #FFFFFF
+    BorderColor #1A5276
+    HeaderBackgroundColor #D4E6F1
+}
+
+package "Motor Principal en la Nube: Cloud Firestore (Proyecto: votaapp-unamad-2026)" as PkgCloud #EBF5FB {
+    entity "users / {uid}" as fs_users {
+        * **uid** : String <<PK, Firebase Auth UID>>
+        --
+        * nombre : String
+        * codigoUniversitario : String <<Índice Único>>
+        * carrera : String (12 Carreras UNAMAD)
+        * email : String
+        * fechaRegistro : Long (Epoch ms)
+    }
+
+    entity "encuestas / {encuestaId}" as fs_encuestas {
+        * **encuestaId** : String <<PK, Auto-ID>>
+        --
+        * titulo : String
+        * descripcion : String
+        * categoria : String ('Académica'|'Satisfacción'|'Votación'|'General')
+        * activa : Boolean
+        * fechaCreacion : String
+        * creadorUid : String <<FK -> users/{uid}>>
+        * creadorNombre : String
+        * carreraRestringida : String ('TODAS' o Escuela Profesional)
+        * codigosPermitidos : String (Padrón CSV/TXT)
+        * **preguntas** : Array<Map> <<Subdocumento Embebido>>
+    }
+
+    entity "Pregunta Embebida (en preguntas[])" as fs_preguntas {
+        * **id** : String <<UUID>>
+        --
+        * texto : String
+        * tipo : String ('UNICA' | 'MULTIPLE')
+        * **alternativas** : Array<Map {id, texto}>
+    }
+
+    entity "encuestas / {encuestaId} / votos / {uid}" as fs_votos {
+        * **uid** : String <<PK, ID Documento = UID Votante>>
+        --
+        * participante : String (Nombre + Código)
+        * fechaVoto : String
+        * **respuestas** : Map<preguntaId, List<alternativaId>>
+    }
+
+    fs_users ||--o{ fs_encuestas : "crea (creadorUid)"
+    fs_encuestas *--|{ fs_preguntas : "contiene embebidas (1:N)"
+    fs_encuestas ||--o{ fs_votos : "subcolección votos (1:N)"
+    fs_users ||--o{ fs_votos : "emite 1 voto único por encuesta (uid)"
+}
+
+package "Motor Local de Respaldo: SQLite (encuestas_unamad.db - DatabaseHelper.kt)" as PkgSQLite #FEF9E7 {
+    entity "encuestas (SQLite)" as sq_enc {
+        * **id_encuesta** : INTEGER <<PK>>
+        --
+        * titulo, descripcion, categoria : TEXT
+        * activa : INTEGER (1|0)
+        * fecha_creacion : TEXT
+    }
+
+    entity "preguntas (SQLite)" as sq_preg {
+        * **id_pregunta** : INTEGER <<PK>>
+        --
+        * id_encuesta : INTEGER <<FK CASCADE>>
+        * texto_pregunta, tipo_pregunta : TEXT
+    }
+
+    entity "alternativas (SQLite)" as sq_alt {
+        * **id_alternativa** : INTEGER <<PK>>
+        --
+        * id_pregunta : INTEGER <<FK CASCADE>>
+        * texto_alternativa : TEXT
+        * votos : INTEGER
+    }
+
+    entity "respuestas (SQLite)" as sq_resp {
+        * **id_respuesta** : INTEGER <<PK>>
+        --
+        * id_encuesta, id_pregunta, id_alternativa : INTEGER <<FK>>
+        * participante, fecha_voto : TEXT
+    }
+
+    sq_enc ||--|{ sq_preg : "1:N CASCADE"
+    sq_preg ||--|{ sq_alt : "1:N CASCADE"
+    sq_alt ||--o{ sq_resp : "1:N"
+}
+@enduml
