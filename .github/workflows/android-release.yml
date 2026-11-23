@@ -1,0 +1,64 @@
+name: Android CI/CD & Auto-Release APK
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Compilar APK y Actualizar Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Gradle y caché
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Otorgar permisos de ejecución a gradlew
+        run: chmod +x ./gradlew
+
+      - name: Ejecutar pruebas unitarias
+        run: ./gradlew testDebugUnitTest --console=plain
+
+      - name: Compilar APK (assembleDebug)
+        run: ./gradlew assembleDebug --console=plain
+
+      - name: Renombrar APK compilado
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk VotaApp-UNAMAD.apk
+
+      - name: Subir APK como artefacto de GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: VotaApp-UNAMAD-APK
+          path: VotaApp-UNAMAD.apk
+          retention-days: 30
+
+      - name: Publicar / Actualizar Release Automático con el APK más reciente
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="latest-apk"
+          TITLE="VotaApp UNAMAD - Build Automático (GitHub Actions)"
+          NOTES="APK compilado y desplegado automáticamente por GitHub Actions desde el commit ${GITHUB_SHA::7}."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" VotaApp-UNAMAD.apk --clobber
+            gh release edit "$TAG" --title "$TITLE" --notes "$NOTES"
+          else
+            gh release create "$TAG" VotaApp-UNAMAD.apk --title "$TITLE" --notes "$NOTES" --latest
+          fi
