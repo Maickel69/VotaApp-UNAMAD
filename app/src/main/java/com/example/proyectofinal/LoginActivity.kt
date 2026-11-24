@@ -280,8 +280,11 @@ class LoginActivity : AppCompatActivity() {
                     user.updateProfile(profileUpdates).addOnCompleteListener {
                         FirebaseRepository.guardarPerfilUsuario(
                             user.uid, nombre, codigo, email, carrera
-                        ) { _, _ ->
+                        ) { ok, err ->
                             mostrarCargando(false)
+                            if (!ok && !err.isNullOrBlank()) {
+                                Toast.makeText(this, err, Toast.LENGTH_LONG).show()
+                            }
                             irAMain()
                         }
                     }
@@ -309,7 +312,10 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         val client = GoogleSignIn.getClient(this, gso)
-        googleSignInLauncher.launch(client.signInIntent)
+        // Limpiar sesión previa en el cliente OAuth para permitir elegir cualquier cuenta @unamad.edu.pe
+        client.signOut().addOnCompleteListener {
+            googleSignInLauncher.launch(client.signInIntent)
+        }
     }
 
     private fun autenticarConGoogleEnFirebase(idToken: String, nombre: String, email: String) {

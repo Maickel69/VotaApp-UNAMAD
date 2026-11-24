@@ -48,10 +48,8 @@ object FirebaseRepository {
         val ref = db.collection(COL_USERS).document(uid)
         val codNormalizado = codigoUniversitario.trim().uppercase()
 
-        // Si ingresó un código universitario, verificar que no esté asignado a otro UID
-        val procederGuardado = { snapActual: com.google.firebase.firestore.DocumentSnapshot ->
+        val procederGuardado = { snapActual: com.google.firebase.firestore.DocumentSnapshot, codigoFinal: String ->
             val fechaReg = snapActual.getLong("fechaRegistro") ?: System.currentTimeMillis()
-            val codigoFinal = codNormalizado.ifBlank { snapActual.getString("codigoUniversitario") ?: "" }
             val carreraFinal = carrera?.trim()?.ifBlank { null } ?: snapActual.getString("carrera") ?: ""
             val data = hashMapOf(
                 "uid" to uid,
@@ -67,7 +65,24 @@ object FirebaseRepository {
         }
 
         ref.get().addOnSuccessListener { snap ->
+            val codigoExistente = snap.getString("codigoUniversitario")?.trim()?.uppercase() ?: ""
+
+            // Regla de inmutabilidad: si ya tiene un código registrado, no se puede modificar jamás
+            if (codigoExistente.isNotBlank()) {
+                if (codNormalizado.isNotBlank() && codNormalizado != codigoExistente) {
+                    onComplete(false, "Tu código universitario ($codigoExistente) ya fue registrado y no puede modificarse.")
+                    return@addOnSuccessListener
+                }
+                procederGuardado(snap, codigoExistente)
+                return@addOnSuccessListener
+            }
+
+            // Si aún no tiene código y está registrando uno nuevo por primera y única vez
             if (codNormalizado.isNotBlank()) {
+                if (!Regex("^[0-9A-Z-]{4,20}$").matches(codNormalizado)) {
+                    onComplete(false, "Ingresa un código universitario válido (4 a 20 caracteres alfanuméricos, sin espacios).")
+                    return@addOnSuccessListener
+                }
                 db.collection(COL_USERS)
                     .whereEqualTo("codigoUniversitario", codNormalizado)
                     .get()
@@ -76,14 +91,14 @@ object FirebaseRepository {
                         if (ocupadoPorOtro) {
                             onComplete(false, "El código universitario $codNormalizado ya está registrado por otro estudiante.")
                         } else {
-                            procederGuardado(snap)
+                            procederGuardado(snap, codNormalizado)
                         }
                     }
-                    .addOnFailureListener {
-                        procederGuardado(snap)
+                    .addOnFailureListener { e ->
+                        onComplete(false, "No se pudo verificar disponibilidad del código: ${e.localizedMessage}")
                     }
             } else {
-                procederGuardado(snap)
+                procederGuardado(snap, "")
             }
         }.addOnFailureListener { e ->
             onComplete(false, e.localizedMessage)

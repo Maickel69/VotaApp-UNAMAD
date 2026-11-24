@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private var cacheEncuestas: List<Encuesta> = emptyList()
     private var perfilActual: UsuarioPerfil? = null
+    private var dialogoCodigoObligatorio: androidx.appcompat.app.AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +78,9 @@ class MainActivity : AppCompatActivity() {
         FirebaseRepository.obtenerPerfilUsuario(uid) { perfil ->
             if (isFinishing || isDestroyed) return@obtenerPerfilUsuario
             perfilActual = perfil
-            if (perfil != null && perfil.codigoUniversitario.isNotBlank()) {
+            if (perfil == null || perfil.codigoUniversitario.isBlank()) {
+                mostrarDialogoRegistroCodigoObligatorio(perfil)
+            } else {
                 val infoExtra = if (perfil.carrera.isNotBlank()) " • ${perfil.codigoUniversitario}" else " (${perfil.codigoUniversitario})"
                 tvUsuarioActual.text = "Hola, ${perfil.nombre.ifBlank { FirebaseRepository.currentDisplayName() }}$infoExtra"
             }
@@ -152,12 +155,154 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun mostrarDialogoRegistroCodigoObligatorio(perfil: UsuarioPerfil?) {
+        if (dialogoCodigoObligatorio?.isShowing == true) return
+        val user = Firebase.auth.currentUser ?: return
+        val uid = user.uid
+        val d = resources.displayMetrics.density
+        val pad = (20 * d).toInt()
+
+        val contenedor = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(pad, (12 * d).toInt(), pad, 0)
+        }
+
+        val tvAviso = TextView(this).apply {
+            text = "Correo: ${user.email ?: "Cuenta Google UNAMAD"}\n\nPara continuar, debes registrar tu código universitario de estudiante y tu Escuela Profesional.\n⚠️ Importante: El código se registra una única vez y no podrá modificarse después."
+            textSize = 13f
+            setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+            setPadding(0, 0, 0, (12 * d).toInt())
+        }
+        contenedor.addView(tvAviso)
+
+        val etNombre = EditText(this).apply {
+            hint = "Nombre completo (*)"
+            setText(perfil?.nombre?.ifBlank { FirebaseRepository.currentDisplayName() } ?: FirebaseRepository.currentDisplayName())
+            setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+            setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
+            setBackgroundResource(R.drawable.bg_input)
+            setPadding((12 * d).toInt(), (10 * d).toInt(), (12 * d).toInt(), (10 * d).toInt())
+        }
+        contenedor.addView(etNombre)
+
+        val etCodigo = EditText(this).apply {
+            hint = "Código universitario obligatorio (ej. 202201045)"
+            setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+            setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
+            setBackgroundResource(R.drawable.bg_input)
+            setPadding((12 * d).toInt(), (10 * d).toInt(), (12 * d).toInt(), (10 * d).toInt())
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = (10 * d).toInt() }
+        }
+        contenedor.addView(etCodigo)
+
+        val spCarrera = Spinner(this).apply {
+            setBackgroundResource(R.drawable.bg_input)
+            adapter = ArrayAdapter(
+                this@MainActivity,
+                android.R.layout.simple_spinner_dropdown_item,
+                CatalogoUnamad.CARRERAS_UNAMAD
+            )
+            val idxActual = CatalogoUnamad.CARRERAS_UNAMAD.indexOfFirst {
+                it.equals(perfil?.carrera ?: "", ignoreCase = true)
+            }
+            if (idxActual >= 0) setSelection(idxActual)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (46 * d).toInt()
+            ).apply { topMargin = (10 * d).toInt() }
+        }
+        contenedor.addView(spCarrera)
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle("Registro Obligatorio UNAMAD")
+            .setView(contenedor)
+            .setCancelable(false)
+            .setPositiveButton("Confirmar Código", null)
+            .setNeutralButton("Cambiar Cuenta", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val btnPos = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            val btnNeu = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL)
+
+            btnPos.setOnClickListener {
+                val nombre = etNombre.text.toString().trim()
+                val codigo = etCodigo.text.toString().trim().uppercase()
+                val carrera = spCarrera.selectedItem?.toString() ?: ""
+
+                if (nombre.length < 2) {
+                    etNombre.error = "Ingresa tu nombre completo"
+                    etNombre.requestFocus()
+                    return@setOnClickListener
+                }
+                if (codigo.length < 4 || !Regex("^[0-9A-Z-]{4,20}$").matches(codigo)) {
+                    etCodigo.error = "Ingresa un código universitario válido (4 a 20 caracteres)"
+                    etCodigo.requestFocus()
+                    return@setOnClickListener
+                }
+
+                btnPos.isEnabled = false
+                btnPos.text = "Guardando..."
+                user.updateProfile(
+                    UserProfileChangeRequest.Builder().setDisplayName(nombre).build()
+                )
+                FirebaseRepository.guardarPerfilUsuario(
+                    uid,
+                    nombre,
+                    codigo,
+                    user.email ?: "",
+                    carrera
+                ) { ok, err ->
+                    if (isFinishing || isDestroyed) return@guardarPerfilUsuario
+                    if (ok) {
+                        dialog.dismiss()
+                        dialogoCodigoObligatorio = null
+                        actualizarSaludo()
+                        Toast.makeText(
+                            this,
+                            "Código universitario ($codigo) registrado de forma permanente.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        btnPos.isEnabled = true
+                        btnPos.text = "Confirmar Código"
+                        etCodigo.error = err ?: "No se pudo registrar el código"
+                        Toast.makeText(
+                            this,
+                            err ?: "No se pudo guardar el código universitario.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            btnNeu.setOnClickListener {
+                dialog.dismiss()
+                dialogoCodigoObligatorio = null
+                Firebase.auth.signOut()
+                irALogin()
+            }
+        }
+
+        dialogoCodigoObligatorio = dialog
+        dialog.show()
+    }
+
     private fun mostrarDialogoPerfilYCuenta() {
         val user = Firebase.auth.currentUser ?: return
         val uid = user.uid
 
         FirebaseRepository.obtenerPerfilUsuario(uid) { perfil ->
             if (isFinishing || isDestroyed) return@obtenerPerfilUsuario
+            if (perfil == null || perfil.codigoUniversitario.isBlank()) {
+                mostrarDialogoRegistroCodigoObligatorio(perfil)
+                return@obtenerPerfilUsuario
+            }
+
+            val codigoFijo = perfil.codigoUniversitario.trim().uppercase()
             val d = resources.displayMetrics.density
             val pad = (20 * d).toInt()
 
@@ -176,7 +321,7 @@ class MainActivity : AppCompatActivity() {
 
             val etNombre = EditText(this).apply {
                 hint = "Nombre completo"
-                setText(perfil?.nombre?.ifBlank { FirebaseRepository.currentDisplayName() } ?: FirebaseRepository.currentDisplayName())
+                setText(perfil.nombre.ifBlank { FirebaseRepository.currentDisplayName() })
                 setTextColor(ContextCompat.getColor(context, R.color.text_primary))
                 setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
                 setBackgroundResource(R.drawable.bg_input)
@@ -185,18 +330,30 @@ class MainActivity : AppCompatActivity() {
             contenedor.addView(etNombre)
 
             val etCodigo = EditText(this).apply {
-                hint = "Código universitario (ej. 202201045)"
-                setText(perfil?.codigoUniversitario ?: "")
-                setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-                setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
+                setText("$codigoFijo (Fijo • No modificable)")
+                setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
                 setBackgroundResource(R.drawable.bg_input)
                 setPadding((12 * d).toInt(), (10 * d).toInt(), (12 * d).toInt(), (10 * d).toInt())
+                isEnabled = false
+                isFocusable = false
+                isFocusableInTouchMode = false
+                isCursorVisible = false
+                keyListener = null
+                alpha = 0.78f
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply { topMargin = (10 * d).toInt() }
             }
             contenedor.addView(etCodigo)
+
+            val tvAvisoCodigo = TextView(this).apply {
+                text = "El código universitario se registra una única vez y no puede modificarse."
+                textSize = 11.5f
+                setTextColor(ContextCompat.getColor(context, R.color.text_muted))
+                setPadding((4 * d).toInt(), (4 * d).toInt(), 0, 0)
+            }
+            contenedor.addView(tvAvisoCodigo)
 
             val spCarrera = Spinner(this).apply {
                 setBackgroundResource(R.drawable.bg_input)
@@ -206,7 +363,7 @@ class MainActivity : AppCompatActivity() {
                     CatalogoUnamad.CARRERAS_UNAMAD
                 )
                 val idxActual = CatalogoUnamad.CARRERAS_UNAMAD.indexOfFirst {
-                    it.equals(perfil?.carrera ?: "", ignoreCase = true)
+                    it.equals(perfil.carrera, ignoreCase = true)
                 }
                 if (idxActual >= 0) setSelection(idxActual)
                 layoutParams = LinearLayout.LayoutParams(
@@ -236,7 +393,6 @@ class MainActivity : AppCompatActivity() {
                 .setView(contenedor)
                 .setPositiveButton("Guardar Perfil") { _, _ ->
                     val nuevoNombre = etNombre.text.toString().trim()
-                    val nuevoCodigo = etCodigo.text.toString().trim()
                     val nuevaCarrera = spCarrera.selectedItem?.toString() ?: ""
                     if (nuevoNombre.length >= 2) {
                         user.updateProfile(
@@ -245,13 +401,13 @@ class MainActivity : AppCompatActivity() {
                         FirebaseRepository.guardarPerfilUsuario(
                             uid,
                             nuevoNombre,
-                            nuevoCodigo,
+                            codigoFijo,
                             user.email ?: "",
                             nuevaCarrera
                         ) { ok, err ->
                             if (ok) {
                                 actualizarSaludo()
-                                Toast.makeText(this, "Perfil y carrera actualizados.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Perfil actualizado.", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(this, err ?: "No se pudo guardar el perfil.", Toast.LENGTH_LONG).show()
                             }

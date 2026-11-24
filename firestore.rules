@@ -12,7 +12,8 @@ service cloud.firestore {
     // Fields:
     //   - uid: string (required, immutable, must equal {uid} and request.auth.uid)
     //   - nombre: string (required, 2..120 chars)
-    //   - codigoUniversitario: string (required, 0..30 chars)
+    //   - codigoUniversitario: string (required, 0..30 chars, immutable once non-empty)
+    //   - carrera: string (optional, 0..120 chars)
     //   - email: string (required, valid email format, <= 254 chars)
     //   - fechaRegistro: number (required, immutable, >= 0)
     //
@@ -27,6 +28,8 @@ service cloud.firestore {
     //   - creadorUid: string (required, immutable, must equal request.auth.uid on create)
     //   - creadorNombre: string (required, 1..120 chars)
     //   - preguntas: list (required, 0..50 items)
+    //   - carreraRestringida: string (optional, 0..120 chars)
+    //   - codigosPermitidos: string (optional, 0..10000 chars)
     //
     // Subcollection: encuestas/{encuestaId}/votos
     // Document ID: {voterUid} (must equal voter's Firebase Auth UID to enforce 1 vote per user)
@@ -67,6 +70,12 @@ service cloud.firestore {
       return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
     }
 
+    // Enforce one-time immutability of codigoUniversitario once set to a non-empty string
+    function isCodigoUniversitarioValidOnUpdate() {
+      return !(resource.data.codigoUniversitario is string && resource.data.codigoUniversitario.size() > 0) ||
+             request.resource.data.codigoUniversitario == resource.data.codigoUniversitario;
+    }
+
     // Validate string length bounds
     function validStringLength(value, minLen, maxLen) {
       return value is string && value.size() >= minLen && value.size() <= maxLen;
@@ -97,18 +106,19 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidUser(data, uid) {
-      return hasOnlyAllowedFields(['uid', 'nombre', 'codigoUniversitario', 'email', 'fechaRegistro']) &&
+      return hasOnlyAllowedFields(['uid', 'nombre', 'codigoUniversitario', 'carrera', 'email', 'fechaRegistro']) &&
              hasRequiredFields(['uid', 'nombre', 'codigoUniversitario', 'email', 'fechaRegistro']) &&
              data.uid is string && data.uid == uid && data.uid == request.auth.uid &&
              validStringLength(data.nombre, 2, 120) &&
              validStringLength(data.codigoUniversitario, 0, 30) &&
+             (!('carrera' in data) || validStringLength(data.carrera, 0, 120)) &&
              isValidEmail(data.email) &&
              data.fechaRegistro is number && data.fechaRegistro >= 0;
     }
 
     function isValidEncuesta(data) {
       let validCategorias = ['Académica', 'Satisfacción', 'Votación', 'Votación Estudiantil', 'General'];
-      return hasOnlyAllowedFields(['titulo', 'descripcion', 'categoria', 'activa', 'fechaCreacion', 'creadorUid', 'creadorNombre', 'preguntas']) &&
+      return hasOnlyAllowedFields(['titulo', 'descripcion', 'categoria', 'activa', 'fechaCreacion', 'creadorUid', 'creadorNombre', 'preguntas', 'carreraRestringida', 'codigosPermitidos']) &&
              hasRequiredFields(['titulo', 'descripcion', 'categoria', 'activa', 'fechaCreacion', 'creadorUid', 'creadorNombre', 'preguntas']) &&
              validStringLength(data.titulo, 5, 160) &&
              validStringLength(data.descripcion, 1, 1000) &&
@@ -117,7 +127,9 @@ service cloud.firestore {
              validStringLength(data.fechaCreacion, 1, 40) &&
              validStringLength(data.creadorUid, 1, 128) &&
              validStringLength(data.creadorNombre, 1, 120) &&
-             data.preguntas is list && data.preguntas.size() >= 0 && data.preguntas.size() <= 50;
+             data.preguntas is list && data.preguntas.size() >= 0 && data.preguntas.size() <= 50 &&
+             (!('carreraRestringida' in data) || validStringLength(data.carreraRestringida, 0, 120)) &&
+             (!('codigosPermitidos' in data) || validStringLength(data.codigosPermitidos, 0, 10000));
     }
 
     function isValidVoto(data, voterUid) {
@@ -136,13 +148,14 @@ service cloud.firestore {
     // Collection Rules
     // ===============================================================
 
-    // Users collection: contains PII (email, codigoUniversitario), so read is restricted to owner
+    // Users collection: readable by authenticated users to verify unique codigoUniversitario across students
     match /users/{uid} {
-      allow read: if isOwner(uid);
+      allow read: if isAuthenticated();
       allow create: if isOwner(uid) && isValidUser(request.resource.data, uid);
       allow update: if isOwner(uid) &&
                        isValidUser(request.resource.data, uid) &&
-                       areImmutableFieldsUnchanged(['uid', 'fechaRegistro']);
+                       areImmutableFieldsUnchanged(['uid', 'fechaRegistro']) &&
+                       isCodigoUniversitarioValidOnUpdate();
       allow delete: if false;
     }
 

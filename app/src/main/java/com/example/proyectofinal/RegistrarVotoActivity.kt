@@ -88,17 +88,23 @@ class RegistrarVotoActivity : AppCompatActivity() {
     private fun precargarParticipante() {
         val uid = FirebaseRepository.currentUid() ?: return
         etParticipante.setText(FirebaseRepository.currentDisplayName())
+        etParticipante.isEnabled = false
+        etParticipante.isFocusable = false
+        etParticipante.isFocusableInTouchMode = false
+        etParticipante.keyListener = null
         FirebaseRepository.obtenerPerfilUsuario(uid) { perfil ->
-            if (perfil != null && etParticipante.text.isBlank()) {
-                val etiqueta = if (perfil.codigoUniversitario.isNotBlank()) {
-                    "${perfil.nombre} - ${perfil.codigoUniversitario}"
-                } else {
-                    perfil.nombre
-                }
-                etParticipante.setText(etiqueta)
-            } else if (perfil != null && perfil.codigoUniversitario.isNotBlank()) {
-                etParticipante.setText("${perfil.nombre} - ${perfil.codigoUniversitario}")
+            if (isFinishing || isDestroyed) return@obtenerPerfilUsuario
+            if (perfil == null || perfil.codigoUniversitario.isBlank()) {
+                Toast.makeText(
+                    this,
+                    "Debes registrar tu código universitario antes de emitir un voto.",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+                return@obtenerPerfilUsuario
             }
+            val nombreBase = perfil.nombre.ifBlank { FirebaseRepository.currentDisplayName() }
+            etParticipante.setText("$nombreBase - ${perfil.codigoUniversitario}")
         }
     }
 
